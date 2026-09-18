@@ -1,0 +1,179 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>xtb-wasm</title><meta name="description" content="Documentation for xtb-wasm"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">xtb-wasm</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>xtb-wasm</h1></div><div class="tsd-panel tsd-typography"><h1 id="xtb-wasm" class="tsd-anchor-link">xtb-wasm<a href="#xtb-wasm" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>GFN2-xTB vibrational spectroscopy as a library: hand it a structure and it returns the
+optimized geometry, the harmonic wavenumbers, the IR intensities, the Raman activities and
+the RRHO thermochemistry — computed on the machine the page is open on, with nothing
+uploaded.</p>
+<p>The quantum chemistry is <a href="https://www.npmjs.com/package/@peterspackman/occjs"><code>@peterspackman/occjs</code></a>
+— OCC, an independent C++17 implementation of GFN2-xTB compiled to WebAssembly — driven
+from a pool of Web Workers.</p>
+<pre><code class="sh"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">xtb-wasm</span><span class="hl-1"> </span><span class="hl-2">openchemlib</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="usage" class="tsd-anchor-link">Usage<a href="#usage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="ts"><span class="hl-3">import</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">DEFAULT_OUTPUTS</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">DEFAULT_SETTINGS</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">installVibrationalAnalyser</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">moleculeFromSmiles</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">occjsEngine</span><span class="hl-1">,</span><br/><span class="hl-1">} </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&#39;xtb-wasm&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">// Binds the Raman and thermochemistry analyses to the engine. Call once, at</span><br/><span class="hl-5">// startup: without it a run still succeeds but leaves both fields null.</span><br/><span class="hl-0">installVibrationalAnalyser</span><span class="hl-1">();</span><br/><br/><span class="hl-6">const</span><span class="hl-1"> </span><span class="hl-7">molecule</span><span class="hl-1"> = </span><span class="hl-3">await</span><span class="hl-1"> </span><span class="hl-0">moleculeFromSmiles</span><span class="hl-1">(</span><span class="hl-2">&#39;CC(=O)C&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;acetone&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-6">const</span><span class="hl-1"> </span><span class="hl-7">result</span><span class="hl-1"> = </span><span class="hl-3">await</span><span class="hl-1"> </span><span class="hl-4">occjsEngine</span><span class="hl-1">.</span><span class="hl-0">compute</span><span class="hl-1">(</span><br/><span class="hl-1">  { </span><span class="hl-4">molecule</span><span class="hl-1">, </span><span class="hl-4">settings:</span><span class="hl-1"> </span><span class="hl-7">DEFAULT_SETTINGS</span><span class="hl-1">, </span><span class="hl-4">outputs:</span><span class="hl-1"> </span><span class="hl-7">DEFAULT_OUTPUTS</span><span class="hl-1"> },</span><br/><span class="hl-1">  {</span><br/><span class="hl-1">    </span><span class="hl-0">onProgress</span><span class="hl-4">:</span><span class="hl-1"> (</span><span class="hl-4">progress</span><span class="hl-1">) </span><span class="hl-6">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">progress</span><span class="hl-1">.</span><span class="hl-4">stage</span><span class="hl-1">, </span><span class="hl-4">progress</span><span class="hl-1">.</span><span class="hl-4">fraction</span><span class="hl-1">, </span><span class="hl-4">progress</span><span class="hl-1">.</span><span class="hl-4">message</span><span class="hl-1">);</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">);</span><br/><br/><span class="hl-3">for</span><span class="hl-1"> (</span><span class="hl-6">const</span><span class="hl-1"> </span><span class="hl-7">mode</span><span class="hl-1"> </span><span class="hl-6">of</span><span class="hl-1"> </span><span class="hl-4">result</span><span class="hl-1">.</span><span class="hl-4">modes</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">mode</span><span class="hl-1">.</span><span class="hl-4">wavenumber</span><span class="hl-1">, </span><span class="hl-4">mode</span><span class="hl-1">.</span><span class="hl-4">irIntensity</span><span class="hl-1">, </span><span class="hl-4">mode</span><span class="hl-1">.</span><span class="hl-4">ramanActivity</span><span class="hl-1">);</span><br/><span class="hl-1">}</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">result</span><span class="hl-1">.</span><span class="hl-4">energy</span><span class="hl-1">.</span><span class="hl-4">total</span><span class="hl-1">, </span><span class="hl-4">result</span><span class="hl-1">.</span><span class="hl-4">thermochemistry</span><span class="hl-1">?.</span><span class="hl-4">totalFreeEnergy</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+<p><code>compute</code> rejects a request it cannot honour rather than quietly ignoring part of it;
+<code>occjsEngine.validate(request)</code> returns the same refusals as strings without running
+anything.</p>
+<h2 id="what-a-consumer-needs" class="tsd-anchor-link">What a consumer needs<a href="#what-a-consumer-needs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><strong>A Vite-compatible bundler.</strong> The wasm binary and its data package are resolved through
+the bundler with Vite's <code>?url</code> suffix — declared in <code>src/assets.d.ts</code> — so that the
+consumer's own asset pipeline decides where they are served from and how they are hashed.
+Under another bundler, alias <code>@peterspackman/occjs/wasm?url</code> and
+<code>@peterspackman/occjs/data?url</code> to the corresponding files inside
+<code>@peterspackman/occjs</code>.</p>
+<p><strong>openchemlib as a peer dependency.</strong> It is a peer on purpose: two copies mean two
+<code>Molecule</code> classes, and the atom indices that <code>Molecule.bonds</code> carries — the ones a
+bond-to-mode mapping compares against — stop being comparable across them.</p>
+<p>The engine needs <code>Worker</code>; <code>occjsEngine.isAvailable()</code> reports whether it is there.</p>
+<h2 id="public-api" class="tsd-anchor-link">Public API<a href="#public-api" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Exports</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Engines</td>
+<td><code>occjsEngine</code>, <code>occjsSerialEngine</code>, <code>createOccjsEngine</code>, <code>ENGINES</code>, <code>getEngine</code>, <code>disposeOccPool</code>, <code>occPoolWorkerCount</code></td>
+</tr>
+<tr>
+<td>Input</td>
+<td><code>moleculeFromSmiles</code>, <code>moleculeFromMolfile</code>, <code>moleculeFromIdCode</code>, <code>moleculeFromGeometry</code>, <code>moleculeFromStructure</code>, <code>moleculesFromText</code>, <code>moleculesFromFile</code>, <code>geometryFromPdb</code>, <code>detectFormat</code>, <code>getOcl</code>, <code>DEFAULT_SEED</code></td>
+</tr>
+<tr>
+<td>Analyses</td>
+<td><code>installVibrationalAnalyser</code>, <code>thermochemistry</code>, <code>ramanActivities</code>, <code>bondPolarizability</code>, <code>ramanSupport</code>, <code>compareConnectivity</code>, <code>SUPPORTED_ELEMENTS</code>, <code>resolveSymmetry</code>, <code>principalMoments</code></td>
+</tr>
+<tr>
+<td>Geometry</td>
+<td><code>fromXyz</code>, <code>toXyz</code>, <code>geometryFromOcl</code>, <code>canonicalElement</code>, <code>elementSymbols</code></td>
+</tr>
+<tr>
+<td>Defaults, units</td>
+<td><code>DEFAULT_SETTINGS</code>, <code>DEFAULT_OUTPUTS</code>, and the CODATA conversion factors (<code>WAVENUMBER_PER_HARTREE</code>, <code>IR_INTENSITY_KM_PER_MOL</code>, <code>KCAL_PER_MOL_PER_HARTREE</code>, …)</td>
+</tr>
+</tbody>
+</table>
+<p>Types: <code>Molecule</code>, <code>Geometry</code>, <code>MoleculeSource</code>, <code>CalculationSettings</code>, <code>OutputSelection</code>,
+<code>VibrationalRequest</code>, <code>VibrationalResult</code>, <code>VibrationalMode</code>, <code>ModeInvolvement</code>,
+<code>Thermochemistry</code>, <code>EnergyBreakdown</code>, <code>Timings</code>, <code>VibrationalEngine</code>,
+<code>EngineCapabilities</code>, <code>EngineProgress</code>, <code>EngineStage</code>, <code>EngineRunOptions</code>, <code>XtbMethod</code>.</p>
+<p><code>occjsSerialEngine</code> is the same physics pinned to one instance. The parallel sweep visits
+the displacements in a run-dependent order and warm-starts each point from the previous
+one, so it reproduces itself only to ~0.02 cm⁻¹; the serial engine gives identical digits
+run to run, which is what a fixture comparison needs.</p>
+<h3 id="input-formats" class="tsd-anchor-link">Input formats<a href="#input-formats" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>SMILES, OpenChemLib idCodes, molfile (V2000 and V3000), multi-record SDF, XYZ and PDB.
+Charge and unpaired electrons are read from the structure, so ions and radicals work.
+<code>moleculesFromText</code> detects the format itself.</p>
+<h2 id="_" class="tsd-anchor-link"><code>xtb-wasm/reference</code><a href="#_" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">REFERENCE_FIXTURES</span><span class="hl-1">, </span><span class="hl-4">REFERENCE_TOLERANCES</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&#39;xtb-wasm/reference&#39;</span><span class="hl-1">;</span>
+</code><button type="button">Copy</button></pre>
+
+<p>Ten GFN2 calculations produced by <strong>native xtb 6.7.1</strong> — water, methanol, acetic acid,
+benzene, toluene, paracetamol, aspirin, caffeine, ibuprofen and cholesterol, 3 to 74 atoms
+— each carrying the optimized geometry, the energies, the wavenumbers, the IR intensities,
+the Hessian invariants and the thermochemistry, plus a <code>tier1_hess_at_optimized_geometry</code>
+block that is a <code>--hess</code> run at exactly the stored coordinates.</p>
+<p>They are the data this package is validated against, shipped so that a consumer can re-run
+the validation instead of taking the accuracy claim on trust. <code>REFERENCE_TOLERANCES</code> is
+the measured agreement a result must reach to count as reproducing native xtb. Both sit
+behind the subpath so the ~190 kB of JSON never reaches a bundle that only wants to compute
+a spectrum.</p>
+<p>The provenance — the container, the generation scripts, the raw geometries, the run logs,
+the native test-suite baseline and the three spread studies behind every tolerance — is in
+<a href="media/reference"><code>experiments/reference/</code></a> in the repository.</p>
+<h2 id="accuracy-measured" class="tsd-anchor-link">Accuracy, measured<a href="#accuracy-measured" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><strong>Frequencies and IR intensities</strong>, against the fixtures: water max |Δν| 0.107 cm⁻¹,
+benzene 0.590 cm⁻¹. Intensities come from the true GFN2 dipole — the AO multipole over the
+wavefunction basis — not a point-charge approximation.</p>
+<p><strong>Thermochemistry</strong>: Grimme's modified RRHO, transcribed from xtb's own <code>print_thermo</code>
+(<code>sthr = 50</code> cm⁻¹, Head-Gordon damping α = 4, mRRHO on). It reproduces xtb's ZPVE, enthalpy
+and free energy on all ten fixtures. Water: total free energy −5.068045 Eh against xtb's
+−5.068045036403. The rotational symmetry number comes from the detected point group, with a
+guard for a defect in occ's detector — a five-atom XY₄ such as methane is reported D2/σ=4
+instead of Td/σ=12, worth 0.65 kcal/mol in G.</p>
+<p><strong>Size</strong>: cholesterol, 74 atoms, runs a full Hessian in about 90 s on a single instance.</p>
+<h2 id="speed-measured" class="tsd-anchor-link">Speed, measured<a href="#speed-measured" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The displacement sweep is fused: one pass of <code>energyAndGradient</code> on a persistent calculator
+yields both the Hessian column and the dipole derivative. Against two separate 6N sweeps
+that rebuild the molecule each time, that is <strong>9.5× on water, 2.6× on benzene, 1.9× on
+caffeine</strong>, with the Hessian bit-identical. The Web Worker
+pool adds a further <strong>2.5–4.3×</strong> (benzene 2.5× at 4 workers, caffeine 4.3× at 8,
+3580 ms → 825 ms).</p>
+<p>occ's own wasm threading is not used and COOP/COEP headers are not required:
+<code>SharedArrayBuffer</code> is gated without cross-origin isolation in every browser, and where
+threads are available they are worth only ~1.2×.</p>
+<h2 id="limits" class="tsd-anchor-link">Limits<a href="#limits" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><strong>GFN2 only.</strong> <code>m.XtbMethod</code> has exactly one value in this build. GFN1, GFN0 and GFN-FF
+would need a tblite-enabled build, which is not reachable for WebAssembly. The engine
+refuses any other method rather than substituting one.</p>
+<p><strong>Gas phase only — no implicit solvation.</strong> Every geometry, wavenumber and intensity
+describes one isolated molecule, so a band measured in solution or in the solid state can
+sit tens of cm⁻¹ away. A continuum model would not close that gap either: it can add a
+solvation free energy at a fixed geometry, never shift a band. The measurements behind that
+statement, and the patches to occ that produced them, are in
+<a href="media/occ-smd-solvation"><code>upstream/occ-smd-solvation/</code></a>; they are not part of this
+build.</p>
+<p><strong>Raman is empirical.</strong> The Placzek quantity over the Lippincott–Stutman
+bond-polarizability model — purely geometric, with no wavefunction behind it. Absolute
+intensities are typically tens of percent out and it is qualitatively wrong for cumulated
+and triple bonds. It covers 36 elements; <code>ramanSupport(elements)</code> names the ones it
+cannot do. By default it uses the molecule's real bond graph and an analytic
+polarizability gradient; ASE's <code>d &lt; 1.5·(rᵢ+rⱼ)</code> rule is available for bit-comparison but
+invents bonds — every Cl···Cl pair of CCl₄ counts as one, which is why its mean
+polarizability comes out nearly eight times too large.</p>
+<p><strong>No band widths are predicted.</strong> The result carries wavenumbers and intensities; whatever
+draws a spectrum chooses the line shape. Rotational fine structure, hydrogen bonding,
+vibrational lifetime and solvent inhomogeneity are all absent.</p>
+<h2 id="repository-layout" class="tsd-anchor-link">Repository layout<a href="#repository-layout" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/types/</code></td>
+<td>The shared contract: molecule, calculation, vibration, engine</td>
+</tr>
+<tr>
+<td><code>src/engines/</code></td>
+<td>The occjs driver: fused sweep, worker pool, result assembly</td>
+</tr>
+<tr>
+<td><code>src/chemistry/</code></td>
+<td>Raman, thermochemistry, symmetry, geometry, CODATA constants</td>
+</tr>
+<tr>
+<td><code>src/molecules/</code></td>
+<td>Every input format, plus charge and radical detection</td>
+</tr>
+<tr>
+<td><code>src/reference/</code></td>
+<td>The 10 native-xtb fixtures and their tolerances — what ships</td>
+</tr>
+<tr>
+<td><code>experiments/</code></td>
+<td>How the fixtures were produced, and every measurement behind them</td>
+</tr>
+<tr>
+<td><code>upstream/</code></td>
+<td>Patches for occ that are not part of the build, with their evidence</td>
+</tr>
+<tr>
+<td><code>research/</code>, <code>report/</code></td>
+<td>The investigations behind the design, kept verbatim</td>
+</tr>
+</tbody>
+</table>
+<h2 id="licence" class="tsd-anchor-link">Licence<a href="#licence" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>OCC is GPL-3.0, so this package is distributed under the same terms. See
+<a href="media/LICENSE"><code>LICENSE</code></a>.</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#xtb-wasm"><span>xtb-<wbr/>wasm</span></a><ul><li><a href="#usage"><span>Usage</span></a></li><li><a href="#what-a-consumer-needs"><span>What a consumer needs</span></a></li><li><a href="#public-api"><span>Public <wbr/>API</span></a></li><li><ul><li><a href="#input-formats"><span>Input formats</span></a></li></ul></li><li><a href="#_"><span></span></a></li><li><a href="#accuracy-measured"><span>Accuracy, measured</span></a></li><li><a href="#speed-measured"><span>Speed, measured</span></a></li><li><a href="#limits"><span>Limits</span></a></li><li><a href="#repository-layout"><span>Repository layout</span></a></li><li><a href="#licence"><span>Licence</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">xtb-wasm</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer></footer><div class="overlay"></div></body></html>
