@@ -1,0 +1,246 @@
+{
+  "schema": "xtb-wasm/input-sensitivity/1",
+  "description": "Full --ohess pipeline restarted from the reference optimized geometry perturbed by a uniform random displacement of +/- eps Angstrom per coordinate.",
+  "molecules": {
+    "benzene": {
+      "n_modes": 30,
+      "reference_energy": -15.879640654516,
+      "perturbations": [
+        {
+          "eps": 1e-08,
+          "seed": 1,
+          "energy_abs_diff": 1.000088900582341e-12,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 0.0002800000000036107,
+          "intensity_max_rel_above_1kmmol": 2.3291354548952163e-06
+        },
+        {
+          "eps": 1e-08,
+          "seed": 2,
+          "energy_abs_diff": 0.0,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 0.000240000000005125,
+          "intensity_max_rel_above_1kmmol": 1.9964018184985014e-06
+        },
+        {
+          "eps": 1e-06,
+          "seed": 1,
+          "energy_abs_diff": 6.10000938650046e-11,
+          "freq_max_abs_cm1": 0.010000000000218279,
+          "freq_mean_abs_cm1": 0.0013333333333245415,
+          "intensity_max_abs_km_mol": 0.020879999999991128,
+          "intensity_max_rel_above_1kmmol": 0.00017368695820558686
+        },
+        {
+          "eps": 1e-06,
+          "seed": 2,
+          "energy_abs_diff": 1.1000977906405751e-11,
+          "freq_max_abs_cm1": 0.010000000000218279,
+          "freq_mean_abs_cm1": 0.0006666666666660604,
+          "intensity_max_abs_km_mol": 0.029480000000006612,
+          "intensity_max_rel_above_1kmmol": 0.00024522469003371766
+        },
+        {
+          "eps": 0.0001,
+          "seed": 1,
+          "energy_abs_diff": 7.160700121744412e-08,
+          "freq_max_abs_cm1": 0.7800000000002001,
+          "freq_mean_abs_cm1": 0.15400000000000394,
+          "intensity_max_abs_km_mol": 0.6410800000000023,
+          "intensity_max_rel_above_1kmmol": 0.005185987898822291
+        },
+        {
+          "eps": 0.0001,
+          "seed": 2,
+          "energy_abs_diff": 6.144500019900079e-08,
+          "freq_max_abs_cm1": 0.3200000000001637,
+          "freq_mean_abs_cm1": 0.07933333333331423,
+          "intensity_max_abs_km_mol": 3.275960000000012,
+          "intensity_max_rel_above_1kmmol": 0.026500731448533526
+        }
+      ]
+    },
+    "acetic_acid": {
+      "n_modes": 18,
+      "reference_energy": -14.450260534759,
+      "perturbations": [
+        {
+          "eps": 1e-08,
+          "seed": 1,
+          "energy_abs_diff": 1.000088900582341e-12,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 3.000000003794412e-05,
+          "intensity_max_rel_above_1kmmol": 2.8180643560290156e-06
+        },
+        {
+          "eps": 1e-08,
+          "seed": 2,
+          "energy_abs_diff": 1.5999646052478056e-11,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 3.0000000000640625e-05,
+          "intensity_max_rel_above_1kmmol": 5.897095680285105e-06
+        },
+        {
+          "eps": 1e-06,
+          "seed": 1,
+          "energy_abs_diff": 5.100098121602059e-11,
+          "freq_max_abs_cm1": 0.01999999999998181,
+          "freq_mean_abs_cm1": 0.0027777777777657775,
+          "intensity_max_abs_km_mol": 0.0027300000000423097,
+          "intensity_max_rel_above_1kmmol": 0.0003663483662975382
+        },
+        {
+          "eps": 1e-06,
+          "seed": 2,
+          "energy_abs_diff": 1.60700075468867e-09,
+          "freq_max_abs_cm1": 0.010000000000218279,
+          "freq_mean_abs_cm1": 0.0022222222222336224,
+          "intensity_max_abs_km_mol": 0.0028500000000004633,
+          "intensity_max_rel_above_1kmmol": 0.00040157417074940266
+        },
+        {
+          "eps": 0.0001,
+          "seed": 1,
+          "energy_abs_diff": 4.026099986731424e-08,
+          "freq_max_abs_cm1": 1.9100000000003092,
+          "freq_mean_abs_cm1": 0.3333333333333507,
+          "intensity_max_abs_km_mol": 0.2755499999999529,
+          "intensity_max_rel_above_1kmmol": 0.036895507582706655
+        },
+        {
+          "eps": 0.0001,
+          "seed": 2,
+          "energy_abs_diff": 1.216910003876137e-07,
+          "freq_max_abs_cm1": 0.9700000000002547,
+          "freq_mean_abs_cm1": 0.22444444444444164,
+          "intensity_max_abs_km_mol": 0.2823000000000002,
+          "intensity_max_rel_above_1kmmol": 0.03977697838685545
+        }
+      ]
+    },
+    "paracetamol": {
+      "n_modes": 54,
+      "reference_energy": -32.783628124402,
+      "perturbations": [
+        {
+          "eps": 1e-08,
+          "seed": 1,
+          "energy_abs_diff": 5.002220859751105e-12,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 0.001660000000001105,
+          "intensity_max_rel_above_1kmmol": 7.58189131887911e-05
+        },
+        {
+          "eps": 1e-08,
+          "seed": 2,
+          "energy_abs_diff": 9.99733629214461e-12,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 0.0003700000000037562,
+          "intensity_max_rel_above_1kmmol": 0.00010883078069338894
+        },
+        {
+          "eps": 1e-06,
+          "seed": 1,
+          "energy_abs_diff": 5.469971142701979e-10,
+          "freq_max_abs_cm1": 0.010000000000218279,
+          "freq_mean_abs_cm1": 0.0014814814814801342,
+          "intensity_max_abs_km_mol": 0.16812000000000182,
+          "intensity_max_rel_above_1kmmol": 0.007687578288771766
+        },
+        {
+          "eps": 1e-06,
+          "seed": 2,
+          "energy_abs_diff": 1.0499974223421304e-09,
+          "freq_max_abs_cm1": 0.01999999999998181,
+          "freq_mean_abs_cm1": 0.002592592592605235,
+          "intensity_max_abs_km_mol": 0.03730000000000189,
+          "intensity_max_rel_above_1kmmol": 0.010744946693846397
+        },
+        {
+          "eps": 0.0001,
+          "seed": 1,
+          "energy_abs_diff": 1.4706900230976316e-07,
+          "freq_max_abs_cm1": 1.4400000000000546,
+          "freq_mean_abs_cm1": 0.21074074074074145,
+          "intensity_max_abs_km_mol": 1.5970699999999738,
+          "intensity_max_rel_above_1kmmol": 0.22880415901014214
+        },
+        {
+          "eps": 0.0001,
+          "seed": 2,
+          "energy_abs_diff": 1.869493999606675e-06,
+          "freq_max_abs_cm1": 19.340000000000003,
+          "freq_mean_abs_cm1": 1.024074074074096,
+          "intensity_max_abs_km_mol": 6.511589999999998,
+          "intensity_max_rel_above_1kmmol": 0.5312908879946677
+        }
+      ]
+    },
+    "caffeine": {
+      "n_modes": 66,
+      "reference_energy": -42.153938141197,
+      "perturbations": [
+        {
+          "eps": 1e-08,
+          "seed": 1,
+          "energy_abs_diff": 4.000355602329364e-12,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 0.00011000000006333721,
+          "intensity_max_rel_above_1kmmol": 1.8700746907787915e-05
+        },
+        {
+          "eps": 1e-08,
+          "seed": 2,
+          "energy_abs_diff": 5.9969806898152456e-12,
+          "freq_max_abs_cm1": 0.0,
+          "freq_mean_abs_cm1": 0.0,
+          "intensity_max_abs_km_mol": 0.00015999999999394277,
+          "intensity_max_rel_above_1kmmol": 2.992119505256032e-05
+        },
+        {
+          "eps": 1e-06,
+          "seed": 1,
+          "energy_abs_diff": 3.829967454294092e-10,
+          "freq_max_abs_cm1": 0.03999999999999915,
+          "freq_mean_abs_cm1": 0.002272727272734572,
+          "intensity_max_abs_km_mol": 0.011110000000030595,
+          "intensity_max_rel_above_1kmmol": 0.0020346412635719427
+        },
+        {
+          "eps": 1e-06,
+          "seed": 2,
+          "energy_abs_diff": 5.559996907322784e-10,
+          "freq_max_abs_cm1": 0.020000000000003126,
+          "freq_mean_abs_cm1": 0.0019696969696957165,
+          "intensity_max_abs_km_mol": 0.015960000000006858,
+          "intensity_max_rel_above_1kmmol": 0.0031155444348447085
+        },
+        {
+          "eps": 0.0001,
+          "seed": 1,
+          "energy_abs_diff": 1.0074700185214169e-07,
+          "freq_max_abs_cm1": 3.9299999999999997,
+          "freq_mean_abs_cm1": 0.2089393939394004,
+          "intensity_max_abs_km_mol": 1.0745900000000574,
+          "intensity_max_rel_above_1kmmol": 0.20431688041620377
+        },
+        {
+          "eps": 0.0001,
+          "seed": 2,
+          "energy_abs_diff": 9.805999923173658e-08,
+          "freq_max_abs_cm1": 2.9299999999999926,
+          "freq_mean_abs_cm1": 0.24742424242422925,
+          "intensity_max_abs_km_mol": 1.8453499999999963,
+          "intensity_max_rel_above_1kmmol": 0.17481458209440887
+        }
+      ]
+    }
+  }
+}

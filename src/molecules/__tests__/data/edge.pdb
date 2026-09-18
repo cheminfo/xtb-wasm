@@ -1,0 +1,15 @@
+HEADER    EDGE CASES
+REMARK   1 hand-written to exercise the PDB reader
+MODEL        1
+ATOM      1  N   GLY A   1       1.000   2.000   3.000  1.00 10.00           N
+ATOM      2  CA AGLY A   1       4.000   5.000   6.000  1.00 10.00           C
+ATOM      3  CA BGLY A   1       4.500   5.500   6.500  1.00 10.00           C
+HETATM    4 CL    CL A   2       7.000   8.000   9.000  1.00 10.00          CL
+ATOM      5  D1  DOD A   3      10.000  11.000  12.000  1.00 10.00           D
+ATOM      6 HMAA HEM A   4      -1.500  -2.500  -3.500  1.00 10.00
+TER       7      HEM A   4
+ENDMDL
+MODEL        2
+ATOM      1  N   GLY A   1      99.000  99.000  99.000  1.00 10.00           N
+ENDMDL
+END

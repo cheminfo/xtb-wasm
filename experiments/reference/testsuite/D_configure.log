@@ -1,0 +1,116 @@
+WARNING: Recommend using either -Dbuildtype or -Doptimization + -Ddebug. Using both is redundant since they override each other. See: https://mesonbuild.com/Builtin-options.html#build-type-options
+The Meson build system
+Version: 1.3.2
+Source dir: /opt/work/xtb-D
+Build dir: /opt/work/xtb-D/_build_fp
+Build type: native build
+Project name: xtb
+Project version: 6.7.1
+Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+Fortran linker for the host machine: gfortran ld.bfd 2.42
+C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+C linker for the host machine: cc ld.bfd 2.42
+Host machine cpu family: aarch64
+Host machine cpu: aarch64
+Program git found: YES (/usr/bin/git)
+WARNING: You should add the boolean check kwarg to the run_command call.
+         It currently defaults to false,
+         but it will default to true in future releases of meson.
+         See also: https://github.com/mesonbuild/meson/issues/9300
+Program python3 found: YES (/usr/bin/python3)
+Configuring xtb_version.fh using configuration
+Run-time dependency threads found: YES
+Found pkg-config: YES (/usr/bin/pkg-config) 1.8.1
+Run-time dependency lapack found: YES 0.3.26+ds
+Run-time dependency blas found: YES 0.3.26+ds
+Found CMake: /usr/bin/cmake (3.28.3)
+Run-time dependency mctc-lib found: NO (tried pkgconfig and cmake)
+Looking for a fallback subproject for the dependency mctc-lib
+
+Executing subproject mctc-lib 
+
+mctc-lib| Project name: mctc-lib
+mctc-lib| Project version: 0.5.1
+mctc-lib| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+mctc-lib| Fortran linker for the host machine: gfortran ld.bfd 2.42
+mctc-lib| Run-time dependency jonquil found: NO (tried pkgconfig and cmake)
+mctc-lib| Looking for a fallback subproject for the dependency jonquil
+mctc-lib| Building fallback subproject with default_library=static
+
+Executing subproject mctc-lib:jonquil
+
+jonquil| Project name: jonquil
+jonquil| Project version: 0.3.0
+jonquil| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+jonquil| Fortran linker for the host machine: gfortran ld.bfd 2.42
+jonquil| Run-time dependency toml-f found: NO (tried pkgconfig and cmake)
+jonquil| Looking for a fallback subproject for the dependency toml-f
+
+Executing subproject mctc-lib:jonquil:toml-f
+
+toml-f| Project name: toml-f
+toml-f| Project version: 0.5.0
+toml-f| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+toml-f| Fortran linker for the host machine: gfortran ld.bfd 2.42
+toml-f| Run-time dependency test-drive found: NO (tried pkgconfig and cmake)
+toml-f| Looking for a fallback subproject for the dependency test-drive
+toml-f| Building fallback subproject with default_library=static
+
+Executing subproject mctc-lib:jonquil:toml-f:test-drive
+
+test-drive| Project name: test-drive
+test-drive| Project version: 0.5.0
+test-drive| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+test-drive| Fortran linker for the host machine: gfortran ld.bfd 2.42
+test-drive| Compiler for Fortran supports arguments -ffree-line-length-none: YES
+test-drive| Compiler for Fortran supports arguments -fbacktrace: YES
+test-drive| Build targets in project: 5
+test-drive| Subproject test-drive finished.
+
+toml-f| Dependency test-drive from subproject subprojects/test-drive found: YES 0.5.0
+toml-f| Program go found: NO
+toml-f| Build targets in project: 9
+toml-f| Subproject toml-f finished.
+
+jonquil| Dependency toml-f from subproject subprojects/toml-f found: YES 0.5.0
+jonquil| Dependency test-drive found: YES 0.5.0 (cached)
+jonquil| Build targets in project: 11
+jonquil| Subproject jonquil finished.
+
+mctc-lib| Dependency jonquil from subproject subprojects/jonquil found: YES 0.3.0
+mctc-lib| Build targets in project: 14
+mctc-lib| Subproject mctc-lib finished.
+
+Dependency mctc-lib from subproject subprojects/mctc-lib found: YES 0.5.1
+Dependency tblite skipped: feature tblite disabled
+Dependency multicharge skipped: feature tblite disabled
+Dependency dftd4 skipped: feature tblite disabled
+Dependency cpx skipped: feature cpcmx disabled
+Program asciidoctor found: NO
+Configuring config_env.bash using configuration
+Configuring config_env.csh using configuration
+Configuring xtb.pc using configuration
+Configuring xtb.tcl using configuration
+Dependency test-drive from subproject subprojects/test-drive found: YES 0.5.0
+Build targets in project: 19
+
+xtb 6.7.1
+
+  Subprojects
+    jonquil     : YES (from mctc-lib)
+    mctc-lib    : YES
+    test-drive  : YES (from mctc-lib => jonquil => toml-f)
+    toml-f      : YES (from mctc-lib => jonquil)
+
+  User defined options
+    buildtype   : release
+    optimization: 1
+    prefix      : /opt/install-D
+    c_args      : -ffp-contract=off
+    fortran_args: -ffp-contract=off -fno-unsafe-math-optimizations
+    cpcmx       : disabled
+    lapack      : netlib
+    openmp      : false
+    tblite      : disabled
+
+Found ninja-1.11.1 at /usr/bin/ninja

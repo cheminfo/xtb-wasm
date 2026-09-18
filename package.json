@@ -1,0 +1,66 @@
+{
+  "name": "xtb-wasm",
+  "version": "0.0.0",
+  "description": "GFN2-xTB vibrational spectroscopy in the browser: harmonic frequencies, IR intensities, Raman activities and RRHO thermochemistry, validated against native xtb",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": "./lib/index.js",
+    "./reference": "./lib/reference/index.js"
+  },
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "clean": "rimraf coverage lib",
+    "eslint": "eslint .",
+    "eslint-fix": "eslint . --fix",
+    "prepack": "npm run tsc",
+    "prettier": "prettier --check .",
+    "prettier-write": "prettier --write .",
+    "test": "npm run test-only && npm run check-types && npm run eslint && npm run prettier",
+    "test-only": "vitest run --coverage",
+    "tsc": "npm run clean && npm run tsc-build",
+    "tsc-build": "tsc --project tsconfig.build.json && cp -R src/reference/fixtures lib/reference/ && cp src/reference/tolerances.json lib/reference/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheminfo/xtb-wasm.git"
+  },
+  "keywords": [
+    "xtb",
+    "gfn2",
+    "infrared",
+    "raman",
+    "vibrational",
+    "spectroscopy",
+    "webassembly",
+    "chemistry"
+  ],
+  "bugs": {
+    "url": "https://github.com/cheminfo/xtb-wasm/issues"
+  },
+  "homepage": "https://github.com/cheminfo/xtb-wasm#readme",
+  "dependencies": {
+    "@peterspackman/occjs": "^0.9.3",
+    "sdf-parser": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.11",
+    "@zakodium/tsconfig": "^1.0.5",
+    "cheminfo-types": "^1.16.0",
+    "eslint": "^9",
+    "eslint-config-zakodium": "^20.1.0",
+    "openchemlib": "^9.25.0",
+    "prettier": "^3.9.6",
+    "rimraf": "^6.1.3",
+    "typescript": "^6",
+    "vitest": "^4.1.11"
+  },
+  "peerDependencies": {
+    "openchemlib": "^9.25.0"
+  }
+}

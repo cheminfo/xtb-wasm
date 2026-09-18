@@ -1,0 +1,80 @@
+From c19fed329577d8d8716245ecabc7f44b14905c25 Mon Sep 17 00:00:00 2001
+From: Luc Patiny <luc@patiny.com>
+Date: Fri, 18 Sep 2026 08:29:16 +0200
+Subject: [PATCH] feat(solvent): add has_smd_parameters and
+ available_smd_solvents
+
+Lets a caller probe a solvent name and enumerate the shipped SMD set instead
+of catching the exception get_smd_parameters throws or keeping its own copy
+of the names.
+
+Assisted-By: Claude Opus 5 <noreply@anthropic.com>
+---
+ include/occ/solvent/parameters.h | 11 +++++++++++
+ src/solvent/parameters.cpp       | 17 +++++++++++++++++
+ 2 files changed, 28 insertions(+)
+
+diff --git a/include/occ/solvent/parameters.h b/include/occ/solvent/parameters.h
+index 8ff1667..6e866d6 100644
+--- a/include/occ/solvent/parameters.h
++++ b/include/occ/solvent/parameters.h
+@@ -3,6 +3,7 @@
+ #include <occ/solvent/json.h>
+ #include <occ/solvent/smd_parameters.h>
+ #include <string>
++#include <vector>
+ 
+ namespace occ::solvent {
+ 
+@@ -14,6 +15,16 @@ void override_data_path_directory(const std::string &);
+ double get_dielectric(const std::string &name);
+ SMDSolventParameters get_smd_parameters(const std::string &name);
+ 
++/// True when `name` is in the shipped SMD parameter set, i.e. when
++/// `get_smd_parameters(name)` will succeed instead of throwing.
++bool has_smd_parameters(const std::string &name);
++
++/// Every solvent name in the shipped SMD parameter set
++/// (`$OCC_DATA_PATH/solvent/smd.json`), sorted. These are the exact spellings
++/// `get_smd_parameters` accepts — callers building a solvent picker should
++/// take them from here rather than keep their own copy.
++std::vector<std::string> available_smd_solvents();
++
+ void list_available_solvents();
+ 
+ nlohmann::json load_draco_parameters();
+diff --git a/src/solvent/parameters.cpp b/src/solvent/parameters.cpp
+index 28d9b71..b97ccb7 100644
+--- a/src/solvent/parameters.cpp
++++ b/src/solvent/parameters.cpp
+@@ -1,3 +1,4 @@
++#include <algorithm>
+ #include <filesystem>
+ #include <fmt/core.h>
+ #include <fstream>
+@@ -660,6 +661,22 @@ SMDSolventParameters get_smd_parameters(const std::string &name) {
+   return kv->second;
+ }
+ 
++bool has_smd_parameters(const std::string &name) {
++  load_solvent_parameters();
++  return smd_solvent_parameters.find(name) != smd_solvent_parameters.end();
++}
++
++std::vector<std::string> available_smd_solvents() {
++  load_solvent_parameters();
++  std::vector<std::string> names;
++  names.reserve(smd_solvent_parameters.size());
++  for (const auto &kv : smd_solvent_parameters) {
++    names.push_back(kv.first);
++  }
++  std::sort(names.begin(), names.end());
++  return names;
++}
++
+ void list_available_solvents() {
+   occ::log::info("{: <32s} {:>10s} {:>10s} {:>10s} {:>10s} {:>10s} "
+                  "{:>10s} {:>10s}",
+-- 
+2.39.5 (Apple Git-154)
+

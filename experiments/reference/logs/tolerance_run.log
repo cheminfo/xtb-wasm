@@ -1,0 +1,113 @@
+[water] B_omp1_openblas1: E=-5.070544344175
+[water] B_repeat_identical: E=-5.070544344175
+[water] B_omp1_openblas4: E=-5.070544344175
+[water] A_omp1_openblas1: E=-5.070544344175
+[water] A_omp4_openblas4: E=-5.070544344175
+[water] C_omp1_netlib_reference: E=-5.070544344175
+[methanol] B_omp1_openblas1: E=-8.226118333561
+[methanol] B_repeat_identical: E=-8.226118333561
+[methanol] B_omp1_openblas4: E=-8.226118333561
+[methanol] A_omp1_openblas1: E=-8.226118333561
+[methanol] A_omp4_openblas4: E=-8.226118333561
+[methanol] C_omp1_netlib_reference: E=-8.226118333561
+[benzene] B_omp1_openblas1: E=-15.879640654516
+[benzene] B_repeat_identical: E=-15.879640654516
+[benzene] B_omp1_openblas4: E=-15.879640654516
+[benzene] A_omp1_openblas1: E=-15.879640654516
+[benzene] A_omp4_openblas4: E=-15.879640654516
+[benzene] C_omp1_netlib_reference: E=-15.879640654516
+[acetic_acid] B_omp1_openblas1: E=-14.450260534759
+[acetic_acid] B_repeat_identical: E=-14.450260534759
+[acetic_acid] B_omp1_openblas4: E=-14.450260534759
+[acetic_acid] A_omp1_openblas1: E=-14.450260534759
+[acetic_acid] A_omp4_openblas4: E=-14.450260534759
+[acetic_acid] C_omp1_netlib_reference: E=-14.450260534759
+[toluene] B_omp1_openblas1: E=-19.050402650793
+[toluene] B_repeat_identical: E=-19.050402650793
+[toluene] B_omp1_openblas4: E=-19.050402650793
+[toluene] A_omp1_openblas1: E=-19.050402650793
+[toluene] A_omp4_openblas4: E=-19.050402650793
+[toluene] C_omp1_netlib_reference: E=-19.050402650793
+[paracetamol] B_omp1_openblas1: E=-32.783628124402
+[paracetamol] B_repeat_identical: E=-32.783628124402
+[paracetamol] B_omp1_openblas4: E=-32.783628124402
+[paracetamol] A_omp1_openblas1: E=-32.783628124402
+[paracetamol] A_omp4_openblas4: E=-32.783628124402
+[paracetamol] C_omp1_netlib_reference: E=-32.783628124402
+[aspirin] B_omp1_openblas1: E=-39.623040361567
+[aspirin] B_repeat_identical: E=-39.623040361567
+[aspirin] B_omp1_openblas4: E=-39.623040361567
+[aspirin] A_omp1_openblas1: E=-39.623040361567
+[aspirin] A_omp4_openblas4: E=-39.623040361567
+[aspirin] C_omp1_netlib_reference: E=-39.623040361567
+[caffeine] B_omp1_openblas1: E=-42.153938141197
+[caffeine] B_repeat_identical: E=-42.153938141197
+[caffeine] B_omp1_openblas4: E=-42.153938141197
+[caffeine] A_omp1_openblas1: E=-42.153938141197
+[caffeine] A_omp4_openblas4: E=-42.153938141197
+[caffeine] C_omp1_netlib_reference: E=-42.153938141197
+[ibuprofen] B_omp1_openblas1: E=-45.163317165846
+[ibuprofen] B_repeat_identical: E=-45.163317165846
+[ibuprofen] B_omp1_openblas4: E=-45.163317165846
+[ibuprofen] A_omp1_openblas1: E=-45.163317165846
+[ibuprofen] A_omp4_openblas4: E=-45.163317165846
+[ibuprofen] C_omp1_netlib_reference: E=-45.163317165846
+[cholesterol] B_omp1_openblas1: E=-85.431013276533
+[cholesterol] B_repeat_identical: E=-85.431013276533
+[cholesterol] B_omp1_openblas4: E=-85.431013276533
+[cholesterol] A_omp1_openblas1: E=-85.431013276533
+[cholesterol] A_omp4_openblas4: E=-85.431013276533
+[cholesterol] C_omp1_netlib_reference: E=-85.431013276533
+
+=== SPREAD SUMMARY (vs B_omp1_openblas1) ===
+molecule      variant                  dE (Eh)    max df    max dI  max relI
+water         B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+water         B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+water         A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+water         A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+water         C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+methanol      B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+methanol      B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+methanol      A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+methanol      A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+methanol      C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+benzene       B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+benzene       B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+benzene       A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+benzene       A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+benzene       C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+acetic_acid   B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+acetic_acid   B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+acetic_acid   A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+acetic_acid   A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+acetic_acid   C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+toluene       B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+toluene       B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+toluene       A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+toluene       A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+toluene       C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+paracetamol   B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+paracetamol   B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+paracetamol   A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+paracetamol   A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+paracetamol   C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+aspirin       B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+aspirin       B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+aspirin       A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+aspirin       A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+aspirin       C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+caffeine      B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+caffeine      B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+caffeine      A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+caffeine      A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+caffeine      C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+ibuprofen     B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+ibuprofen     B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+ibuprofen     A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+ibuprofen     A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+ibuprofen     C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00
+cholesterol   B_repeat_identical      0.00e+00    0.0000    0.0000  0.00e+00
+cholesterol   B_omp1_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+cholesterol   A_omp1_openblas1        0.00e+00    0.0000    0.0000  0.00e+00
+cholesterol   A_omp4_openblas4        0.00e+00    0.0000    0.0000  0.00e+00
+cholesterol   C_omp1_netlib_reference    0.00e+00    0.0000    0.0000  0.00e+00

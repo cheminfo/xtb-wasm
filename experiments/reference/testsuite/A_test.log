@@ -1,0 +1,300 @@
+ninja: Entering directory `/opt/work/xtb-A/_build_default'
+ninja: no work to do.
+  1/216 toml-f / version                        OK              0.02s
+  2/216 toml-f / fpm                            OK              0.01s
+  3/216 test-drive / all tests                  OK              0.01s
+  4/216 test-drive / check                      OK              0.02s
+  5/216 test-drive / select                     OK              0.02s
+  6/216 toml-f / tftest-build                   OK              0.02s
+  7/216 toml-f / tftest-lexer                   OK              0.02s
+  8/216 toml-f / tftest-parser                  OK              0.01s
+  9/216 toml-f / tftest-ser                     OK              0.01s
+ 10/216 toml-f / tftest-sort                    OK              0.01s
+ 11/216 toml-f / tftest-utils                   OK              0.01s
+ 12/216 toml-f / example-1.1                    OK              0.01s
+ 13/216 toml-f / example-1.2                    OK              0.01s
+ 14/216 jonquil:unit / lexer                    OK              0.09s
+ 15/216 mctc-lib / cutoff                       OK              0.02s
+ 16/216 mctc-lib / data                         OK              0.02s
+ 17/216 mctc-lib / math                         OK              0.01s
+ 18/216 mctc-lib / ncoord                       OK              1.18s
+ 19/216 mctc-lib / read                         OK              0.03s
+ 20/216 mctc-lib / read-aims                    OK              0.03s
+ 21/216 mctc-lib / read-cjson                   OK              0.04s
+ 22/216 mctc-lib / read-ctfile                  OK              0.03s
+ 23/216 mctc-lib / read-gaussian                OK              0.01s
+ 24/216 mctc-lib / read-genformat               OK              0.02s
+ 25/216 mctc-lib / read-json                    OK              0.02s
+ 26/216 mctc-lib / read-pdb                     OK              0.01s
+ 27/216 mctc-lib / read-pymatgen                OK              0.02s
+ 28/216 mctc-lib / read-qchem                   OK              0.01s
+ 29/216 mctc-lib / read-qcschema                OK              0.01s
+ 30/216 mctc-lib / read-turbomole               OK              0.01s
+ 31/216 mctc-lib / read-vasp                    OK              0.00s
+ 32/216 mctc-lib / read-xyz                     OK              0.01s
+ 33/216 mctc-lib / symbols                      OK              0.00s
+ 34/216 mctc-lib / write                        OK              0.02s
+ 35/216 mctc-lib / write-aims                   OK              0.01s
+ 36/216 mctc-lib / write-cjson                  OK              0.01s
+ 37/216 mctc-lib / write-ctfile                 OK              0.02s
+ 38/216 mctc-lib / write-gaussian               OK              0.01s
+ 39/216 mctc-lib / write-genformat              OK              0.01s
+ 40/216 mctc-lib / write-pdb                    OK              0.02s
+ 41/216 mctc-lib / write-pymatgen               OK              0.03s
+ 42/216 mctc-lib / write-qchem                  OK              0.03s
+ 43/216 mctc-lib / write-qcschema               OK              0.01s
+ 44/216 mctc-lib / write-turbomole              OK              0.02s
+ 45/216 mctc-lib / write-vasp                   OK              0.03s
+ 46/216 mctc-lib / write-xyz                    OK              0.02s
+ 47/216 multicharge / model                     OK              0.21s
+ 48/216 multicharge / pbc                       FAIL            4.90s   exit status 1
+>>> ASAN_OPTIONS=halt_on_error=1:abort_on_error=1:print_summary=1 UBSAN_OPTIONS=halt_on_error=1:abort_on_error=1:print_summary=1:print_stacktrace=1 MALLOC_PERTURB_=183 /opt/work/xtb-A/_build_default/subprojects/multicharge/test/unit/tester pbc
+――――――――――――――――――――――――――――――――――――― ✀  ―――――――――――――――――――――――――――――――――――――
+stdout:
+sigma:
+ 2.43559317293389E+01 2.42226355608636E-01-9.08957329466456E-02
+ 2.42226355608636E-01 2.43589944856724E+01-8.82291654059318E-02
+-9.08957329466457E-02-8.82291654059321E-02 2.47820789320903E+01
+numgrad:
+ 2.43559317292252E+01 2.42226358082576E-01-9.08957291656520E-02
+ 2.42226371405252E-01 2.43589944872724E+01-8.82291564252569E-02
+-9.08957300538304E-02-8.82291653070411E-02 2.47820789303077E+01
+diff:
+ 1.13708154003689E-10-2.47393983077160E-09-3.78099360154316E-09
+-1.57966157099398E-08-1.60005342308978E-09-8.98067491206245E-09
+-2.89281529286534E-09-9.88910758836781E-11 1.78262027361598E-09
+stderr:
+# Testing: pbc
+  Starting eeq-charges-cyanamide ... (1/18)
+       ... eeq-charges-cyanamide [PASSED]
+  Starting eeq-energy-formamide ... (2/18)
+       ... eeq-energy-formamide [PASSED]
+  Starting eeq-dbdr-co2 ... (3/18)
+       ... eeq-dbdr-co2 [PASSED]
+  Starting eeq-dbdL-co2 ... (4/18)
+       ... eeq-dbdL-co2 [PASSED]
+  Starting eeq-dadr-ice ... (5/18)
+       ... eeq-dadr-ice [PASSED]
+  Starting eeq-dadL-ice ... (6/18)
+       ... eeq-dadL-ice [PASSED]
+  Starting eeq-gradient-co2 ... (7/18)
+       ... eeq-gradient-co2 [PASSED]
+  Starting eeq-sigma-ice ... (8/18)
+       ... eeq-sigma-ice [PASSED]
+  Starting eeq-dqdr-urea ... (9/18)
+       ... eeq-dqdr-urea [PASSED]
+  Starting eeq-dqdL-oxacb ... (10/18)
+       ... eeq-dqdL-oxacb [PASSED]
+  Starting eeqbc-dbdr-co2 ... (11/18)
+       ... eeqbc-dbdr-co2 [PASSED]
+  Starting eeqbc-dbdL-co2 ... (12/18)
+       ... eeqbc-dbdL-co2 [PASSED]
+  Starting eeqbc-dadr-ice ... (13/18)
+       ... eeqbc-dadr-ice [PASSED]
+  Starting eeqbc-dadL-ice ... (14/18)
+       ... eeqbc-dadL-ice [PASSED]
+  Starting eeqbc-gradient-co2 ... (15/18)
+       ... eeqbc-gradient-co2 [PASSED]
+  Starting eeqbc-sigma-ice ... (16/18)
+       ... eeqbc-sigma-ice [FAILED]
+  Message: Derivative of energy does not match
+  Starting eeqbc-dqdr-urea ... (17/18)
+       ... eeqbc-dqdr-urea [PASSED]
+  Starting eeqbc-dqdL-oxacb ... (18/18)
+       ... eeqbc-dqdL-oxacb [PASSED]
+1 test(s) failed!
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG
+ERROR STOP 1
+
+Error termination. Backtrace:
+#0  0xffffab1dd44b in ???
+#1  0xffffab1de277 in ???
+#2  0xaaaad8cc33df in MAIN__
+#3  0xaaaad8cc2d23 in main
+――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+ 49/216 multicharge / wignerseitz               OK              0.03s
+ 50/216 dftd4 / app-version                     OK              0.02s
+ 51/216 dftd4 / app-help                        OK              0.01s
+ 52/216 dftd4 / app-help-run                    OK              0.01s
+ 53/216 dftd4 / app-help-param                  OK              0.02s
+ 54/216 dftd4 / app-param-list                  OK              0.01s
+ 55/216 dftd4 / app-license                     OK              0.01s
+ 56/216 dftd4 / app-citation                    OK              0.01s
+ 57/216 dftd4 / app-noargs                      EXPECTEDFAIL    0.01s   exit status 1
+ 58/216 dftd4 / app-energy                      SKIP            0.05s   exit status 77
+ 59/216 dftd4 / app-energy-d4s                  SKIP            0.04s   exit status 77
+ 60/216 dftd4 / app-gradient                    SKIP            0.05s   exit status 77
+ 61/216 dftd4 / app-gradient-d4s                SKIP            0.08s   exit status 77
+ 62/216 dftd4 / app-properties                  SKIP            0.03s   exit status 77
+ 63/216 dftd4 / app-pair-analysis               SKIP            0.05s   exit status 77
+ 64/216 dftd4 / app-energy-d4-eeqbc             SKIP            0.03s   exit status 77
+ 65/216 dftd4 / app-r2scan3c                    SKIP            0.04s   exit status 77
+ 66/216 dftd4 / app-r2scan3c-mod                SKIP            0.04s   exit status 77
+ 67/216 dftd4 / app-r2scan3c-cli                SKIP            0.05s   exit status 77
+ 68/216 dftd4 / model                           OK              0.03s
+ 69/216 dftd4 / dftd4                           OK              0.17s
+ 70/216 dftd4 / pairwise                        OK              0.29s
+ 71/216 dftd4 / param                           OK              0.24s
+ 72/216 dftd4 / periodic                        OK              9.55s
+ 73/216 s-dftd3:app / version                   OK              0.01s
+ 74/216 s-dftd3:app / help                      OK              0.00s
+ 75/216 s-dftd3:app / noargs                    EXPECTEDFAIL    0.01s   exit status 1
+ 76/216 s-dftd3:app / example                   OK              0.06s
+ 77/216 s-dftd3:app / run-example               OK              0.02s
+ 78/216 s-dftd3:app / param-all                 OK              0.04s
+ 79/216 s-dftd3:app / param-select              OK              0.02s
+ 80/216 s-dftd3:unit / model                    OK              0.02s
+ 81/216 s-dftd3:unit / dftd3                    OK              0.14s
+ 82/216 s-dftd3:unit / param                    OK              0.03s
+ 83/216 s-dftd3:unit / pairwise                 OK              0.15s
+ 84/216 s-dftd3:unit / periodic                 OK             23.67s
+ 85/216 s-dftd3:unit / gcp                      OK              0.03s
+ 86/216 s-dftd3:unit / regression               OK              0.07s
+ 87/216 tblite:unit / cgto-ortho                OK              0.02s
+ 88/216 tblite:unit / coulomb-charge            OK              1.74s
+ 89/216 tblite:unit / coulomb-multipole         OK              2.80s
+ 90/216 tblite:unit / coulomb-thirdorder        OK              0.08s
+ 91/216 tblite:unit / dispersion                OK              0.03s
+ 92/216 tblite:unit / double-dictionary         OK              0.02s
+ 93/216 tblite:unit / fit                       OK              0.02s
+ 94/216 tblite:unit / gfn1-xtb                  OK              3.47s
+ 95/216 tblite:unit / gfn2-xtb                  OK              0.18s
+ 96/216 tblite:unit / ceh                       OK              0.09s
+ 97/216 tblite:unit / hamiltonian               OK              1.50s
+ 98/216 tblite:unit / halogen                   OK              0.02s
+ 99/216 tblite:unit / integral-overlap          OK              0.08s
+100/216 tblite:unit / integral-multipole        OK              0.01s
+101/216 tblite:unit / integral-trafo            OK              0.01s
+102/216 tblite:unit / ipea1-xtb                 OK              3.83s
+103/216 tblite:unit / npy                       OK              0.02s
+104/216 tblite:unit / npz                       OK              0.02s
+105/216 tblite:unit / post-processing           OK              0.04s
+106/216 tblite:unit / repulsion                 OK              0.16s
+107/216 tblite:unit / slater-expansion          OK              0.03s
+108/216 tblite:unit / spin                      OK              0.29s
+109/216 tblite:unit / solvation-born            OK              0.02s
+110/216 tblite:unit / solvation-cpcm            OK              0.28s
+111/216 tblite:unit / solvation-surface         OK              0.11s
+112/216 tblite:unit / solvation-cds             OK              0.12s
+113/216 tblite:unit / solvation-shift           OK              0.01s
+114/216 tblite:unit / tagged-io                 OK              0.01s
+115/216 tblite:unit / wavefunction-restart      OK              0.02s
+116/216 tblite:unit / xtb-param                 OK              2.00s
+117/216 tblite:unit / xtb-external              OK              0.76s
+118/216 tblite:unit / xtbml                     OK              0.10s
+119/216 tblite:cli / help                       OK              0.02s
+120/216 tblite:cli / fit-help                   OK              0.04s
+121/216 tblite:cli / param-help                 OK              0.01s
+122/216 tblite:cli / run-help                   OK              0.01s
+123/216 tblite:cli / guess-help                 OK              0.01s
+124/216 tblite:cli / tagdiff-help               OK              0.01s
+125/216 tblite:cli / version                    OK              0.01s
+126/216 tblite:cli / fit-version                OK              0.01s
+127/216 tblite:cli / param-version              OK              0.01s
+128/216 tblite:cli / run-version                OK              0.05s
+129/216 tblite:cli / guess-version              OK              0.03s
+130/216 tblite:cli / tagdiff-version            OK              0.02s
+131/216 tblite:cli / noargs                     EXPECTEDFAIL    0.03s   exit status 1
+132/216 tblite:cli / fit-noargs                 EXPECTEDFAIL    0.02s   exit status 1
+133/216 tblite:cli / param-noargs               EXPECTEDFAIL    0.03s   exit status 1
+134/216 tblite:cli / run-noargs                 EXPECTEDFAIL    0.04s   exit status 1
+135/216 tblite:cli / guess-noargs               EXPECTEDFAIL    0.03s   exit status 1
+136/216 tblite:cli / tagdiff-noargs             EXPECTEDFAIL    0.02s   exit status 1
+137/216 tblite:cli / 01a-gfn1xtb                OK              0.23s
+138/216 tblite:cli / 01b-gfn2xtb                OK              0.11s
+139/216 tblite:cli / 01c-ipea1xtb               OK              0.13s
+140/216 tblite:cli / 01d-gfn1xtb-solv           OK              0.06s
+141/216 tblite:cli / 01e-gfn2xtb-solv           OK              0.07s
+142/216 tblite:cli / 02a-gfn1xtb                OK              0.32s
+143/216 tblite:cli / 02b-gfn2xtb                OK              0.15s
+144/216 tblite:cli / 02c-ipea1xtb               OK              0.27s
+145/216 tblite:cli / 02d-gfn1xtb-solv           OK              0.15s
+146/216 tblite:cli / 02e-gfn2xtb-solv           OK              0.13s
+147/216 tblite:cli / 03a-gfn1xtb                OK              0.10s
+148/216 tblite:cli / 03b-gfn2xtb                OK              0.18s
+149/216 tblite:cli / 03c-ipea1xtb               OK              0.18s
+150/216 tblite:cli / 03d-gfn1xtb-solv           OK              0.17s
+151/216 tblite:cli / 03e-gfn2xtb-solv           OK              0.30s
+152/216 tblite:cli / 04a-gfn1xtb                OK              0.10s
+153/216 tblite:cli / 04b-gfn2xtb                OK              0.16s
+154/216 tblite:cli / 04c-ipea1xtb               OK              0.12s
+155/216 tblite:cli / 04d-gfn1xtb-solv           OK              0.08s
+156/216 tblite:cli / 04e-gfn2xtb-solv           OK              0.09s
+157/216 tblite:cli / 05a-gfn1xtb                OK              0.17s
+158/216 tblite:cli / 05b-gfn2xtb                OK              0.22s
+159/216 tblite:cli / 05c-ipea1xtb               OK              0.33s
+160/216 tblite:cli / 05d-gfn1xtb-solv           OK              0.11s
+161/216 tblite:cli / 05e-gfn2xtb-solv           OK              0.11s
+162/216 tblite:cli / 06a-gfn1xtb                OK              0.30s
+163/216 tblite:cli / 07f-ceh                    OK              0.06s
+164/216 tblite:cli / tagdiff-example            OK              0.01s
+165/216 tblite:cli / fit-example                OK              0.01s
+166/216 tblite:cli / param-gfn2                 OK              0.20s
+167/216 tblite:cli / param-gfn1                 OK              0.57s
+168/216 tblite:cli / param-ipea1                OK              0.46s
+169/216 tblite:cli / post-processing-str        OK              0.04s
+170/216 tblite:cli / post-processing-toml       OK              0.10s
+171/216 tblite:cli / post-processing-param      OK              0.14s
+172/216 tblite:cli / post-processing-other-file EXPECTEDFAIL    0.03s   exit status 1
+173/216 tblite:cli / xtbml-cli-arg              OK              0.05s
+174/216 tblite:cli / xtbml-xyz-cli-arg          OK              0.08s
+175/216 tblite:cli / xtbml-xyz-cli-toml         OK              0.07s
+176/216 numsa / surface                         OK              0.02s
+177/216 numsa / cds                             OK              0.01s
+178/216 cpx:unit / io                           OK              0.02s
+179/216 cpx:unit / calc                         OK              0.11s
+180/216 cpx / Argparser print help              OK              0.01s
+181/216 cpx / C API                             OK              1.15s
+182/216 xtb / C API                             OK              0.30s
+183/216 xtb:unit / atomlist                     OK              0.02s
+184/216 xtb:unit / coordinationnumber           OK              0.08s
+185/216 xtb:unit / coulomb                      OK              0.72s
+186/216 xtb:unit / dftd3                        OK              1.14s
+187/216 xtb:unit / dftd4                        OK              0.95s
+188/216 xtb:unit / detrotra                     OK              0.02s
+189/216 xtb:unit / docking                      OK              3.59s
+190/216 xtb:unit / eeq                          OK              0.10s
+191/216 xtb:unit / gfn0                         OK              0.50s
+192/216 xtb:unit / gfn1                         OK              3.20s
+193/216 xtb:unit / gfn2                         OK              3.31s
+194/216 xtb:unit / gfnff                        OK              8.47s
+195/216 xtb:unit / hessian                      OK              0.08s
+196/216 xtb:unit / iff                          OK              0.33s
+197/216 xtb:unit / latticepoint                 OK              0.01s
+198/216 xtb:unit / molecule                     OK              0.01s
+199/216 xtb:unit / oniom                        OK              0.07s
+200/216 xtb:unit / dipro                        OK              0.09s
+201/216 xtb:unit / pbc-tools                    OK              0.03s
+202/216 xtb:unit / peeq                         OK              0.19s
+203/216 xtb:unit / random                       OK              0.01s
+204/216 xtb:unit / repulsion                    OK              0.18s
+205/216 xtb:unit / symmetry                     OK              0.09s
+206/216 xtb:unit / tblite                       OK              2.18s
+207/216 xtb:unit / thermo                       OK              0.02s
+208/216 xtb:unit / vertical                     OK              0.03s
+209/216 xtb:unit / wsc                          OK              0.03s
+210/216 xtb:unit / cpx                          OK              0.26s
+211/216 xtb:unit / ptb                          OK              1.25s
+212/216 xtb / Argparser print version           OK              0.01s
+213/216 xtb / Argparser print help              OK              0.02s
+214/216 xtb / Argparser print license           OK              0.01s
+215/216 xtb / Argparser no arguments            EXPECTEDFAIL    0.01s   exit status 1
+216/216 xtb / Info                              OK              0.02s
+
+Summary of Failures:
+
+ 48/216 multicharge / pbc                       FAIL            4.90s   exit status 1
+
+Ok:                 195 
+Expected Fail:      10  
+Fail:               1   
+Unexpected Pass:    0   
+Skipped:            10  
+Timeout:            0   
+
+Full log written to /opt/work/xtb-A/_build_default/meson-logs/testlog.txt
+
+real	1m37.248s
+user	1m25.014s
+sys	0m3.346s

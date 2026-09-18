@@ -1,0 +1,13 @@
+validating /opt/work/xtb-B/_build_wasmshape/xtb against 10 fixtures, tier 1
+  water         modes=3    dE=0.00e+00 Eh  max df=0.000 cm^-1
+  methanol      modes=12   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  benzene       modes=30   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  acetic_acid   modes=18   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  toluene       modes=39   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  paracetamol   modes=54   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  aspirin       modes=57   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  caffeine      modes=66   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  ibuprofen     modes=93   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  cholesterol   modes=216  dE=0.00e+00 Eh  max df=0.000 cm^-1
+
+PASS: 10/10 molecules within tier-1 tolerances

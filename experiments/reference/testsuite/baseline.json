@@ -1,0 +1,591 @@
+{
+  "schema": "xtb-wasm/native-testsuite-baseline/1",
+  "xtb": {
+    "version": "6.7.1",
+    "commit": "a45f05d",
+    "repo": "https://github.com/grimme-lab/xtb"
+  },
+  "environment": {
+    "image": "xtbnat:base",
+    "base_image": "ubuntu:24.04",
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "Linux-6.12.76-linuxkit-aarch64-with-glibc2.39",
+    "arch": "aarch64 (Docker Desktop on Apple Silicon)",
+    "gfortran": "13.3.0",
+    "meson": "1.3.2",
+    "ninja": "1.11.1",
+    "lapack_default": "OpenBLAS (libopenblas.so.0, openblas-pthread)",
+    "OMP_NUM_THREADS": "1"
+  },
+  "configurations": {
+    "A_default": {
+      "label": "default",
+      "setup": "meson setup _build_default --buildtype=release --prefix=/opt/install-A -Dlapack=openblas",
+      "compile": "ninja -C _build_default",
+      "test": "OMP_NUM_THREADS=1 meson test -C _build_default --print-errorlogs",
+      "options": {
+        "buildtype": "release",
+        "lapack": "openblas",
+        "openmp": true,
+        "tblite": "enabled",
+        "cpcmx": "enabled"
+      }
+    },
+    "B_wasm_shaped": {
+      "label": "wasm-shaped",
+      "setup": "meson setup _build_wasmshape --buildtype=release --prefix=/opt/install-B -Dlapack=openblas -Dopenmp=false -Dtblite=disabled -Dcpcmx=disabled",
+      "compile": "ninja -C _build_wasmshape",
+      "test": "OMP_NUM_THREADS=1 meson test -C _build_wasmshape --print-errorlogs",
+      "options": {
+        "buildtype": "release",
+        "lapack": "openblas",
+        "openmp": false,
+        "tblite": "disabled",
+        "cpcmx": "disabled"
+      }
+    }
+  },
+  "results": {
+    "A_default": {
+      "run_1_parallel_no_pytest": {
+        "targets": 216,
+        "totals": {
+          "OK": 195,
+          "FAIL": 1,
+          "EXPECTEDFAIL": 10,
+          "SKIP": 10
+        },
+        "sum_target_seconds": 95.4,
+        "per_project": {
+          "cpx": {
+            "targets": 2,
+            "OK": 2,
+            "seconds": 1.2
+          },
+          "cpx:unit": {
+            "targets": 2,
+            "OK": 2,
+            "seconds": 0.1
+          },
+          "dftd4": {
+            "targets": 23,
+            "OK": 12,
+            "EXPECTEDFAIL": 1,
+            "SKIP": 10,
+            "seconds": 10.8
+          },
+          "jonquil:unit": {
+            "targets": 1,
+            "OK": 1,
+            "seconds": 0.1
+          },
+          "mctc-lib": {
+            "targets": 32,
+            "OK": 32,
+            "seconds": 1.7
+          },
+          "multicharge": {
+            "targets": 3,
+            "OK": 2,
+            "FAIL": 1,
+            "seconds": 5.1
+          },
+          "numsa": {
+            "targets": 2,
+            "OK": 2,
+            "seconds": 0.0
+          },
+          "s-dftd3:app": {
+            "targets": 7,
+            "OK": 6,
+            "EXPECTEDFAIL": 1,
+            "seconds": 0.2
+          },
+          "s-dftd3:unit": {
+            "targets": 7,
+            "OK": 7,
+            "seconds": 24.1
+          },
+          "tblite:cli": {
+            "targets": 57,
+            "OK": 50,
+            "EXPECTEDFAIL": 7,
+            "seconds": 6.6
+          },
+          "tblite:unit": {
+            "targets": 32,
+            "OK": 32,
+            "seconds": 17.9
+          },
+          "test-drive": {
+            "targets": 3,
+            "OK": 3,
+            "seconds": 0.1
+          },
+          "toml-f": {
+            "targets": 10,
+            "OK": 10,
+            "seconds": 0.1
+          },
+          "xtb": {
+            "targets": 6,
+            "OK": 5,
+            "EXPECTEDFAIL": 1,
+            "seconds": 0.4
+          },
+          "xtb:unit": {
+            "targets": 29,
+            "OK": 29,
+            "seconds": 27.0
+          }
+        },
+        "non_ok_targets": [
+          {
+            "name": "multicharge / pbc",
+            "result": "FAIL",
+            "returncode": 1
+          },
+          {
+            "name": "dftd4 / app-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "dftd4 / app-energy",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-energy-d4s",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-gradient",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-gradient-d4s",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-properties",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-pair-analysis",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-energy-d4-eeqbc",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-r2scan3c",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-r2scan3c-mod",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "dftd4 / app-r2scan3c-cli",
+            "result": "SKIP",
+            "returncode": 77
+          },
+          {
+            "name": "s-dftd3:app / noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / fit-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / param-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / run-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / guess-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / tagdiff-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / post-processing-other-file",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "xtb / Argparser no arguments",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          }
+        ],
+        "wall_clock_seconds": 97.2,
+        "note": "meson default parallelism; python3-pytest NOT installed, so the 10 dftd4 app tests self-skip with exit 77."
+      },
+      "run_2_serial_with_pytest": {
+        "targets": 216,
+        "totals": {
+          "OK": 204,
+          "FAIL": 2,
+          "EXPECTEDFAIL": 10
+        },
+        "sum_target_seconds": 63.9,
+        "per_project": {
+          "cpx": {
+            "targets": 2,
+            "OK": 2,
+            "seconds": 0.5
+          },
+          "cpx:unit": {
+            "targets": 2,
+            "OK": 2,
+            "seconds": 0.1
+          },
+          "dftd4": {
+            "targets": 23,
+            "OK": 22,
+            "EXPECTEDFAIL": 1,
+            "seconds": 11.2
+          },
+          "jonquil:unit": {
+            "targets": 1,
+            "OK": 1,
+            "seconds": 0.0
+          },
+          "mctc-lib": {
+            "targets": 32,
+            "OK": 32,
+            "seconds": 0.7
+          },
+          "multicharge": {
+            "targets": 3,
+            "OK": 2,
+            "FAIL": 1,
+            "seconds": 2.7
+          },
+          "numsa": {
+            "targets": 2,
+            "OK": 1,
+            "FAIL": 1,
+            "seconds": 0.0
+          },
+          "s-dftd3:app": {
+            "targets": 7,
+            "OK": 6,
+            "EXPECTEDFAIL": 1,
+            "seconds": 0.1
+          },
+          "s-dftd3:unit": {
+            "targets": 7,
+            "OK": 7,
+            "seconds": 13.1
+          },
+          "tblite:cli": {
+            "targets": 57,
+            "OK": 50,
+            "EXPECTEDFAIL": 7,
+            "seconds": 3.5
+          },
+          "tblite:unit": {
+            "targets": 32,
+            "OK": 32,
+            "seconds": 14.6
+          },
+          "test-drive": {
+            "targets": 3,
+            "OK": 3,
+            "seconds": 0.0
+          },
+          "toml-f": {
+            "targets": 10,
+            "OK": 10,
+            "seconds": 0.0
+          },
+          "xtb": {
+            "targets": 6,
+            "OK": 5,
+            "EXPECTEDFAIL": 1,
+            "seconds": 0.3
+          },
+          "xtb:unit": {
+            "targets": 29,
+            "OK": 29,
+            "seconds": 17.2
+          }
+        },
+        "non_ok_targets": [
+          {
+            "name": "multicharge / pbc",
+            "result": "FAIL",
+            "returncode": 1
+          },
+          {
+            "name": "dftd4 / app-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "s-dftd3:app / noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / fit-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / param-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / run-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / guess-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / tagdiff-noargs",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "tblite:cli / post-processing-other-file",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          },
+          {
+            "name": "numsa / cds",
+            "result": "FAIL",
+            "returncode": 1
+          },
+          {
+            "name": "xtb / Argparser no arguments",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          }
+        ],
+        "wall_clock_seconds": 64.7,
+        "note": "meson test --num-processes 1 with python3-pytest installed: the 10 dftd4 skips become passes, and numsa/cds fails due to build-directory pollution (see README)."
+      },
+      "subtests": {
+        "total": 135,
+        "counts": {
+          "PASSED": 134,
+          "SKIPPED": 1
+        },
+        "skipped": [
+          {
+            "suite": "eeq",
+            "subtest": "hbond",
+            "reason": "Not implemented"
+          }
+        ]
+      }
+    },
+    "B_wasm_shaped": {
+      "run_1_parallel": {
+        "targets": 81,
+        "totals": {
+          "OK": 80,
+          "EXPECTEDFAIL": 1
+        },
+        "sum_target_seconds": 44.7,
+        "per_project": {
+          "jonquil:unit": {
+            "targets": 1,
+            "OK": 1,
+            "seconds": 0.0
+          },
+          "mctc-lib": {
+            "targets": 32,
+            "OK": 32,
+            "seconds": 3.0
+          },
+          "test-drive": {
+            "targets": 3,
+            "OK": 3,
+            "seconds": 0.1
+          },
+          "toml-f": {
+            "targets": 10,
+            "OK": 10,
+            "seconds": 0.3
+          },
+          "xtb": {
+            "targets": 6,
+            "OK": 5,
+            "EXPECTEDFAIL": 1,
+            "seconds": 0.5
+          },
+          "xtb:unit": {
+            "targets": 29,
+            "OK": 29,
+            "seconds": 40.8
+          }
+        },
+        "non_ok_targets": [
+          {
+            "name": "xtb / Argparser no arguments",
+            "result": "EXPECTEDFAIL",
+            "returncode": 1
+          }
+        ],
+        "wall_clock_seconds": 47.4
+      },
+      "run_2_serial": {
+        "targets": 81,
+        "totals": {
+          "OK": 80,
+          "EXPECTEDFAIL": 1
+        },
+        "wall_clock_seconds": 26.5,
+        "note": "meson test --num-processes 1"
+      },
+      "subtests": {
+        "total": 119,
+        "counts": {
+          "PASSED": 104,
+          "SKIPPED": 15
+        },
+        "skipped": [
+          {
+            "suite": "eeq",
+            "subtest": "hbond",
+            "reason": "Not implemented"
+          },
+          {
+            "suite": "dipro",
+            "subtest": "J_ab,eff",
+            "reason": "tblite libary not available."
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn1",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn2",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn1-mindless",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn2-mindless",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn1-mindless-gbsa",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn2-mindless-alpb",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn1-mindless-gb",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn2-mindless-gbe",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn1-mindless-cosmo",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "gfn2-mindless-cosmo",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "tblite",
+            "subtest": "mindless-efield",
+            "reason": "xtb not compiled with tblite support"
+          },
+          {
+            "suite": "cpx",
+            "subtest": "solvation",
+            "reason": "CPCM-X libary not available."
+          },
+          {
+            "suite": "ptb",
+            "subtest": "ptb_not_present",
+            "reason": "xtb not compiled with tblite support"
+          }
+        ]
+      }
+    }
+  },
+  "xtb_own_suite": {
+    "description": "Only the 'xtb' and 'xtb:unit' meson suites, i.e. xtb's own tests. This is the number the wasm build must reproduce; every other target belongs to a bundled third-party subproject.",
+    "command": "OMP_NUM_THREADS=1 meson test -C <builddir> --suite xtb",
+    "A_default": {
+      "targets": 35,
+      "OK": 34,
+      "EXPECTEDFAIL": 1,
+      "FAIL": 0,
+      "SKIP": 0,
+      "repeats": 3,
+      "deterministic": true
+    },
+    "B_wasm_shaped": {
+      "targets": 35,
+      "OK": 34,
+      "EXPECTEDFAIL": 1,
+      "FAIL": 0,
+      "SKIP": 0,
+      "repeats": 3,
+      "deterministic": true
+    },
+    "expected_fail_target": "xtb / Argparser no arguments (xtb exits 1 when invoked with no arguments; declared should_fail in test/meson.build)"
+  }
+}

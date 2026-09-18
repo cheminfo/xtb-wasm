@@ -1,0 +1,261 @@
+The Meson build system
+Version: 1.3.2
+Source dir: /opt/work/xtb-A
+Build dir: /opt/work/xtb-A/_build_default
+Build type: native build
+Project name: xtb
+Project version: 6.7.1
+Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+Fortran linker for the host machine: gfortran ld.bfd 2.42
+C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+C linker for the host machine: cc ld.bfd 2.42
+Host machine cpu family: aarch64
+Host machine cpu: aarch64
+Program git found: YES (/usr/bin/git)
+WARNING: You should add the boolean check kwarg to the run_command call.
+         It currently defaults to false,
+         but it will default to true in future releases of meson.
+         See also: https://github.com/mesonbuild/meson/issues/9300
+Program python3 found: YES (/usr/bin/python3)
+Configuring xtb_version.fh using configuration
+Run-time dependency OpenMP found: YES 4.5
+Run-time dependency threads found: YES
+Found pkg-config: YES (/usr/bin/pkg-config) 1.8.1
+Run-time dependency openblas found: YES 0.3.26
+Found CMake: /usr/bin/cmake (3.28.3)
+Run-time dependency mctc-lib found: NO (tried pkgconfig and cmake)
+Looking for a fallback subproject for the dependency mctc-lib
+
+Executing subproject mctc-lib 
+
+mctc-lib| Project name: mctc-lib
+mctc-lib| Project version: 0.5.1
+mctc-lib| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+mctc-lib| Fortran linker for the host machine: gfortran ld.bfd 2.42
+mctc-lib| Dependency openmp found: YES 4.5 (cached)
+mctc-lib| Run-time dependency jonquil found: NO (tried pkgconfig and cmake)
+mctc-lib| Looking for a fallback subproject for the dependency jonquil
+mctc-lib| Building fallback subproject with default_library=static
+
+Executing subproject mctc-lib:jonquil
+
+jonquil| Project name: jonquil
+jonquil| Project version: 0.3.0
+jonquil| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+jonquil| Fortran linker for the host machine: gfortran ld.bfd 2.42
+jonquil| Run-time dependency toml-f found: NO (tried pkgconfig and cmake)
+jonquil| Looking for a fallback subproject for the dependency toml-f
+
+Executing subproject mctc-lib:jonquil:toml-f
+
+toml-f| Project name: toml-f
+toml-f| Project version: 0.5.0
+toml-f| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+toml-f| Fortran linker for the host machine: gfortran ld.bfd 2.42
+toml-f| Run-time dependency test-drive found: NO (tried pkgconfig and cmake)
+toml-f| Looking for a fallback subproject for the dependency test-drive
+toml-f| Building fallback subproject with default_library=static
+
+Executing subproject mctc-lib:jonquil:toml-f:test-drive
+
+test-drive| Project name: test-drive
+test-drive| Project version: 0.5.0
+test-drive| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+test-drive| Fortran linker for the host machine: gfortran ld.bfd 2.42
+test-drive| Compiler for Fortran supports arguments -ffree-line-length-none: YES
+test-drive| Compiler for Fortran supports arguments -fbacktrace: YES
+test-drive| Dependency openmp found: YES 4.5 (cached)
+test-drive| Build targets in project: 5
+test-drive| Subproject test-drive finished.
+
+toml-f| Dependency test-drive from subproject subprojects/test-drive found: YES 0.5.0
+toml-f| Program go found: NO
+toml-f| Build targets in project: 9
+toml-f| Subproject toml-f finished.
+
+jonquil| Dependency toml-f from subproject subprojects/toml-f found: YES 0.5.0
+jonquil| Dependency test-drive found: YES 0.5.0 (cached)
+jonquil| Build targets in project: 11
+jonquil| Subproject jonquil finished.
+
+mctc-lib| Dependency jonquil from subproject subprojects/jonquil found: YES 0.3.0
+mctc-lib| Build targets in project: 14
+mctc-lib| Subproject mctc-lib finished.
+
+Dependency mctc-lib from subproject subprojects/mctc-lib found: YES 0.5.1
+Run-time dependency tblite found: NO (tried pkgconfig and cmake)
+Looking for a fallback subproject for the dependency tblite
+
+Executing subproject tblite 
+
+tblite| Project name: tblite
+tblite| Project version: 0.6.0
+tblite| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+tblite| Fortran linker for the host machine: gfortran ld.bfd 2.42
+tblite| C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+tblite| C linker for the host machine: cc ld.bfd 2.42
+tblite| Library gfortran found: YES
+tblite| Library quadmath found: NO
+tblite| Library mvec found: YES
+tblite| Library m found: YES
+tblite| Dependency openmp found: YES 4.5 (cached)
+tblite| Dependency openblas found: YES 0.3.26 (cached)
+tblite| Dependency toml-f found: YES 0.5.0 (cached)
+tblite| Dependency mctc-lib found: YES 0.5.1 (cached)
+tblite| Run-time dependency multicharge found: NO (tried pkgconfig and cmake)
+tblite| Looking for a fallback subproject for the dependency multicharge
+
+Executing subproject tblite:multicharge
+
+multicharge| Project name: multicharge
+multicharge| Project version: 0.5.0
+multicharge| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+multicharge| Fortran linker for the host machine: gfortran ld.bfd 2.42
+multicharge| C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+multicharge| C linker for the host machine: cc ld.bfd 2.42
+multicharge| Dependency openmp found: YES 4.5 (cached)
+multicharge| Dependency openblas found: YES 0.3.26 (cached)
+multicharge| Dependency mctc-lib found: YES 0.5.1 (cached)
+multicharge| Program tester.py found: YES (/opt/work/xtb-A/subprojects/multicharge/test/validation/tester.py)
+multicharge| Run-time dependency mstore found: NO (tried pkgconfig and cmake)
+multicharge| Looking for a fallback subproject for the dependency mstore
+
+Executing subproject tblite:multicharge:mstore
+
+mstore| Project name: mstore
+mstore| Project version: 0.3.0
+mstore| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+mstore| Fortran linker for the host machine: gfortran ld.bfd 2.42
+mstore| Dependency openmp found: YES 4.5 (cached)
+mstore| Dependency mctc-lib found: YES 0.5.1 (cached)
+mstore| Build targets in project: 19
+mstore| Subproject mstore finished.
+
+multicharge| Dependency mstore from subproject subprojects/mstore found: YES 0.3.0
+multicharge| Build targets in project: 20
+multicharge| Subproject multicharge finished.
+
+tblite| Dependency multicharge from subproject subprojects/multicharge found: YES 0.5.0
+tblite| Run-time dependency dftd4 found: NO (tried pkgconfig and cmake)
+tblite| Looking for a fallback subproject for the dependency dftd4
+
+Executing subproject tblite:dftd4
+
+dftd4| Project name: dftd4
+dftd4| Project version: 4.2.0
+dftd4| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+dftd4| Fortran linker for the host machine: gfortran ld.bfd 2.42
+dftd4| C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+dftd4| C linker for the host machine: cc ld.bfd 2.42
+dftd4| Dependency openmp found: YES 4.5 (cached)
+dftd4| Dependency openblas found: YES 0.3.26 (cached)
+dftd4| Dependency mctc-lib found: YES 0.5.1 (cached)
+dftd4| Dependency multicharge found: YES 0.5.0 (cached)
+dftd4| Program tester.py found: YES (/opt/work/xtb-A/subprojects/dftd4/app/tester.py)
+dftd4| Dependency mstore found: YES 0.3.0 (cached)
+dftd4| Build targets in project: 23
+dftd4| Subproject dftd4 finished.
+
+tblite| Dependency dftd4 from subproject subprojects/dftd4 found: YES 4.2.0
+tblite| Dependency multicharge found: YES 0.5.0 (cached)
+tblite| Run-time dependency s-dftd3 found: NO (tried pkgconfig and cmake)
+tblite| Looking for a fallback subproject for the dependency s-dftd3
+
+Executing subproject tblite:s-dftd3
+
+s-dftd3| Project name: s-dftd3
+s-dftd3| Project version: 1.4.0
+s-dftd3| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+s-dftd3| Fortran linker for the host machine: gfortran ld.bfd 2.42
+s-dftd3| subprojects/s-dftd3/meson.build:30: WARNING: add_languages is missing native:, assuming languages are wanted for both host and build.
+s-dftd3| C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+s-dftd3| C linker for the host machine: cc ld.bfd 2.42
+s-dftd3| Run-time dependency OpenMP found: YES 4.5
+s-dftd3| Dependency mctc-lib found: YES 0.5.1 (cached)
+s-dftd3| Dependency toml-f found: YES 0.5.0 (cached)
+s-dftd3| Dependency mstore found: YES 0.3.0 (cached)
+s-dftd3| Program /opt/work/xtb-A/subprojects/s-dftd3/test/validation/tester.py found: YES (/usr/bin/python3 /opt/work/xtb-A/subprojects/s-dftd3/test/validation/tester.py)
+s-dftd3| Build targets in project: 26
+s-dftd3| Subproject s-dftd3 finished.
+
+tblite| Dependency s-dftd3 from subproject subprojects/s-dftd3 found: YES 1.4.0
+tblite| Dependency mstore found: YES 0.3.0 (cached)
+tblite| Program tester.py found: YES (/opt/work/xtb-A/subprojects/tblite/test/cli/tester.py)
+tblite| Program tester.py found: YES (/usr/bin/python3 /opt/work/xtb-A/subprojects/tblite/test/validation/tester.py)
+tblite| Build targets in project: 29
+tblite| Subproject tblite finished.
+
+Dependency tblite from subproject subprojects/tblite found: YES 0.6.0
+Dependency multicharge found: YES 0.5.0 (cached)
+Dependency dftd4 found: YES 4.2.0 (cached)
+Run-time dependency cpx found: NO (tried pkgconfig and cmake)
+Looking for a fallback subproject for the dependency cpx
+
+Executing subproject cpx 
+
+cpx| Project name: cpx
+cpx| Project version: 1.1.0
+cpx| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+cpx| Fortran linker for the host machine: gfortran ld.bfd 2.42
+cpx| C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+cpx| C linker for the host machine: cc ld.bfd 2.42
+cpx| Dependency openmp found: YES 4.5 (cached)
+cpx| Dependency threads found: YES unknown (cached)
+cpx| Dependency openmp found: YES 4.5 (cached)
+cpx| Dependency openblas found: YES 0.3.26 (cached)
+cpx| Dependency mctc-lib found: YES 0.5.1 (cached)
+cpx| Run-time dependency numsa found: NO (tried pkgconfig and cmake)
+cpx| Looking for a fallback subproject for the dependency numsa
+
+Executing subproject cpx:numsa
+
+numsa| Project name: numsa
+numsa| Project version: 0.2.0
+numsa| Fortran compiler for the host machine: gfortran (gcc 13.3.0 "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+numsa| Fortran linker for the host machine: gfortran ld.bfd 2.42
+numsa| Dependency openmp found: YES 4.5 (cached)
+numsa| Dependency mctc-lib found: YES 0.5.1 (cached)
+numsa| Build targets in project: 32
+numsa| Subproject numsa finished.
+
+cpx| Dependency numsa from subproject subprojects/numsa found: YES 0.2.0
+cpx| Dependency toml-f found: YES 0.5.0 (cached)
+cpx| Program config/install-mod.py found: YES (/usr/bin/env python /opt/work/xtb-A/subprojects/cpx/config/install-mod.py)
+cpx| Dependency test-drive from subproject subprojects/test-drive found: YES 0.5.0
+cpx| Build targets in project: 36
+cpx| Subproject cpx finished.
+
+Dependency cpx from subproject subprojects/cpx found: YES 1.1.0
+Program asciidoctor found: NO
+Configuring config_env.bash using configuration
+Configuring config_env.csh using configuration
+Configuring xtb.pc using configuration
+Configuring xtb.tcl using configuration
+Dependency test-drive found: YES 0.5.0 (cached)
+Build targets in project: 41
+
+xtb 6.7.1
+
+  Subprojects
+    cpx        : YES
+    dftd4      : YES (from tblite)
+    jonquil    : YES (from mctc-lib)
+    mctc-lib   : YES
+    mstore     : YES (from tblite => multicharge)
+    multicharge: YES (from tblite)
+    numsa      : YES (from cpx)
+    s-dftd3    : YES 1 warnings (from tblite)
+    tblite     : YES
+    test-drive : YES (from mctc-lib => jonquil => toml-f)
+    toml-f     : YES (from mctc-lib => jonquil)
+
+  User defined options
+    buildtype  : release
+    prefix     : /opt/install-A
+    lapack     : openblas
+
+Found ninja-1.11.1 at /usr/bin/ninja
+
+real	0m2.762s
+user	0m2.100s
+sys	0m0.539s

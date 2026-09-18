@@ -1,0 +1,96 @@
+ninja: Entering directory `/opt/work/xtb-B/_build_wasmshape'
+ninja: no work to do.
+ 1/81 toml-f / version              OK              0.03s
+ 2/81 toml-f / fpm                  OK              0.03s
+ 3/81 test-drive / all tests        OK              0.08s
+ 4/81 test-drive / check            OK              0.04s
+ 5/81 test-drive / select           OK              0.02s
+ 6/81 toml-f / tftest-build         OK              0.05s
+ 7/81 toml-f / tftest-lexer         OK              0.03s
+ 8/81 toml-f / tftest-parser        OK              0.03s
+ 9/81 toml-f / tftest-ser           OK              0.02s
+10/81 toml-f / tftest-sort          OK              0.03s
+11/81 toml-f / tftest-utils         OK              0.02s
+12/81 toml-f / example-1.1          OK              0.02s
+13/81 toml-f / example-1.2          OK              0.01s
+14/81 jonquil:unit / lexer          OK              0.02s
+15/81 mctc-lib / cutoff             OK              0.03s
+16/81 mctc-lib / data               OK              0.01s
+17/81 mctc-lib / math               OK              0.03s
+18/81 mctc-lib / ncoord             OK              2.20s
+19/81 mctc-lib / read               OK              0.05s
+20/81 mctc-lib / read-aims          OK              0.03s
+21/81 mctc-lib / read-cjson         OK              0.06s
+22/81 mctc-lib / read-ctfile        OK              0.05s
+23/81 mctc-lib / read-gaussian      OK              0.03s
+24/81 mctc-lib / read-genformat     OK              0.00s
+25/81 mctc-lib / read-json          OK              0.01s
+26/81 mctc-lib / read-pdb           OK              0.02s
+27/81 mctc-lib / read-pymatgen      OK              0.04s
+28/81 mctc-lib / read-qchem         OK              0.04s
+29/81 mctc-lib / read-qcschema      OK              0.05s
+30/81 mctc-lib / read-turbomole     OK              0.02s
+31/81 mctc-lib / read-vasp          OK              0.02s
+32/81 mctc-lib / read-xyz           OK              0.02s
+33/81 mctc-lib / symbols            OK              0.01s
+34/81 mctc-lib / write              OK              0.02s
+35/81 mctc-lib / write-aims         OK              0.03s
+36/81 mctc-lib / write-cjson        OK              0.02s
+37/81 mctc-lib / write-ctfile       OK              0.02s
+38/81 mctc-lib / write-gaussian     OK              0.04s
+39/81 mctc-lib / write-genformat    OK              0.06s
+40/81 mctc-lib / write-pdb          OK              0.02s
+41/81 mctc-lib / write-pymatgen     OK              0.01s
+42/81 mctc-lib / write-qchem        OK              0.03s
+43/81 mctc-lib / write-qcschema     OK              0.01s
+44/81 mctc-lib / write-turbomole    OK              0.01s
+45/81 mctc-lib / write-vasp         OK              0.04s
+46/81 mctc-lib / write-xyz          OK              0.02s
+47/81 xtb / C API                   OK              0.30s
+48/81 xtb:unit / atomlist           OK              0.06s
+49/81 xtb:unit / coordinationnumber OK              0.16s
+50/81 xtb:unit / coulomb            OK              0.99s
+51/81 xtb:unit / dftd3              OK              1.49s
+52/81 xtb:unit / dftd4              OK              1.96s
+53/81 xtb:unit / detrotra           OK              0.18s
+54/81 xtb:unit / docking            OK              6.53s
+55/81 xtb:unit / eeq                OK              0.18s
+56/81 xtb:unit / gfn0               OK              1.10s
+57/81 xtb:unit / gfn1               OK              5.78s
+58/81 xtb:unit / gfn2               OK              3.70s
+59/81 xtb:unit / gfnff              OK             15.80s
+60/81 xtb:unit / hessian            OK              0.28s
+61/81 xtb:unit / iff                OK              0.65s
+62/81 xtb:unit / latticepoint       OK              0.02s
+63/81 xtb:unit / molecule           OK              0.03s
+64/81 xtb:unit / oniom              OK              0.08s
+65/81 xtb:unit / dipro              OK              0.03s
+66/81 xtb:unit / pbc-tools          OK              0.04s
+67/81 xtb:unit / peeq               OK              0.33s
+68/81 xtb:unit / random             OK              0.10s
+69/81 xtb:unit / repulsion          OK              0.75s
+70/81 xtb:unit / symmetry           OK              0.33s
+71/81 xtb:unit / tblite             OK              0.01s
+72/81 xtb:unit / thermo             OK              0.08s
+73/81 xtb:unit / vertical           OK              0.12s
+74/81 xtb:unit / wsc                OK              0.02s
+75/81 xtb:unit / cpx                OK              0.02s
+76/81 xtb:unit / ptb                OK              0.01s
+77/81 xtb / Argparser print version OK              0.04s
+78/81 xtb / Argparser print help    OK              0.03s
+79/81 xtb / Argparser print license OK              0.02s
+80/81 xtb / Argparser no arguments  EXPECTEDFAIL    0.06s   exit status 1
+81/81 xtb / Info                    OK              0.03s
+
+Ok:                 80  
+Expected Fail:      1   
+Fail:               0   
+Unexpected Pass:    0   
+Skipped:            0   
+Timeout:            0   
+
+Full log written to /opt/work/xtb-B/_build_wasmshape/meson-logs/testlog.txt
+
+real	0m47.366s
+user	0m29.786s
+sys	0m3.214s

@@ -1,0 +1,11 @@
+CHANGELOG.md
+coverage
+lib
+node_modules
+report
+research
+experiments
+# Verbatim output of experiments/reference/scripts — reformatting them would
+# hide that they are generated, not authored.
+src/reference/fixtures
+src/reference/tolerances.json

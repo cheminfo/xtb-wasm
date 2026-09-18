@@ -1,0 +1,177 @@
+From e6d6d16e62eb581b382c1aa432d49373e9d00854 Mon Sep 17 00:00:00 2001
+From: Luc Patiny <luc@patiny.com>
+Date: Fri, 18 Sep 2026 08:29:16 +0200
+Subject: [PATCH] feat(js): expose GFN2-xTB SMD solvation to the JavaScript
+ bindings
+
+XtbCalculator::set_solvent is a stub that always returns false, and
+set_solvation_model was never bound, so solvation was unreachable from JS.
+Binds it as setSmdSolvent plus the energy split, dielectric, cavity size and
+the solvent list.
+
+Assisted-By: Claude Opus 5 <noreply@anthropic.com>
+---
+ include/occ/xtb/smd_xtb.h |   2 +
+ src/js/xtb_bindings.cpp   | 113 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 115 insertions(+)
+
+diff --git a/include/occ/xtb/smd_xtb.h b/include/occ/xtb/smd_xtb.h
+index 79fd09d..0977c95 100644
+--- a/include/occ/xtb/smd_xtb.h
++++ b/include/occ/xtb/smd_xtb.h
+@@ -60,6 +60,8 @@ public:
+   const occ::solvent::SMDSolventParameters &parameters() const {
+     return m_engine.smd_parameters();
+   }
++  /// The solvent name this model was constructed with.
++  const std::string &solvent() const { return m_solvent; }
+   double dielectric() const { return m_engine.dielectric(); }
+ 
+   // ES (Coulomb) surface — feeds the SCC.
+diff --git a/src/js/xtb_bindings.cpp b/src/js/xtb_bindings.cpp
+index 1b0cef9..4f284ac 100644
+--- a/src/js/xtb_bindings.cpp
++++ b/src/js/xtb_bindings.cpp
+@@ -4,14 +4,38 @@
+ #include <occ/core/dimer.h>
+ #include <occ/core/molecule.h>
+ #include <occ/crystal/crystal.h>
++#include <memory>
+ #include <occ/qm/wavefunction.h>
++#include <occ/solvent/parameters.h>
++#include <occ/xtb/smd_xtb.h>
+ #include <occ/xtb/xtb_calculator.h>
+ #include <occ/xtb/xtb_result.h>
++#include <string>
+ 
+ using namespace emscripten;
++using occ::xtb::SmdSolvationModel;
+ using occ::xtb::XtbCalculator;
+ using occ::xtb::XtbResult;
+ 
++namespace {
++
++const SmdSolvationModel *as_smd(const XtbCalculator &c) {
++  return dynamic_cast<const SmdSolvationModel *>(c.solvation_model().get());
++}
++
++/// The SMD solvent names as a plain JS array of strings, so a solvent picker
++/// uses the exact spellings of the shipped parameter set rather than its own
++/// copy. Plain array = no `.delete()` for the caller, matching `kpoints`.
++val available_smd_solvents() {
++  val out = val::array();
++  for (const auto &name : occ::solvent::available_smd_solvents()) {
++    out.call<void>("push", name);
++  }
++  return out;
++}
++
++} // namespace
++
+ void register_xtb_bindings() {
+   // ----- XtbResult --------------------------------------------------------
+   // Mirrors the Python binding: read-only properties for every field.
+@@ -132,6 +156,85 @@ void register_xtb_bindings() {
+                 }))
+       .function("setSolvent", &XtbCalculator::set_solvent)
+ 
++      // ----- Implicit solvation (SMD) ----------------------------------
++      // `setSolvent` above is a stub kept for API parity with the tblite
++      // backend: it ignores its argument and always returns false. The
++      // functions below attach a real `XtbSolvationModel`, which the GFN2
++      // SCC folds into the shell potential every iteration and which
++      // `gradient()` differentiates through, so single points, geometry
++      // optimisations and numerical Hessians are all solvated.
++      //
++      // Returns false — leaving any model already attached untouched — for a
++      // name outside the shipped SMD parameter set, so a caller can probe
++      // cheaply. `availableSmdSolvents()` lists the accepted spellings.
++      .function("setSmdSolvent",
++                optional_override([](XtbCalculator &c, const std::string &s) {
++                  if (!occ::solvent::has_smd_parameters(s))
++                    return false;
++                  c.set_solvation_model(std::make_shared<SmdSolvationModel>(s));
++                  return true;
++                }))
++      /// Detach the solvation model and return to gas phase.
++      .function("clearSolvent", optional_override([](XtbCalculator &c) {
++                  c.set_solvation_model(nullptr);
++                }))
++      .function("hasSolvent", optional_override([](const XtbCalculator &c) {
++                  return static_cast<bool>(c.solvation_model());
++                }))
++      /// The attached solvent's name, or "" in gas phase.
++      .function("solventName", optional_override([](const XtbCalculator &c) {
++                  const auto *m = as_smd(c);
++                  return m ? m->solvent() : std::string();
++                }))
++      /// The model's own description, e.g.
++      /// "SMD-xtb(solvent='water', eps=78.355)", or "" in gas phase. The
++      /// dielectric it quotes is only resolved by the first `singlePoint()`
++      /// (see `solvationDielectric`).
++      .function("solvationModel", optional_override([](const XtbCalculator &c) {
++                  const auto &m = c.solvation_model();
++                  return m ? m->name() : std::string();
++                }))
++      /// Dielectric constant the attached model is using: 0 in gas phase.
++      /// The engine resolves it when it builds the cavity, i.e. during the
++      /// first `singlePoint()`; before that this reads 1. To show a solvent's
++      /// dielectric without running anything, use the module-level
++      /// `smdSolventDielectric(name)`.
++      .function("solvationDielectric",
++                optional_override([](const XtbCalculator &c) {
++                  const auto *m = as_smd(c);
++                  return m ? m->dielectric() : 0.0;
++                }))
++      /// Solvation term at the last SCC (Hartree): `e_es + e_cds`. This is
++      /// the variational ½σ·φ polarisation energy that enters the SCC — it is
++      /// NOT the solvation free energy. ΔG_solv is
++      /// `E_total(solvated) - E_total(gas)` over two separate calculations,
++      /// which differs from this by the solute's electronic reorganisation.
++      .function("solvationEnergy", optional_override([](const XtbCalculator &c) {
++                  const auto &m = c.solvation_model();
++                  return m ? m->energy() : 0.0;
++                }))
++      /// Electrostatic part of `solvationEnergy()` (Hartree).
++      .function("solvationEnergyElectrostatic",
++                optional_override([](const XtbCalculator &c) {
++                  const auto *m = as_smd(c);
++                  return m ? m->e_es() : 0.0;
++                }))
++      /// Cavitation-dispersion-solvent-rearrangement part of
++      /// `solvationEnergy()` (Hartree). Depends on the geometry only.
++      .function("solvationEnergyCds",
++                optional_override([](const XtbCalculator &c) {
++                  const auto *m = as_smd(c);
++                  return m ? m->e_cds() : 0.0;
++                }))
++      /// Number of elements on the electrostatic cavity — the dimension of
++      /// the dense COSMO solve, hence a direct handle on the solvated cost.
++      /// 0 in gas phase, and until the first `singlePoint()`.
++      .function("numSolvationSurfacePoints",
++                optional_override([](const XtbCalculator &c) {
++                  const auto *m = as_smd(c);
++                  return m ? static_cast<int>(m->num_es_surface_points()) : 0;
++                }))
++
+       // Geometry update
+       .function("updateStructure",
+                 optional_override([](XtbCalculator &c, const occ::Mat3N &p) {
+@@ -206,4 +309,14 @@ void register_xtb_bindings() {
+                          " atoms=" + std::to_string(c.num_atoms()) +
+                          (c.is_periodic() ? " periodic>" : ">");
+                 }));
++
++  // ----- SMD solvent database --------------------------------------------
++  function("availableSmdSolvents", &available_smd_solvents);
++  function("hasSmdSolvent", &occ::solvent::has_smd_parameters);
++  // Throws for a name outside the SMD set — probe with `hasSmdSolvent`, or
++  // take names from `availableSmdSolvents`.
++  function("smdSolventDielectric",
++           optional_override([](const std::string &name) {
++             return occ::solvent::get_smd_parameters(name).dielectric;
++           }));
+ }
+-- 
+2.39.5 (Apple Git-154)
+

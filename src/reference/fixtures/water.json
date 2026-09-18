@@ -1,0 +1,213 @@
+{
+  "schema": "xtb-wasm/ir-reference/1",
+  "molecule": {
+    "name": "water",
+    "formula": "H2O",
+    "smiles": "O",
+    "n_atoms": 3,
+    "charge": 0,
+    "uhf": 0
+  },
+  "provenance": {
+    "xtb_version": "6.7.1",
+    "method": "GFN2-xTB",
+    "build_label": "wasm-shaped",
+    "build_options": "meson setup --buildtype=release -Dlapack=openblas -Dopenmp=false -Dtblite=disabled -Dcpcmx=disabled",
+    "geometry_source": "SMILES -> Open Babel --gen3d (obabel 3.1.1), then xtb --opt --gfn 2",
+    "hessian_rounds": 1,
+    "saddle_escape_applied": false,
+    "hessian_rounds_note": "Number of --ohess rounds. >1 means the first Hessian had an imaginary mode (a methyl-torsion saddle point); the geometry was distorted along it (xtb's xtbhess.xyz) and re-optimized until all modes are real.",
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "lapack": "OpenBLAS (Ubuntu 24.04 libopenblas.so.0)",
+      "host_arch": "aarch64",
+      "container": "xtbnat:base (ubuntu:24.04, gfortran 13.3.0)"
+    },
+    "commands": {
+      "preoptimization": "/opt/work/xtb-B/_build_wasmshape/xtb input.xyz --opt --gfn 2 --chrg 0 --uhf 0",
+      "hessian": "/opt/work/xtb-B/_build_wasmshape/xtb optimized.xyz --ohess --gfn 2 --chrg 0 --uhf 0"
+    }
+  },
+  "input_geometry_xyz": {
+    "n_atoms": 3,
+    "comment": "",
+    "atoms": [
+      {
+        "symbol": "O",
+        "x": 1.04263,
+        "y": 0.0314,
+        "z": -0.09606
+      },
+      {
+        "symbol": "H",
+        "x": 2.01052,
+        "y": 0.00389,
+        "z": -0.05866
+      },
+      {
+        "symbol": "H",
+        "x": 0.76378,
+        "y": -0.51838,
+        "z": 0.65156
+      }
+    ]
+  },
+  "optimized_geometry_xyz": {
+    "n_atoms": 3,
+    "comment": " energy: -5.070544344175 gnorm: 0.000196232978 xtb: 6.7.1 (unknown)",
+    "atoms": [
+      {
+        "symbol": "O",
+        "x": 1.05347377284625,
+        "y": 0.02231766828301,
+        "z": -0.08370951406423
+      },
+      {
+        "symbol": "H",
+        "x": 2.012483249174,
+        "y": 0.0115256287444,
+        "z": -0.06904331431321
+      },
+      {
+        "symbol": "H",
+        "x": 0.75097297797976,
+        "y": -0.51693329702741,
+        "z": 0.64959282837744
+      }
+    ]
+  },
+  "energies_hartree": {
+    "total_energy": -5.070544344175,
+    "total_enthalpy": -5.046639004919,
+    "total_free_energy": -5.068045036403,
+    "gradient_norm": 0.000196232978,
+    "zero_point_energy": 0.020124421574,
+    "g_rrho_without_zpve": -0.017625113802,
+    "g_rrho_contribution": 0.002499307772
+  },
+  "homo_lumo_gap_ev": 14.386422115254,
+  "dipole": {
+    "x": 0.503,
+    "y": -0.422,
+    "z": 0.573,
+    "total_debye": 2.216
+  },
+  "vibrations": {
+    "units": {
+      "frequency": "cm^-1",
+      "ir_intensity": "km/mol"
+    },
+    "n_modes_total": 9,
+    "n_vibrational_modes": 3,
+    "n_imaginary": 0,
+    "frequencies": [
+      1538.9,
+      3643.06,
+      3651.64
+    ],
+    "ir_intensities": [
+      133.287,
+      6.78751,
+      16.6759
+    ],
+    "all_modes_including_trans_rot": {
+      "frequencies": [
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1538.9,
+        3643.06,
+        3651.64
+      ],
+      "ir_intensities": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        133.287,
+        6.78751,
+        16.6759
+      ]
+    }
+  },
+  "hessian_invariants": {
+    "dimension": 9,
+    "frobenius_norm": 1.3648889790286547,
+    "trace": 2.0496178242,
+    "valid": true
+  },
+  "timings_seconds": {
+    "preoptimization_wall": 0.055,
+    "ohess_wall": 0.023,
+    "xtb_internal": {
+      "total": 0.017,
+      "SCF": 0.004,
+      "ANC optimizer": 0.001,
+      "analytical hessian": 0.003
+    },
+    "note": "preoptimization_wall/ohess_wall are external wall clock for the two xtb invocations. xtb_internal is xtb's own breakdown of the --ohess run; 'ANC optimizer' is the geometry relaxation and 'analytical hessian' is the 6N+1 finite-difference Hessian (despite the label, xtb has no analytic Hessian)."
+  },
+  "validation": {
+    "tier1_eligible": true,
+    "tier2_single_ohess_reaches_minimum": true,
+    "note": "A single --ohess from geometries/water.xyz reaches this minimum."
+  },
+  "tier1_hess_at_optimized_geometry": {
+    "description": "Reference for the tier-1 validation protocol: `xtb optimized.xyz --hess --gfn 2` run at exactly the coordinates in optimized_geometry_xyz, with no optimizer step. Use THIS block when validating with --hess; the top-level `vibrations` block came from --ohess, which relaxes the geometry a little further first and therefore reports slightly different IR intensities.",
+    "command": "xtb optimized.xyz --hess --gfn 2 --chrg <charge> --uhf <uhf>",
+    "total_energy_hartree": -5.070544344175,
+    "zero_point_energy_hartree": 0.020124421574,
+    "units": {
+      "frequency": "cm^-1",
+      "ir_intensity": "km/mol"
+    },
+    "n_vibrational_modes": 3,
+    "n_imaginary": 0,
+    "frequencies": [
+      1538.9,
+      3643.06,
+      3651.64
+    ],
+    "ir_intensities": [
+      133.287,
+      6.78751,
+      16.6759
+    ],
+    "all_modes_including_trans_rot": {
+      "frequencies": [
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1538.9,
+        3643.06,
+        3651.64
+      ],
+      "ir_intensities": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        133.287,
+        6.78751,
+        16.6759
+      ]
+    },
+    "hessian_invariants": {
+      "dimension": 9,
+      "frobenius_norm": 1.3648889790286547,
+      "trace": 2.0496178242,
+      "n_elements": 81,
+      "valid": true
+    }
+  }
+}

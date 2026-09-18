@@ -1,0 +1,11 @@
+molecule           dE (Eh)    max df    max dI  maxrelI>1   max dHess
+water             0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+methanol          0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+benzene           0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+acetic_acid       0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+toluene           0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+paracetamol       0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+aspirin           0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+caffeine          0.00e+00      0.00     0.000   0.00e+00    0.00e+00
+ibuprofen         0.00e+00      0.00     0.000   0.00e+00    1.00e-10
+cholesterol       0.00e+00      0.00     0.000   0.00e+00    1.00e-10

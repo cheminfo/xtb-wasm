@@ -1,0 +1,66 @@
+OCC module loaded with data directory: /
+# occjs load: 281 ms  node v26.0.0
+  sp   water N=3 best=1.2ms iters=8 E=-5.070544
+  hess water N=3 0.04s nmodes=9 rss=161.5MB  (est was 0.0s)
+  hess water N=3 0.08s nmodes=9 rss=175.8MB  (est was 0.0s)
+  sp   methanol N=6 best=0.7ms iters=9 E=-8.226117
+  hess methanol N=6 0.25s nmodes=18 rss=165.1MB  (est was 0.0s)
+  hess methanol N=6 0.18s nmodes=18 rss=130.4MB  (est was 0.0s)
+  sp   alkane_c2 N=8 best=0.7ms iters=8 E=-7.336369
+  hess alkane_c2 N=8 0.13s nmodes=24 rss=130.8MB  (est was 0.0s)
+  hess alkane_c2 N=8 0.17s nmodes=24 rss=131.2MB  (est was 0.0s)
+  sp   ethanol N=9 best=1.1ms iters=11 E=-11.394336
+  hess ethanol N=9 0.21s nmodes=27 rss=132.0MB  (est was 0.1s)
+  hess ethanol N=9 0.21s nmodes=27 rss=132.1MB  (est was 0.1s)
+  sp   benzene N=12 best=2.0ms iters=10 E=-15.879637
+  hess benzene N=12 0.70s nmodes=36 rss=131.7MB  (est was 0.1s)
+  hess benzene N=12 0.67s nmodes=36 rss=131.8MB  (est was 0.1s)
+  sp   phenol N=13 best=3.9ms iters=16 E=-19.954142
+  hess phenol N=13 0.49s nmodes=39 rss=132.5MB  (est was 0.3s)
+  hess phenol N=13 0.48s nmodes=39 rss=132.5MB  (est was 0.3s)
+  sp   alkane_c4 N=14 best=1.7ms iters=9 E=-13.665121
+  hess alkane_c4 N=14 0.32s nmodes=42 rss=132.6MB  (est was 0.1s)
+  hess alkane_c4 N=14 0.33s nmodes=42 rss=132.7MB  (est was 0.1s)
+  sp   naphthalene N=18 best=5.4ms iters=12 E=-25.474379
+  hess naphthalene N=18 1.22s nmodes=54 rss=134.7MB  (est was 0.6s)
+  hess naphthalene N=18 1.22s nmodes=54 rss=134.8MB  (est was 0.6s)
+  sp   hexane N=20 best=3.4ms iters=10 E=-19.993826
+  hess hexane N=20 0.94s nmodes=60 rss=134.9MB  (est was 0.4s)
+  hess hexane N=20 0.95s nmodes=60 rss=135.0MB  (est was 0.4s)
+  sp   aspirin N=21 best=14.0ms iters=20 E=-39.622401
+  hess aspirin N=21 2.44s nmodes=63 rss=146.0MB  (est was 1.8s)
+  hess aspirin N=21 2.50s nmodes=63 rss=146.1MB  (est was 1.8s)
+  sp   caffeine N=24 best=17.3ms iters=19 E=-42.153930
+  hess caffeine N=24 3.48s nmodes=72 rss=148.1MB  (est was 2.5s)
+  hess caffeine N=24 3.55s nmodes=72 rss=164.5MB  (est was 2.5s)
+  sp   alkane_c8 N=26 best=6.5ms iters=11 E=-26.322616
+  hess alkane_c8 N=26 2.50s nmodes=78 rss=73.0MB  (est was 1.0s)
+  hess alkane_c8 N=26 2.18s nmodes=78 rss=74.4MB  (est was 1.0s)
+  sp   ibuprofen N=33 best=29.2ms iters=19 E=-45.163312
+  hess ibuprofen N=33 7.87s nmodes=99 rss=70.7MB  (est was 5.8s)
+  hess ibuprofen N=33 7.96s nmodes=99 rss=70.8MB  (est was 5.8s)
+  sp   alkane_c12 N=38 best=19.6ms iters=13 E=-38.980231
+  hess alkane_c12 N=38 7.06s nmodes=114 rss=70.5MB  (est was 4.5s)
+  hess alkane_c12 N=38 6.59s nmodes=114 rss=75.8MB  (est was 4.5s)
+  sp   estradiol N=44 best=52.8ms iters=18 E=-58.975724
+  hess estradiol N=44 18.01s nmodes=132 rss=77.6MB  (est was 14.0s)
+  hess estradiol N=44 17.82s nmodes=132 rss=77.6MB  (est was 14.0s)
+  sp   sucrose N=45 best=51.7ms iters=15 E=-81.661855
+  hess sucrose N=45 22.63s nmodes=135 rss=79.0MB  (est was 14.0s)
+  hess sucrose N=45 22.16s nmodes=135 rss=79.1MB  (est was 14.0s)
+  sp   alkane_c16 N=50 best=38.3ms iters=13 E=-51.637852
+  hess alkane_c16 N=50 16.45s nmodes=150 rss=74.9MB  (est was 11.5s)
+  hess alkane_c16 N=50 17.01s nmodes=150 rss=75.1MB  (est was 11.5s)
+  sp   alkane_c20 N=62 best=65.1ms iters=13 E=-64.295473
+  hess alkane_c20 N=62 32.06s nmodes=186 rss=81.7MB  (est was 24.3s)
+  sp   sildenafil N=63 best=282.3ms iters=28 E=-99.514893
+  hess sildenafil N=63 91.64s nmodes=189 rss=93.4MB  (est was 107.0s)
+  sp   alkane_c24 N=74 best=102.0ms iters=13 E=-76.953094
+  hess alkane_c24 N=74 53.50s nmodes=222 rss=87.4MB  (est was 45.4s)
+  sp   cholesterol N=74 best=157.4ms iters=17 E=-85.430830
+  hess cholesterol N=74 88.51s nmodes=222 rss=90.4MB  (est was 70.0s)
+  sp   betacarotene N=96 best=585.3ms iters=25 E=-114.093261
+  hess betacarotene N=96 264.42s nmodes=288 rss=122.1MB  (est was 337.7s)
+  sp   alkane_c32 N=98 best=217.6ms iters=14 E=-102.268329
+  hess alkane_c32 N=98 136.32s nmodes=294 rss=114.6MB  (est was 128.2s)
+### OCCDONE

@@ -1,0 +1,13 @@
+{
+  "extends": "@zakodium/tsconfig",
+  "compilerOptions": {
+    // The engine drives a pool of Web Workers and resolves the wasm through the
+    // bundler, so it needs the browser lib even though it renders nothing. The
+    // worker module adds `webworker` for itself with a triple-slash reference;
+    // declaring both here would collide on `self`.
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "noUncheckedIndexedAccess": true,
+    "types": ["node"]
+  },
+  "include": ["src", "vitest.config.ts"]
+}

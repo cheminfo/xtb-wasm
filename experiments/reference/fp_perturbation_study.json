@@ -1,0 +1,127 @@
+{
+  "schema": "xtb-wasm/fp-perturbation-study/1",
+  "reference": "B = -O3 release, OpenBLAS, OMP off",
+  "perturbed": "D = -O1 -ffp-contract=off -fno-unsafe-math-optimizations, netlib reference LAPACK/BLAS, OMP off",
+  "molecules": {
+    "water": {
+      "n_modes": 3,
+      "energy_B": -5.070544344175,
+      "energy_D": -5.070544344175,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 81,
+      "hessian_max_abs_diff": 0.0
+    },
+    "methanol": {
+      "n_modes": 12,
+      "energy_B": -8.226118333561,
+      "energy_D": -8.226118333561,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 324,
+      "hessian_max_abs_diff": 0.0
+    },
+    "benzene": {
+      "n_modes": 30,
+      "energy_B": -15.879640654516,
+      "energy_D": -15.879640654516,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 1296,
+      "hessian_max_abs_diff": 0.0
+    },
+    "acetic_acid": {
+      "n_modes": 18,
+      "energy_B": -14.450260534759,
+      "energy_D": -14.450260534759,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 576,
+      "hessian_max_abs_diff": 0.0
+    },
+    "toluene": {
+      "n_modes": 39,
+      "energy_B": -19.050402650793,
+      "energy_D": -19.050402650793,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 2025,
+      "hessian_max_abs_diff": 0.0
+    },
+    "paracetamol": {
+      "n_modes": 54,
+      "energy_B": -32.783628124402,
+      "energy_D": -32.783628124402,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 3600,
+      "hessian_max_abs_diff": 0.0
+    },
+    "aspirin": {
+      "n_modes": 57,
+      "energy_B": -39.623040361567,
+      "energy_D": -39.623040361567,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 3969,
+      "hessian_max_abs_diff": 0.0
+    },
+    "caffeine": {
+      "n_modes": 66,
+      "energy_B": -42.153938141197,
+      "energy_D": -42.153938141197,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 5184,
+      "hessian_max_abs_diff": 0.0
+    },
+    "ibuprofen": {
+      "n_modes": 93,
+      "energy_B": -45.163317165846,
+      "energy_D": -45.163317165846,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 9801,
+      "hessian_max_abs_diff": 1.0000000003410059e-10
+    },
+    "cholesterol": {
+      "n_modes": 216,
+      "energy_B": -85.431013276533,
+      "energy_D": -85.431013276533,
+      "energy_abs_diff": 0.0,
+      "freq_max_abs_cm1": 0.0,
+      "freq_mean_abs_cm1": 0.0,
+      "intensity_max_abs_km_mol": 0.0,
+      "intensity_max_rel_above_1kmmol": 0.0,
+      "hessian_n_elements": 49284,
+      "hessian_max_abs_diff": 1.0000000003410059e-10
+    }
+  }
+}

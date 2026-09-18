@@ -1,0 +1,280 @@
+### PASS sp
+=== water (N=3) ===
+  sp    water          N=3   rep=1 wall=   0.03s user=   0.01s rss=   20420kB nao=6    scf=1    cyc=     exit=0
+  sp    water          N=3   rep=2 wall=   0.03s user=   0.01s rss=   18500kB nao=6    scf=1    cyc=     exit=0
+  sp    water          N=3   rep=3 wall=   0.02s user=   0.01s rss=   18300kB nao=6    scf=1    cyc=     exit=0
+  sp    water          N=3   rep=4 wall=   0.04s user=   0.00s rss=   20320kB nao=6    scf=1    cyc=     exit=0
+  sp    water          N=3   rep=5 wall=   0.03s user=   0.01s rss=   18316kB nao=6    scf=1    cyc=     exit=0
+=== methanol (N=6) ===
+  sp    methanol       N=6   rep=1 wall=   0.03s user=   0.00s rss=   20424kB nao=12   scf=1    cyc=     exit=0
+  sp    methanol       N=6   rep=2 wall=   0.09s user=   0.01s rss=   20560kB nao=12   scf=1    cyc=     exit=0
+  sp    methanol       N=6   rep=3 wall=   0.11s user=   0.01s rss=   18440kB nao=12   scf=1    cyc=     exit=0
+  sp    methanol       N=6   rep=4 wall=   0.06s user=   0.01s rss=   18444kB nao=12   scf=1    cyc=     exit=0
+  sp    methanol       N=6   rep=5 wall=   0.07s user=   0.01s rss=   20496kB nao=12   scf=1    cyc=     exit=0
+=== alkane_c2 (N=8) ===
+  sp    alkane_c2      N=8   rep=1 wall=   0.05s user=   0.00s rss=   20524kB nao=14   scf=1    cyc=     exit=0
+  sp    alkane_c2      N=8   rep=2 wall=   0.03s user=   0.01s rss=   20500kB nao=14   scf=1    cyc=     exit=0
+  sp    alkane_c2      N=8   rep=3 wall=   0.03s user=   0.00s rss=   18552kB nao=14   scf=1    cyc=     exit=0
+  sp    alkane_c2      N=8   rep=4 wall=   0.03s user=   0.00s rss=   20500kB nao=14   scf=1    cyc=     exit=0
+  sp    alkane_c2      N=8   rep=5 wall=   0.03s user=   0.00s rss=   20536kB nao=14   scf=1    cyc=     exit=0
+=== ethanol (N=9) ===
+  sp    ethanol        N=9   rep=1 wall=   0.04s user=   0.01s rss=   20568kB nao=18   scf=1    cyc=     exit=0
+  sp    ethanol        N=9   rep=2 wall=   0.03s user=   0.00s rss=   20560kB nao=18   scf=1    cyc=     exit=0
+  sp    ethanol        N=9   rep=3 wall=   0.01s user=   0.00s rss=   18812kB nao=18   scf=1    cyc=     exit=0
+  sp    ethanol        N=9   rep=4 wall=   0.03s user=   0.01s rss=   20564kB nao=18   scf=1    cyc=     exit=0
+  sp    ethanol        N=9   rep=5 wall=   0.05s user=   0.01s rss=   20572kB nao=18   scf=1    cyc=     exit=0
+=== benzene (N=12) ===
+  sp    benzene        N=12  rep=1 wall=   0.03s user=   0.00s rss=   18868kB nao=30   scf=1    cyc=     exit=0
+  sp    benzene        N=12  rep=2 wall=   0.10s user=   0.02s rss=   18868kB nao=30   scf=1    cyc=     exit=0
+  sp    benzene        N=12  rep=3 wall=   0.02s user=   0.01s rss=   18856kB nao=30   scf=1    cyc=     exit=0
+  sp    benzene        N=12  rep=4 wall=   0.05s user=   0.01s rss=   20804kB nao=30   scf=1    cyc=     exit=0
+  sp    benzene        N=12  rep=5 wall=   0.02s user=   0.01s rss=   18852kB nao=30   scf=1    cyc=     exit=0
+=== phenol (N=13) ===
+  sp    phenol         N=13  rep=1 wall=   0.03s user=   0.01s rss=   21028kB nao=34   scf=1    cyc=     exit=0
+  sp    phenol         N=13  rep=2 wall=   0.05s user=   0.01s rss=   21024kB nao=34   scf=1    cyc=     exit=0
+  sp    phenol         N=13  rep=3 wall=   0.03s user=   0.02s rss=   19072kB nao=34   scf=1    cyc=     exit=0
+  sp    phenol         N=13  rep=4 wall=   0.03s user=   0.01s rss=   19072kB nao=34   scf=1    cyc=     exit=0
+  sp    phenol         N=13  rep=5 wall=   0.03s user=   0.01s rss=   21072kB nao=34   scf=1    cyc=     exit=0
+=== alkane_c4 (N=14) ===
+  sp    alkane_c4      N=14  rep=1 wall=   0.03s user=   0.00s rss=   20840kB nao=26   scf=1    cyc=     exit=0
+  sp    alkane_c4      N=14  rep=2 wall=   0.04s user=   0.01s rss=   20856kB nao=26   scf=1    cyc=     exit=0
+  sp    alkane_c4      N=14  rep=3 wall=   0.01s user=   0.01s rss=   19096kB nao=26   scf=1    cyc=     exit=0
+  sp    alkane_c4      N=14  rep=4 wall=   0.01s user=   0.01s rss=   19088kB nao=26   scf=1    cyc=     exit=0
+  sp    alkane_c4      N=14  rep=5 wall=   0.06s user=   0.01s rss=   19088kB nao=26   scf=1    cyc=     exit=0
+=== naphthalene (N=18) ===
+  sp    naphthalene    N=18  rep=1 wall=   0.04s user=   0.02s rss=   21472kB nao=48   scf=1    cyc=     exit=0
+  sp    naphthalene    N=18  rep=2 wall=   0.06s user=   0.02s rss=   19532kB nao=48   scf=1    cyc=     exit=0
+  sp    naphthalene    N=18  rep=3 wall=   0.04s user=   0.02s rss=   19528kB nao=48   scf=1    cyc=     exit=0
+  sp    naphthalene    N=18  rep=4 wall=   0.06s user=   0.03s rss=   19524kB nao=48   scf=1    cyc=     exit=0
+  sp    naphthalene    N=18  rep=5 wall=   0.06s user=   0.04s rss=   21472kB nao=48   scf=1    cyc=     exit=0
+=== hexane (N=20) ===
+  sp    hexane         N=20  rep=1 wall=   0.04s user=   0.01s rss=   21428kB nao=38   scf=1    cyc=     exit=0
+  sp    hexane         N=20  rep=2 wall=   0.03s user=   0.01s rss=   21396kB nao=38   scf=1    cyc=     exit=0
+  sp    hexane         N=20  rep=3 wall=   0.08s user=   0.02s rss=   21388kB nao=38   scf=1    cyc=     exit=0
+  sp    hexane         N=20  rep=4 wall=   0.04s user=   0.02s rss=   19444kB nao=38   scf=1    cyc=     exit=0
+  sp    hexane         N=20  rep=5 wall=   0.06s user=   0.02s rss=   19252kB nao=38   scf=1    cyc=     exit=0
+=== aspirin (N=21) ===
+  sp    aspirin        N=21  rep=1 wall=   0.08s user=   0.04s rss=   19868kB nao=60   scf=1    cyc=     exit=0
+  sp    aspirin        N=21  rep=2 wall=   0.12s user=   0.07s rss=   19916kB nao=60   scf=1    cyc=     exit=0
+  sp    aspirin        N=21  rep=3 wall=   0.05s user=   0.04s rss=   21804kB nao=60   scf=1    cyc=     exit=0
+  sp    aspirin        N=21  rep=4 wall=   0.06s user=   0.04s rss=   19872kB nao=60   scf=1    cyc=     exit=0
+  sp    aspirin        N=21  rep=5 wall=   0.08s user=   0.03s rss=   21820kB nao=60   scf=1    cyc=     exit=0
+=== caffeine (N=24) ===
+  sp    caffeine       N=24  rep=1 wall=   0.09s user=   0.05s rss=   20196kB nao=66   scf=1    cyc=     exit=0
+  sp    caffeine       N=24  rep=2 wall=   0.06s user=   0.04s rss=   20136kB nao=66   scf=1    cyc=     exit=0
+  sp    caffeine       N=24  rep=3 wall=   0.09s user=   0.04s rss=   20136kB nao=66   scf=1    cyc=     exit=0
+  sp    caffeine       N=24  rep=4 wall=   0.18s user=   0.07s rss=   20160kB nao=66   scf=1    cyc=     exit=0
+  sp    caffeine       N=24  rep=5 wall=   0.13s user=   0.06s rss=   20196kB nao=66   scf=1    cyc=     exit=0
+=== alkane_c8 (N=26) ===
+  sp    alkane_c8      N=26  rep=1 wall=   0.06s user=   0.03s rss=   21848kB nao=50   scf=1    cyc=     exit=0
+  sp    alkane_c8      N=26  rep=2 wall=   0.06s user=   0.03s rss=   21856kB nao=50   scf=1    cyc=     exit=0
+  sp    alkane_c8      N=26  rep=3 wall=   0.04s user=   0.02s rss=   21900kB nao=50   scf=1    cyc=     exit=0
+  sp    alkane_c8      N=26  rep=4 wall=   0.08s user=   0.03s rss=   19680kB nao=50   scf=1    cyc=     exit=0
+  sp    alkane_c8      N=26  rep=5 wall=   0.05s user=   0.02s rss=   19912kB nao=50   scf=1    cyc=     exit=0
+=== ibuprofen (N=33) ===
+  sp    ibuprofen      N=33  rep=1 wall=   0.12s user=   0.08s rss=   23012kB nao=78   scf=1    cyc=     exit=0
+  sp    ibuprofen      N=33  rep=2 wall=   0.15s user=   0.11s rss=   21072kB nao=78   scf=1    cyc=     exit=0
+  sp    ibuprofen      N=33  rep=3 wall=   0.09s user=   0.07s rss=   23012kB nao=78   scf=1    cyc=     exit=0
+  sp    ibuprofen      N=33  rep=4 wall=   0.09s user=   0.08s rss=   22956kB nao=78   scf=1    cyc=     exit=0
+  sp    ibuprofen      N=33  rep=5 wall=   0.11s user=   0.06s rss=   21016kB nao=78   scf=1    cyc=     exit=0
+=== alkane_c12 (N=38) ===
+  sp    alkane_c12     N=38  rep=1 wall=   0.07s user=   0.04s rss=   21160kB nao=74   scf=1    cyc=     exit=0
+  sp    alkane_c12     N=38  rep=2 wall=   0.13s user=   0.05s rss=   21172kB nao=74   scf=1    cyc=     exit=0
+  sp    alkane_c12     N=38  rep=3 wall=   0.07s user=   0.03s rss=   23108kB nao=74   scf=1    cyc=     exit=0
+  sp    alkane_c12     N=38  rep=4 wall=   0.07s user=   0.05s rss=   23120kB nao=74   scf=1    cyc=     exit=0
+  sp    alkane_c12     N=38  rep=5 wall=   0.06s user=   0.04s rss=   23160kB nao=74   scf=1    cyc=     exit=0
+=== estradiol (N=44) ===
+  sp    estradiol      N=44  rep=1 wall=   0.15s user=   0.09s rss=   22416kB nao=104  scf=1    cyc=     exit=0
+  sp    estradiol      N=44  rep=2 wall=   0.15s user=   0.09s rss=   24364kB nao=104  scf=1    cyc=     exit=0
+  sp    estradiol      N=44  rep=3 wall=   0.14s user=   0.10s rss=   22364kB nao=104  scf=1    cyc=     exit=0
+  sp    estradiol      N=44  rep=4 wall=   0.20s user=   0.10s rss=   24476kB nao=104  scf=1    cyc=     exit=0
+  sp    estradiol      N=44  rep=5 wall=   0.24s user=   0.13s rss=   22480kB nao=104  scf=1    cyc=     exit=0
+=== sucrose (N=45) ===
+  sp    sucrose        N=45  rep=1 wall=   0.18s user=   0.12s rss=   22836kB nao=114  scf=1    cyc=     exit=0
+  sp    sucrose        N=45  rep=2 wall=   0.25s user=   0.15s rss=   23012kB nao=114  scf=1    cyc=     exit=0
+  sp    sucrose        N=45  rep=3 wall=   0.13s user=   0.11s rss=   24776kB nao=114  scf=1    cyc=     exit=0
+  sp    sucrose        N=45  rep=4 wall=   0.21s user=   0.13s rss=   22836kB nao=114  scf=1    cyc=     exit=0
+  sp    sucrose        N=45  rep=5 wall=   0.17s user=   0.15s rss=   24784kB nao=114  scf=1    cyc=     exit=0
+=== alkane_c16 (N=50) ===
+  sp    alkane_c16     N=50  rep=1 wall=   0.16s user=   0.08s rss=   24452kB nao=98   scf=1    cyc=     exit=0
+  sp    alkane_c16     N=50  rep=2 wall=   0.15s user=   0.08s rss=   22572kB nao=98   scf=1    cyc=     exit=0
+  sp    alkane_c16     N=50  rep=3 wall=   0.12s user=   0.08s rss=   22500kB nao=98   scf=1    cyc=     exit=0
+  sp    alkane_c16     N=50  rep=4 wall=   0.16s user=   0.08s rss=   22568kB nao=98   scf=1    cyc=     exit=0
+  sp    alkane_c16     N=50  rep=5 wall=   0.19s user=   0.10s rss=   22576kB nao=98   scf=1    cyc=     exit=0
+=== alkane_c20 (N=62) ===
+  sp    alkane_c20     N=62  rep=1 wall=   0.24s user=   0.13s rss=   26268kB nao=122  scf=1    cyc=     exit=0
+  sp    alkane_c20     N=62  rep=2 wall=   0.14s user=   0.12s rss=   24216kB nao=122  scf=1    cyc=     exit=0
+  sp    alkane_c20     N=62  rep=3 wall=   0.19s user=   0.12s rss=   24276kB nao=122  scf=1    cyc=     exit=0
+  sp    alkane_c20     N=62  rep=4 wall=   0.18s user=   0.12s rss=   24280kB nao=122  scf=1    cyc=     exit=0
+  sp    alkane_c20     N=62  rep=5 wall=   0.23s user=   0.14s rss=   26172kB nao=122  scf=1    cyc=     exit=0
+=== sildenafil (N=63) ===
+  sp    sildenafil     N=63  rep=1 wall=   0.39s user=   0.31s rss=   26760kB nao=168  scf=1    cyc=     exit=0
+  sp    sildenafil     N=63  rep=2 wall=   0.40s user=   0.30s rss=   26760kB nao=168  scf=1    cyc=     exit=0
+  sp    sildenafil     N=63  rep=3 wall=   0.38s user=   0.31s rss=   26624kB nao=168  scf=1    cyc=     exit=0
+  sp    sildenafil     N=63  rep=4 wall=   0.40s user=   0.36s rss=   28568kB nao=168  scf=1    cyc=     exit=0
+  sp    sildenafil     N=63  rep=5 wall=   0.35s user=   0.31s rss=   26616kB nao=168  scf=1    cyc=     exit=0
+=== alkane_c24 (N=74) ===
+  sp    alkane_c24     N=74  rep=1 wall=   0.17s user=   0.14s rss=   28200kB nao=146  scf=1    cyc=     exit=0
+  sp    alkane_c24     N=74  rep=2 wall=   0.18s user=   0.15s rss=   26228kB nao=146  scf=1    cyc=     exit=0
+  sp    alkane_c24     N=74  rep=3 wall=   0.18s user=   0.15s rss=   28108kB nao=146  scf=1    cyc=     exit=0
+  sp    alkane_c24     N=74  rep=4 wall=   0.18s user=   0.16s rss=   28156kB nao=146  scf=1    cyc=     exit=0
+  sp    alkane_c24     N=74  rep=5 wall=   0.20s user=   0.19s rss=   28152kB nao=146  scf=1    cyc=     exit=0
+=== cholesterol (N=74) ===
+  sp    cholesterol    N=74  rep=1 wall=   0.26s user=   0.23s rss=   26996kB nao=158  scf=1    cyc=     exit=0
+  sp    cholesterol    N=74  rep=2 wall=   0.25s user=   0.23s rss=   27016kB nao=158  scf=1    cyc=     exit=0
+  sp    cholesterol    N=74  rep=3 wall=   0.25s user=   0.22s rss=   28944kB nao=158  scf=1    cyc=     exit=0
+  sp    cholesterol    N=74  rep=4 wall=   0.26s user=   0.24s rss=   28904kB nao=158  scf=1    cyc=     exit=0
+  sp    cholesterol    N=74  rep=5 wall=   0.25s user=   0.23s rss=   28928kB nao=158  scf=1    cyc=     exit=0
+=== betacarotene (N=96) ===
+  sp    betacarotene   N=96  rep=1 wall=   0.64s user=   0.55s rss=   34648kB nao=216  scf=1    cyc=     exit=0
+  sp    betacarotene   N=96  rep=2 wall=   0.52s user=   0.47s rss=   34628kB nao=216  scf=1    cyc=     exit=0
+  sp    betacarotene   N=96  rep=3 wall=   0.55s user=   0.49s rss=   34600kB nao=216  scf=1    cyc=     exit=0
+  sp    betacarotene   N=96  rep=4 wall=   0.50s user=   0.46s rss=   34600kB nao=216  scf=1    cyc=     exit=0
+  sp    betacarotene   N=96  rep=5 wall=   0.53s user=   0.46s rss=   34640kB nao=216  scf=1    cyc=     exit=0
+=== alkane_c32 (N=98) ===
+  sp    alkane_c32     N=98  rep=1 wall=   0.30s user=   0.27s rss=   30924kB nao=194  scf=1    cyc=     exit=0
+  sp    alkane_c32     N=98  rep=2 wall=   0.33s user=   0.30s rss=   30996kB nao=194  scf=1    cyc=     exit=0
+  sp    alkane_c32     N=98  rep=3 wall=   0.35s user=   0.33s rss=   30944kB nao=194  scf=1    cyc=     exit=0
+  sp    alkane_c32     N=98  rep=4 wall=   0.27s user=   0.25s rss=   31000kB nao=194  scf=1    cyc=     exit=0
+  sp    alkane_c32     N=98  rep=5 wall=   0.32s user=   0.28s rss=   33040kB nao=194  scf=1    cyc=     exit=0
+### PASS opt
+=== water (N=3) ===
+  opt   water          N=3   rep=1 wall=   0.10s user=   0.01s rss=   19768kB nao=6    scf=2    cyc=4    exit=0
+  opt   water          N=3   rep=2 wall=   0.01s user=   0.00s rss=   19764kB nao=6    scf=2    cyc=4    exit=0
+=== methanol (N=6) ===
+  opt   methanol       N=6   rep=1 wall=   0.04s user=   0.01s rss=   21740kB nao=12   scf=2    cyc=5    exit=0
+  opt   methanol       N=6   rep=2 wall=   0.02s user=   0.01s rss=   19792kB nao=12   scf=2    cyc=5    exit=0
+=== alkane_c2 (N=8) ===
+  opt   alkane_c2      N=8   rep=1 wall=   0.06s user=   0.01s rss=   21796kB nao=14   scf=2    cyc=4    exit=0
+  opt   alkane_c2      N=8   rep=2 wall=   0.03s user=   0.01s rss=   19796kB nao=14   scf=2    cyc=4    exit=0
+=== ethanol (N=9) ===
+  opt   ethanol        N=9   rep=1 wall=   0.03s user=   0.01s rss=   19988kB nao=18   scf=2    cyc=6    exit=0
+  opt   ethanol        N=9   rep=2 wall=   0.04s user=   0.01s rss=   21616kB nao=18   scf=2    cyc=6    exit=0
+=== benzene (N=12) ===
+  opt   benzene        N=12  rep=1 wall=   0.06s user=   0.04s rss=   22016kB nao=30   scf=2    cyc=4    exit=0
+  opt   benzene        N=12  rep=2 wall=   0.04s user=   0.02s rss=   20124kB nao=30   scf=2    cyc=4    exit=0
+=== phenol (N=13) ===
+  opt   phenol         N=13  rep=1 wall=   0.08s user=   0.05s rss=   22072kB nao=34   scf=2    cyc=5    exit=0
+  opt   phenol         N=13  rep=2 wall=   0.12s user=   0.06s rss=   20168kB nao=34   scf=2    cyc=5    exit=0
+=== alkane_c4 (N=14) ===
+  opt   alkane_c4      N=14  rep=1 wall=   0.10s user=   0.03s rss=   20092kB nao=26   scf=2    cyc=4    exit=0
+  opt   alkane_c4      N=14  rep=2 wall=   0.08s user=   0.03s rss=   21964kB nao=26   scf=2    cyc=4    exit=0
+=== naphthalene (N=18) ===
+  opt   naphthalene    N=18  rep=1 wall=   0.16s user=   0.10s rss=   20648kB nao=48   scf=2    cyc=6    exit=0
+  opt   naphthalene    N=18  rep=2 wall=   0.12s user=   0.10s rss=   22696kB nao=48   scf=2    cyc=6    exit=0
+=== hexane (N=20) ===
+  opt   hexane         N=20  rep=1 wall=   0.09s user=   0.06s rss=   22848kB nao=38   scf=2    cyc=4    exit=0
+  opt   hexane         N=20  rep=2 wall=   0.08s user=   0.06s rss=   20676kB nao=38   scf=2    cyc=4    exit=0
+=== aspirin (N=21) ===
+  opt   aspirin        N=21  rep=1 wall=   0.35s user=   0.28s rss=   23292kB nao=60   scf=2    cyc=10   exit=0
+  opt   aspirin        N=21  rep=2 wall=   0.31s user=   0.26s rss=   23252kB nao=60   scf=2    cyc=10   exit=0
+=== caffeine (N=24) ===
+  opt   caffeine       N=24  rep=1 wall=   0.30s user=   0.23s rss=   23444kB nao=66   scf=2    cyc=7    exit=0
+  opt   caffeine       N=24  rep=2 wall=   0.27s user=   0.22s rss=   21508kB nao=66   scf=2    cyc=7    exit=0
+=== alkane_c8 (N=26) ===
+  opt   alkane_c8      N=26  rep=1 wall=   0.11s user=   0.09s rss=   23236kB nao=50   scf=2    cyc=4    exit=0
+  opt   alkane_c8      N=26  rep=2 wall=   0.12s user=   0.09s rss=   23244kB nao=50   scf=2    cyc=4    exit=0
+=== ibuprofen (N=33) ===
+  opt   ibuprofen      N=33  rep=1 wall=   0.80s user=   0.68s rss=   22248kB nao=78   scf=2    cyc=16   exit=0
+  opt   ibuprofen      N=33  rep=2 wall=   0.71s user=   0.57s rss=   24388kB nao=78   scf=2    cyc=16   exit=0
+=== alkane_c12 (N=38) ===
+  opt   alkane_c12     N=38  rep=1 wall=   0.31s user=   0.19s rss=   22676kB nao=74   scf=2    cyc=4    exit=0
+  opt   alkane_c12     N=38  rep=2 wall=   0.22s user=   0.16s rss=   24732kB nao=74   scf=2    cyc=4    exit=0
+=== estradiol (N=44) ===
+  opt   estradiol      N=44  rep=1 wall=   0.95s user=   0.86s rss=   26284kB nao=104  scf=2    cyc=12   exit=0
+  opt   estradiol      N=44  rep=2 wall=   0.92s user=   0.84s rss=   24168kB nao=104  scf=2    cyc=12   exit=0
+=== sucrose (N=45) ===
+  opt   sucrose        N=45  rep=1 wall=   5.04s user=   4.67s rss=   26508kB nao=114  scf=2    cyc=60   exit=0
+  opt   sucrose        N=45  rep=2 wall=   4.74s user=   4.40s rss=   24556kB nao=114  scf=2    cyc=60   exit=0
+=== alkane_c16 (N=50) ===
+  opt   alkane_c16     N=50  rep=1 wall=   0.61s user=   0.45s rss=   26252kB nao=98   scf=2    cyc=5    exit=0
+  opt   alkane_c16     N=50  rep=2 wall=   0.49s user=   0.38s rss=   24376kB nao=98   scf=2    cyc=5    exit=0
+=== alkane_c20 (N=62) ===
+  opt   alkane_c20     N=62  rep=1 wall=   0.74s user=   0.63s rss=   28364kB nao=122  scf=2    cyc=6    exit=0
+  opt   alkane_c20     N=62  rep=2 wall=   0.74s user=   0.63s rss=   26388kB nao=122  scf=2    cyc=6    exit=0
+=== sildenafil (N=63) ===
+  opt   sildenafil     N=63  rep=1 wall=  11.05s user=  10.38s rss=   28944kB nao=168  scf=2    cyc=51   exit=0
+  opt   sildenafil     N=63  rep=2 wall=  10.22s user=   9.54s rss=   30788kB nao=168  scf=2    cyc=51   exit=0
+=== alkane_c24 (N=74) ===
+  opt   alkane_c24     N=74  rep=1 wall=   1.21s user=   1.03s rss=   30828kB nao=146  scf=2    cyc=7    exit=0
+  opt   alkane_c24     N=74  rep=2 wall=   1.25s user=   1.10s rss=   30952kB nao=146  scf=2    cyc=7    exit=0
+=== cholesterol (N=74) ===
+  opt   cholesterol    N=74  rep=1 wall=   3.61s user=   3.30s rss=   31592kB nao=158  scf=2    cyc=20   exit=0
+  opt   cholesterol    N=74  rep=2 wall=   3.85s user=   3.49s rss=   29520kB nao=158  scf=2    cyc=20   exit=0
+=== betacarotene (N=96) ===
+  opt   betacarotene   N=96  rep=1 wall=  27.71s user=  25.58s rss=   38288kB nao=216  scf=2    cyc=83   exit=0
+  opt   betacarotene   N=96  rep=2 wall=  26.79s user=  25.11s rss=   38244kB nao=216  scf=2    cyc=83   exit=0
+=== alkane_c32 (N=98) ===
+  opt   alkane_c32     N=98  rep=1 wall=   2.64s user=   2.35s rss=   36728kB nao=194  scf=2    cyc=10   exit=0
+  opt   alkane_c32     N=98  rep=2 wall=   2.71s user=   2.40s rss=   37044kB nao=194  scf=2    cyc=10   exit=0
+### PASS hess
+=== water (N=3) ===
+  hess  water          N=3   rep=1 wall=   0.07s user=   0.01s rss=   20704kB nao=6    scf=1    cyc=     exit=0
+  hess  water          N=3   rep=2 wall=   0.02s user=   0.01s rss=   18776kB nao=6    scf=1    cyc=     exit=0
+=== methanol (N=6) ===
+  hess  methanol       N=6   rep=1 wall=   0.09s user=   0.03s rss=   19120kB nao=12   scf=1    cyc=     exit=0
+  hess  methanol       N=6   rep=2 wall=   0.03s user=   0.02s rss=   20996kB nao=12   scf=1    cyc=     exit=0
+=== alkane_c2 (N=8) ===
+  hess  alkane_c2      N=8   rep=1 wall=   0.11s user=   0.05s rss=   20888kB nao=14   scf=1    cyc=     exit=0
+  hess  alkane_c2      N=8   rep=2 wall=   0.18s user=   0.08s rss=   20888kB nao=14   scf=1    cyc=     exit=0
+=== ethanol (N=9) ===
+  hess  ethanol        N=9   rep=1 wall=   0.11s user=   0.06s rss=   21072kB nao=18   scf=1    cyc=     exit=0
+  hess  ethanol        N=9   rep=2 wall=   0.21s user=   0.14s rss=   19132kB nao=18   scf=1    cyc=     exit=0
+=== benzene (N=12) ===
+  hess  benzene        N=12  rep=1 wall=   0.44s user=   0.35s rss=   21172kB nao=30   scf=1    cyc=     exit=0
+  hess  benzene        N=12  rep=2 wall=   0.38s user=   0.30s rss=   19176kB nao=30   scf=1    cyc=     exit=0
+=== phenol (N=13) ===
+  hess  phenol         N=13  rep=1 wall=   0.46s user=   0.41s rss=   19532kB nao=34   scf=1    cyc=     exit=0
+  hess  phenol         N=13  rep=2 wall=   0.55s user=   0.47s rss=   19524kB nao=34   scf=1    cyc=     exit=0
+=== alkane_c4 (N=14) ===
+  hess  alkane_c4      N=14  rep=1 wall=   0.35s user=   0.26s rss=   21252kB nao=26   scf=1    cyc=     exit=0
+  hess  alkane_c4      N=14  rep=2 wall=   0.35s user=   0.29s rss=   21224kB nao=26   scf=1    cyc=     exit=0
+=== naphthalene (N=18) ===
+  hess  naphthalene    N=18  rep=1 wall=   1.52s user=   1.37s rss=   21860kB nao=48   scf=1    cyc=     exit=0
+  hess  naphthalene    N=18  rep=2 wall=   1.66s user=   1.54s rss=   22020kB nao=48   scf=1    cyc=     exit=0
+=== hexane (N=20) ===
+  hess  hexane         N=20  rep=1 wall=   1.08s user=   0.96s rss=   19848kB nao=38   scf=1    cyc=     exit=0
+  hess  hexane         N=20  rep=2 wall=   0.96s user=   0.84s rss=   21784kB nao=38   scf=1    cyc=     exit=0
+=== aspirin (N=21) ===
+  hess  aspirin        N=21  rep=1 wall=   3.04s user=   2.70s rss=   20388kB nao=60   scf=1    cyc=     exit=0
+  hess  aspirin        N=21  rep=2 wall=   3.22s user=   3.04s rss=   20392kB nao=60   scf=1    cyc=     exit=0
+=== caffeine (N=24) ===
+  hess  caffeine       N=24  rep=1 wall=   4.02s user=   3.88s rss=   20780kB nao=66   scf=1    cyc=     exit=0
+  hess  caffeine       N=24  rep=2 wall=   3.88s user=   3.69s rss=   22876kB nao=66   scf=1    cyc=     exit=0
+=== alkane_c8 (N=26) ===
+  hess  alkane_c8      N=26  rep=1 wall=   2.90s user=   2.59s rss=   22672kB nao=50   scf=1    cyc=     exit=0
+  hess  alkane_c8      N=26  rep=2 wall=   2.62s user=   2.35s rss=   22412kB nao=50   scf=1    cyc=     exit=0
+=== ibuprofen (N=33) ===
+  hess  ibuprofen      N=33  rep=1 wall=   7.56s user=   7.14s rss=   21720kB nao=78   scf=1    cyc=     exit=0
+  hess  ibuprofen      N=33  rep=2 wall=   6.12s user=   5.92s rss=   23676kB nao=78   scf=1    cyc=     exit=0
+=== alkane_c12 (N=38) ===
+  hess  alkane_c12     N=38  rep=1 wall=   6.87s user=   6.62s rss=   23956kB nao=74   scf=1    cyc=     exit=0
+  hess  alkane_c12     N=38  rep=2 wall=   7.86s user=   7.43s rss=   21972kB nao=74   scf=1    cyc=     exit=0
+=== estradiol (N=44) ===
+  hess  estradiol      N=44  rep=1 wall=  17.59s user=  16.89s rss=   23736kB nao=104  scf=1    cyc=     exit=0
+  hess  estradiol      N=44  rep=2 wall=  17.08s user=  16.62s rss=   23692kB nao=104  scf=1    cyc=     exit=0
+=== sucrose (N=45) ===
+  hess  sucrose        N=45  rep=1 wall=  24.21s user=  23.66s rss=   24316kB nao=114  scf=1    cyc=     exit=0
+  hess  sucrose        N=45  rep=2 wall=  18.62s user=  18.10s rss=   26260kB nao=114  scf=1    cyc=     exit=0
+=== alkane_c16 (N=50) ===
+  hess  alkane_c16     N=50  rep=1 wall=  12.94s user=  12.59s rss=   24072kB nao=98   scf=1    cyc=     exit=0
+  hess  alkane_c16     N=50  rep=2 wall=  13.02s user=  12.70s rss=   23944kB nao=98   scf=1    cyc=     exit=0
+=== alkane_c20 (N=62) ===
+  hess  alkane_c20     N=62  rep=1 wall=  26.45s user=  25.96s rss=   28256kB nao=122  scf=1    cyc=     exit=0
+  hess  alkane_c20     N=62  rep=2 wall=  29.02s user=  28.41s rss=   28364kB nao=122  scf=1    cyc=     exit=0
+=== sildenafil (N=63) ===
+  hess  sildenafil     N=63  rep=1 wall=  57.88s user=  56.61s rss=   30988kB nao=168  scf=1    cyc=     exit=0
+  hess  sildenafil     N=63  rep=2 wall=  58.38s user=  57.17s rss=   30844kB nao=168  scf=1    cyc=     exit=0
+=== alkane_c24 (N=74) ===
+  hess  alkane_c24     N=74  rep=1 wall=  49.74s user=  48.64s rss=   29364kB nao=146  scf=1    cyc=     exit=0
+  hess  alkane_c24     N=74  rep=2 wall=  49.52s user=  48.69s rss=   29248kB nao=146  scf=1    cyc=     exit=0
+=== cholesterol (N=74) ===
+  hess  cholesterol    N=74  rep=1 wall=  63.81s user=  63.02s rss=   31980kB nao=158  scf=1    cyc=     exit=0
+  hess  cholesterol    N=74  rep=2 wall=  58.13s user=  57.56s rss=   30500kB nao=158  scf=1    cyc=     exit=0
+=== betacarotene (N=96) ===
+  hess  betacarotene   N=96  rep=1 wall= 149.88s user= 147.59s rss=   37292kB nao=216  scf=1    cyc=     exit=0
+  hess  betacarotene   N=96  rep=2 wall= 160.27s user= 156.26s rss=   39244kB nao=216  scf=1    cyc=     exit=0
+=== alkane_c32 (N=98) ===
+  hess  alkane_c32     N=98  rep=1 wall= 109.43s user= 108.51s rss=   37544kB nao=194  scf=1    cyc=     exit=0
+  hess  alkane_c32     N=98  rep=2 wall= 105.83s user= 105.09s rss=   36720kB nao=194  scf=1    cyc=     exit=0
+### DONE

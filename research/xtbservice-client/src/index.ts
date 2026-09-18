@@ -1,0 +1,12 @@
+export { fetchIrSpectrum, DEFAULT_BASE_URL, DEFAULT_TIMEOUT_MS } from './client.ts';
+export type { IrRequest, XtbServiceOptions } from './client.ts';
+export { XtbServiceError } from './errors.ts';
+export type { XtbErrorKind } from './errors.ts';
+export { foldSpectrum } from './fold.ts';
+export type { FoldOptions } from './fold.ts';
+export { normalizeLocalEngine, normalizeXtbService, parseDisplacementXyz } from './normalize.ts';
+export type { NormalizeOptions } from './normalize.ts';
+export type { IrResult, ModeDisplacement, VibrationalMode } from './normalized.ts';
+export { CM1_TO_EV, EV_TO_HARTREE } from './spectrum.ts';
+export type { DataXY } from './spectrum.ts';
+export type * from './types.ts';

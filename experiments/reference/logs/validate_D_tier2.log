@@ -1,0 +1,13 @@
+validating /opt/work/xtb-D/_build_fp/xtb against 10 fixtures, tier 2
+  water         modes=3    dE=0.00e+00 Eh  max df=0.000 cm^-1
+  methanol      modes=12   dE=2.00e-12 Eh  max df=0.000 cm^-1
+  benzene       modes=30   dE=0.00e+00 Eh  max df=0.000 cm^-1
+  acetic_acid   modes=18   dE=2.00e-12 Eh  max df=0.000 cm^-1
+  toluene       SKIP - a single --ohess from the raw geometry lands on a saddle point (see fixture.validation.note)
+  paracetamol   modes=54   dE=1.10e-10 Eh  max df=0.000 cm^-1
+  aspirin       modes=57   dE=1.60e-11 Eh  max df=0.000 cm^-1
+  caffeine      SKIP - a single --ohess from the raw geometry lands on a saddle point (see fixture.validation.note)
+  ibuprofen     modes=93   dE=2.17e-09 Eh  max df=0.020 cm^-1
+  cholesterol   modes=216  dE=4.99e-12 Eh  max df=0.000 cm^-1
+
+PASS: 8/8 molecules within tier-2 tolerances (2 skipped)

@@ -1,0 +1,31 @@
+From 6f00f378a0667495283973e8f4704d681d739013 Mon Sep 17 00:00:00 2001
+From: Luc Patiny <luc@patiny.com>
+Date: Fri, 18 Sep 2026 08:29:16 +0200
+Subject: [PATCH] build(js): export getExceptionMessage,
+ decrementExceptionRefcount and FS
+
+EXPORT_EXCEPTION_HANDLING_HELPERS stopped exporting the exception helpers at
+-O1 and above, and the bracketed EXPORTED_RUNTIME_METHODS list was never
+parsed, so FS was missing too. Name all three in the comma-separated form.
+
+Assisted-By: Claude Opus 5 <noreply@anthropic.com>
+---
+ src/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 04dedba..6e1367b 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -135,7 +135,7 @@ target_link_libraries(occjs PUBLIC
+ # Emscripten-specific linker flags for JavaScript bindings
+ # Note: static_partitioner in XDM code avoids Firefox WASM threading issues
+ set_target_properties(occjs PROPERTIES
+-    LINK_FLAGS "-s MODULARIZE=1 -s EXPORT_NAME='createOccModule' -s EXPORT_ES6=1 -s ENVIRONMENT='web,worker,node' -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s STACK_SIZE=8MB -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORT_EXCEPTION_HANDLING_HELPERS=1 -fexceptions -pthread --bind -s EXPORTED_RUNTIME_METHODS=['FS'] --preload-file ${CMAKE_SOURCE_DIR}/share@/"
++    LINK_FLAGS "-s MODULARIZE=1 -s EXPORT_NAME='createOccModule' -s EXPORT_ES6=1 -s ENVIRONMENT='web,worker,node' -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s STACK_SIZE=8MB -s DISABLE_EXCEPTION_CATCHING=0 -fexceptions -pthread --bind -s EXPORTED_RUNTIME_METHODS=FS,getExceptionMessage,decrementExceptionRefcount --preload-file ${CMAKE_SOURCE_DIR}/share@/"
+ )
+ 
+ # Set output file extension
+-- 
+2.39.5 (Apple Git-154)
+

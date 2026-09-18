@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>xtb → WebAssembly: feasibility for ir.cheminfo.org</title>
+<style>
+  :root{
+    --bg:#fbfbfa; --fg:#1a1a19; --muted:#5d5d57; --line:#e2e0da; --card:#fff;
+    --accent:#8a4b2a; --ok:#2f6a3f; --warn:#8a6d1f; --bad:#8c2f2f; --code:#f4f2ee;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#16171a;--fg:#e8e6e1;--muted:#a2a09a;--line:#2e3035;--card:#1c1e22;
+          --accent:#e0a06a;--ok:#7cc48f;--warn:#e0c06a;--bad:#e08a8a;--code:#22252a;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:48px 24px 96px}
+  header{border-bottom:2px solid var(--line);padding-bottom:24px;margin-bottom:36px}
+  h1{font-size:30px;line-height:1.25;margin:0 0 8px;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:15px}
+  h2{font-size:22px;margin:44px 0 12px;padding-top:16px;border-top:1px solid var(--line);letter-spacing:-.01em}
+  h3{font-size:17px;margin:28px 0 8px}
+  p,li{color:var(--fg)}
+  code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:13.5px;
+       font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre{background:var(--code);padding:14px 16px;border-radius:8px;overflow-x:auto;
+      font-size:13px;line-height:1.5;border:1px solid var(--line)}
+  pre code{background:none;padding:0}
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14.5px;display:block;overflow-x:auto}
+  th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+           border-radius:8px;padding:20px 22px;margin:24px 0}
+  .verdict p:first-child{margin-top:0} .verdict p:last-child{margin-bottom:0}
+  .yes{color:var(--ok);font-weight:600} .no{color:var(--bad);font-weight:600}
+  .maybe{color:var(--warn);font-weight:600}
+  .note{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:18px 0;font-size:14.5px}
+  .note b{color:var(--accent)}
+  ul,ol{padding-left:22px}
+  li{margin:5px 0}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
+  .kpi div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .kpi .n{font-size:22px;font-weight:650;letter-spacing:-.02em;display:block}
+  .kpi .l{font-size:12.5px;color:var(--muted);line-height:1.35}
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+<h1>Porting <code>grimme-lab/xtb</code> to WebAssembly</h1>
+<p class="sub">Feasibility study for in-browser GFN2-xTB IR spectra on ir.cheminfo.org &middot; 28 August 2026<br>
+Evidence base: 15 research agents, 12 adversarially-verified claims, xtb at commit <code>a45f05d</code> (v6.7.1, 2026-08-09)</p>
+</header>
+
+<div class="verdict">
+<p><b><span class="no">No-go today.</span> The route exists in principle, but <span class="maybe">every available Fortran&rarr;wasm toolchain
+is currently unable to compile xtb</span> — and we proved it by trying, on unmodified xtb dependency source.</b></p>
+<p>There is exactly one possible route (patched LLVM Flang &rarr; <code>wasm32-unknown-emscripten</code>; f2c is F77-only, LFortran is alpha, gfortran has
+no wasm backend). Both prebuilt implementations of that route fail on the derived-type pattern that is xtb's <em>universal error channel</em>: one aborts,
+the other silently returns zeros.</p>
+<p>The blocker is <b>one specific, well-localized compiler defect</b> — flang's semantics layer lays out derived types with a 64-bit <code>long</code> while
+the Emscripten runtime reads them as 32-bit. It is plausibly tractable, but fixing it is <b>compiler engineering, not build configuration</b>, and must be
+staffed and budgeted as such.</p>
+<p>Everything else checks out: the compiler emits running wasm, <code>-fdefault-real-8</code> behaves, node supplies argv/getenv/file-I/O/exit codes, and the
+<code>exe_wrapper = node</code> mechanism that runs xtb's test suite cross-compiled is measured-good. Your "all original tests pass" requirement is achievable
+<em>operationally</em> — and it eliminates every shortcut (trimmed builds, tblite-only, reimplementation all fail it outright).</p>
+</div>
+
+<div class="kpi">
+  <div><span class="n">176k</span><span class="l">lines of Fortran in xtb <code>src/</code> (~425k with all dependencies)</span></div>
+  <div><span class="n">6 of 10</span><span class="l">Fortran probes that <b>fail</b> on the best available flang-wasm (2 abort silently wrong)</span></div>
+  <div><span class="n">6N+1</span><span class="l">gradient evaluations per IR spectrum (N atoms)</span></div>
+  <div><span class="n">~25 atoms</span><span class="l">interactive in-browser limit (&lt;10 s), measured + 2.4–5.5× wasm penalty</span></div>
+  <div><span class="n">2 of 2</span><span class="l">prebuilt Fortran&rarr;wasm toolchains proven unusable for xtb</span></div>
+  <div><span class="n">0</span><span class="l">files on disk needed for a GFN2 Hessian — parameters are compiled in</span></div>
+</div>
+
+<h2>1. Why xtb is a different problem from openbabel-wasm and surge-wasm</h2>
+
+<p>Your three existing ports — <a href="https://github.com/cheminfo/surge-wasm">surge-wasm</a>,
+<a href="https://github.com/cheminfo/openbabel-wasm">openbabel-wasm</a>, <a href="https://github.com/cheminfo/inchi-js">inchi-js</a> — are C/C++ compiled
+with <code>emcc</code>, a path Emscripten supports natively. <b>Emscripten has no Fortran front end.</b> xtb is:</p>
+
+<ul>
+<li><b>322 <code>.f90</code> + 51 <code>.F90</code> files, ~176k lines</b>, plus 5 mandatory Fortran subprojects (tblite v0.6.0, mctc-lib v0.5.1,
+dftd4 v4.2.0, multicharge v0.5.0, CPCM-X v1.1.0) — ~425k lines across 10 repos in total.</li>
+<li><b>Uniformly modern Fortran</b>: 1000+ <code>class(...)</code> declarations, 800+ type-bound procedures, <code>select type</code>, abstract interfaces,
+deferred-length allocatable strings, <code>block</code>, <code>do concurrent</code>, <code>contiguous</code>. Baseline is F2008; one file
+(<code>tblite/src/tblite/integral/trafo.f90</code>) needs <b>F2018</b> — it uses <code>ERROR STOP</code> inside <code>pure</code> procedures 12 times, which
+F2008 forbids. Practical consequence: never build with <code>-std=f2008</code>.</li>
+<li><b>Free of the genuinely hard features</b>: zero coarrays, zero parameterized derived types, zero submodules in any <code>src/</code> tree. That is what
+keeps this from being hopeless.</li>
+</ul>
+
+<p>Everything <em>downstream</em> of "we have a <code>.wasm</code>" is already solved and templated in your repos — vendoring by pinned commit, patches under
+<code>build/patches/</code>, one <code>build/build-wasm.sh</code>, the gzipped+base64 wasm committed into a generated TS module, ESM-only publishing.
+<b>The Fortran-to-wasm compiler is the only genuinely new problem.</b></p>
+
+<div class="note"><b>One house-pattern setting must change.</b> Your repos use <code>-sSTACK_SIZE=1-2MiB</code>. Fortran needs
+<b><code>-sSTACK_SIZE=8MB</code> or more</b> — Emscripten's default is 64&nbsp;KB and it <em>fails silently</em>; Fortran automatic arrays blow through it
+immediately.</div>
+
+<h2>2. State of Fortran → WebAssembly, August 2026</h2>
+
+<table>
+<tr><th>Route</th><th>Status</th><th>Verdict for xtb</th></tr>
+<tr><td><b>LLVM Flang + Emscripten</b><br>(patched, wasm32)</td>
+    <td><b>Works for F77-class Fortran; breaks on xtb's Fortran.</b> <code>ghcr.io/r-wasm/flang-wasm:main</code> (flang 21.1.8) compiles, links and runs
+    hello-world, modules, I/O, argv, getenv and <code>error stop</code> correctly under node — and then aborts on any derived type with an allocatable or
+    pointer component. See &sect;3.</td>
+    <td class="maybe">The only possible route, currently blocked</td></tr>
+<tr><td>LFortran</td>
+    <td>v0.65.0 (2026-08-27), self-described alpha, 2367 open issues. Their own beta target is <em>"~500–1000 line programs, not yet larger codebases."</em>
+    No <code>-fdefault-real-8</code>, which xtb hard-requires. webR evaluated it first and chose Flang.</td>
+    <td class="no">Two to three orders of magnitude short</td></tr>
+<tr><td>f2c (the Pyodide/SciPy path)</td>
+    <td>Fortran 77 only. Pyodide still uses a fork of it for SciPy's fixed-form F77, and is <em>abandoning</em> it — SciPy 1.19/2.0 (Dec 2026) will be
+    Fortran-free.</td>
+    <td class="no">Structurally impossible for F2003/F2008</td></tr>
+<tr><td>gfortran / GCC wasm</td>
+    <td>The GCC WebAssembly backend is an unmerged May-2026 RFC with no Fortran support.</td>
+    <td class="no">Does not exist</td></tr>
+</table>
+
+<h3>Upstream LLVM still needs the patch — but it is tiny</h3>
+<p>Checked against the actual source of <b>LLVM 23.1.0 (released 2026-08-25)</b>: <code>flang/lib/Optimizer/CodeGen/Target.cpp</code> dispatches over twelve
+architectures and falls through to <code>TODO(..., "target not implemented")</code>. So
+<a href="https://github.com/llvm/llvm-project/issues/54832">llvm#54832</a> (opened 2022) still reproduces today, and you will carry a patch.</p>
+<p>The <a href="https://github.com/r-wasm/llvm-project">r-wasm/llvm-project</a> <code>wasm</code> branch is <b>3 commits, 59 changed lines</b> on LLVM 21.1.8:
+one adds a <code>TargetWasm32</code> struct implementing only the <code>COMPLEX</code> argument/return ABI; two fix the array-descriptor model to use 32-bit
+index fields. Rebasing onto LLVM 22/23 is a mechanical edit (<code>CodeGenSpecifics::get</code> gained a <code>targetABI</code> parameter).</p>
+
+<div class="note"><b>A trap worth knowing.</b> <code>miinso/flang-releases</code> v21.1.8 is the only prebuilt flang with a <b>macOS-arm64 host binary</b> plus a
+wasm32 Fortran runtime — and it is silently broken. It compiles and links with <em>zero diagnostics</em>, then aborts inside the runtime on every test.
+Cause: flang derives its descriptor model from the <em>host</em> <code>sizeof(long)</code>, so on arm64 macOS it emits <code>i64</code> index fields that the
+wasm32 runtime reads as 32-bit. <b>Always test a deferred-length string and an allocatable array before trusting any flang-wasm toolchain.</b></div>
+
+<h3>Two production users already do this</h3>
+<ul>
+<li><b>webR</b> (Posit) ships BLAS and LAPACK 3.12.0 built for <code>wasm32-unknown-emscripten</code> with this exact toolchain, in production since
+<a href="https://opensource.posit.co/blog/2026-06-18_webr-0-6-0/">webR 0.6.0</a> (2026-06-18, R 4.6.0). Four enabling fixes went upstream into LLVM
+permanently.</li>
+<li><b>emscripten-forge</b> ships <code>flang_emscripten-wasm32</code> and uses it to build reference LAPACK, OpenBLAS <em>with real Fortran</em>, ARPACK and
+SciPy. <b>But see &sect;3.4</b>: the spike found only versions 19.1.7 / 20.1.7, from a different patch series, and they fail more probes than r-wasm — so this
+prior art is real for F77-class Fortran and does not transfer to xtb.</li>
+</ul>
+<p>Neither Pyodide (340 recipes) nor emscripten-forge (639 packages) contains any quantum-chemistry package. <b>Nobody has packaged xtb, tblite or
+xtb-python for wasm</b> — verified with exhaustive GitHub repo/code/issue/PR searches across the grimme-lab and tblite orgs, npm, and the web.</p>
+
+<h3>OpenMP: build serial first</h3>
+<p>Emscripten gained real OpenMP only in <b>6.0.3 (2026-07-13)</b> via PR #27073, merged 2026-07-08 — and it does include the Fortran-callable entry points
+(<code>kmp_ftn_cdecl.cpp</code>). But the r-wasm image pins Emscripten 5.0.7, and so does this machine (verified: no <code>omp.h</code>). xtb makes OpenMP
+optional (<code>-DWITH_OpenMP=OFF</code> / <code>-Dopenmp=false</code>), its CI already runs green at <code>OMP_NUM_THREADS=1</code>, and threads in the
+browser drag in <code>SharedArrayBuffer</code> + COOP/COEP headers. <b>Get a correct serial build first; treat threading as a separate performance
+project.</b> (ir.cheminfo.org is self-hosted nginx/1.27.5, so it <em>can</em> set those headers when the time comes.)</p>
+
+<h2>3. The build spike — we tried it, and this is where it stops</h2>
+
+<p>Research can only tell you a route <em>should</em> work. This study went further and attempted the build, in Docker, on this machine. It stopped at
+milestone 1, and the reason is specific and reproducible.</p>
+
+<h3>3.1 What works</h3>
+<p><code>ghcr.io/r-wasm/flang-wasm:main</code> (flang 21.1.8, default target already <code>wasm32-unknown-emscripten</code>) compiles Fortran to wasm that
+runs under node. Verified: hello-world, modules, formatted and list-directed I/O, a real host file round-trip via <code>-sNODERAWFS</code>,
+<code>argv</code>, <code>getenv</code>, and <code>error stop 3</code> propagating to node exit code 3. <code>-fdefault-real-8 -fdefault-double-8</code>
+verifiably flips <code>kind(1.0)</code> from 4 to 8.</p>
+<div class="note"><b>Gotcha, recorded:</b> <code>-fdefault-real-8</code> <em>alone</em> promotes <code>kind(1.0d0)</code> to 16 (quad). Both flags are
+required together — exactly what <code>xtb/cmake/CMakeLists.txt:57-58</code> already supplies for <code>LLVMFlang</code>.</div>
+<p>That the exit code propagates matters beyond hello-world: it is the precise mechanism <code>meson</code>'s <code>exe_wrapper = 'node'</code> and
+<code>emcmake</code>'s <code>CMAKE_CROSSCOMPILING_EMULATOR=node</code> depend on. <b>The cross-compiled-test-running machinery is measured-good</b> — there is
+simply nothing to run through it yet.</p>
+
+<h3>3.2 What fails, and why it is fatal for xtb</h3>
+<p>A 10-probe suite was run through three compilers from the <em>same source files</em> — gfortran 15.2.0 native, flang-21 21.1.8 native (the identical
+upstream version, a perfect control), and flang-wasm &rarr; node:</p>
+
+<table>
+<tr><th>Probe</th><th>Construct</th><th>gfortran</th><th>flang native</th><th>flang &rarr; wasm</th></tr>
+<tr><td>p1</td><td><code>type(t),allocatable</code> + <code>character(:),allocatable</code> component</td><td>OK</td><td>OK</td><td class="no">abort</td></tr>
+<tr><td>p2</td><td><code>type(t),allocatable</code> + <code>real,allocatable(:)</code> component</td><td>OK</td><td>OK</td><td class="no">abort</td></tr>
+<tr><td>p3</td><td>plain <code>type(t)</code> local + deferred-length char component</td><td>OK</td><td>OK</td><td class="yes">OK</td></tr>
+<tr><td>p4</td><td><code>class(t),allocatable</code> + deferred-char component</td><td>OK</td><td>OK</td><td class="no">abort</td></tr>
+<tr><td>p5</td><td>the exact shape of mctc-lib's <code>error_type</code></td><td>OK</td><td>OK</td><td class="no">abort</td></tr>
+<tr><td>p6</td><td><code>type(t),allocatable</code> with a <em>fixed-length</em> <code>character(16)</code></td><td>OK</td><td>OK</td><td class="yes">OK</td></tr>
+<tr><td>p7</td><td><code>type(t),pointer</code> + deferred-char component</td><td>OK</td><td>OK</td><td class="no">abort</td></tr>
+<tr><td>p8</td><td><code>type(t),allocatable :: b(:)</code> + deferred-char component</td><td>OK</td><td>OK</td><td class="no">abort</td></tr>
+<tr><td>p9</td><td>default init <code>n=42, r=3.5</code> after <code>allocate</code></td><td>42 / 3.50</td><td>42 / 3.50</td><td class="no"><b>0 / 0.00, silently</b></td></tr>
+<tr><td>p10</td><td>same, on a type with no allocatable components at all</td><td>42</td><td>42</td><td class="no"><b>0, silently</b></td></tr>
+</table>
+
+<p>Then the same thing on <b>unmodified xtb dependency source</b> — mctc-lib's <code>src/mctc/env/error.f90</code> with a 12-line driver:</p>
+<pre><code>$ node d.js
+step 1: calling mctc-lib fatal_error()
+fatal Fortran runtime error(error.f90:75): Assign: left-hand side variable is
+    neither allocated nor allocatable
+Aborted(native code called abort())          exit=1
+
+gfortran 15.2.0 native   -> MCTC-ERROR-ROUNDTRIP-OK   exit=0
+flang-21 native x86_64   -> MCTC-ERROR-ROUNDTRIP-OK   exit=0</code></pre>
+
+<p><code>error.f90:75</code> is <code>error%message = message</code> inside <code>fatal_error()</code>. This is not a corner case:
+<b><code>type(error_type), allocatable</code> with a deferred-length <code>message</code> component is the shared error channel of mctc-lib, toml-f, tblite,
+dftd4, s-dftd3, multicharge <em>and</em> xtb</b> — it is on the critical path of every code path and every test.</p>
+
+<p><b>p9/p10 are the worse finding.</b> An abort is loud. Silently dropping derived-type default initialization — returning 0 where the source says 42, exit
+code 0 — is a wrong-answer bug in a quantum-chemistry code. It would surface as mysterious numerical disagreement, not as a crash.</p>
+
+<h3>3.3 Root cause — measured, not inferred</h3>
+<p>The compiler and the C toolchain disagree about pointer width <em>on the same target</em>:</p>
+<pre><code>FLANG-WASM, target wasm32-unknown-emscripten
+  c_size_t = 8   c_intptr_t = 8   c_long = 8   storage_size(c_ptr)/8 = 8
+EMCC C compiler, SAME wasm32 target
+  sizeof(size_t) = 4   sizeof(intptr_t) = 4   sizeof(long) = 4   sizeof(void*) = 4
+
+derived-type layout, flang-wasm vs native x86_64:  byte-identical (LP64)
+  type with character(:),allocatable comp : 24 bytes  (both)
+  type with real,allocatable(:)     comp : 48 bytes  (both)   <- LP64 descriptor</code></pre>
+
+<p>The shipped <code>iso_c_binding.mod</code> literally contains <code>c_size_t=8_4</code>. The r-wasm patch (3 commits) touches only the
+<b>FIR&rarr;LLVM codegen path</b> — <code>Target.cpp</code>, <code>RTBuilder.h</code>, <code>DescriptorModel.h</code>, <code>TypeConverter.*</code>.
+Nothing patches the <b>semantics layer</b> (<code>compute-offsets.cpp</code>, <code>runtime-type-info.cpp</code>), which lays out derived types and emits the
+<code>__fortran_type_info</code> tables using a host-compiled <code>Descriptor</code> where <code>long</code> is 8. The emcc-built
+<code>libFortranRuntime.a</code> then reads those tables as 32-bit &rarr; garbage <code>DerivedType*</code> &rarr; <code>Initialize()</code> no-ops &rarr;
+components never established &rarr; <code>Assign</code> reports "neither allocated nor allocatable".</p>
+
+<div class="note"><b>This explains why webR works and xtb would not.</b> The webR author describes the approach as <em>"hard-coding the size of a long to what is
+needed for wasm32"</em>. That is sufficient for F77-class Fortran — LAPACK, BLAS, and the Fortran inside most R packages, none of which use derived types. It
+is insufficient for F2003+ OOP, which is exactly what xtb is built from. <b>The existing production success does not transfer.</b></div>
+
+<h3>3.4 The second toolchain is worse</h3>
+<p>emscripten-forge's <code>flang_emscripten-wasm32</code> was found only at <b>19.1.7 / 20.1.7</b> — not the 22.1.6 the desk research reported — and it is
+built from a different patch series (<code>serge-sans-paille/llvm-project@feature/flang-wasm</code>). It has the same <code>c_size_t=8</code> defect and fails
+strictly more probes, including two that r-wasm passes (p3 &ldquo;Null address&rdquo;, p6 &ldquo;Invalid descriptor&rdquo;), plus a link failure on p2.
+Route closed.</p>
+<p class="sub"><em>Correction to the desk research:</em> the claim that emscripten-forge ships flang 22.1.6 and builds LAPACK 3.12.1 / OpenBLAS 0.3.34 / SciPy
+1.18.0 with it could not be reproduced — only 19.1.7 and 20.1.7 packages were found. Treat the &ldquo;22.1.6&rdquo; figure as unverified.</p>
+
+<h3>3.5 Reusable artifact</h3>
+<p>The 10-probe suite lives in <code>experiments/fortran-wasm/probes/</code>, with the mctc-lib reproduction in
+<code>experiments/fortran-wasm/realcode/</code>. It answers <em>&ldquo;is this candidate toolchain fit for xtb?&rdquo;</em> in minutes rather than weeks, and
+it should be the first thing run against any future flang-wasm build. That is the single most durable output of this study.</p>
+
+<h2>4. What an IR spectrum actually needs from xtb</h2>
+
+<p>Traced end to end in the source. xtb's IR path is a <b>two-sided finite-difference Hessian over analytic GFN2 gradients</b>: exactly <b>6N+1</b>
+single-point energy+gradient evaluations for N atoms (<code>src/type/calculator.f90:151-186</code>). IR intensities come for free from the SCF dipole already
+computed at each displaced point (<code>dipgrad</code> at <code>calculator.f90:177</code>, contracted at <code>src/hessian.F90:521-533</code>). There is
+<b>no analytic Hessian and no analytic dipole derivative anywhere in xtb</b>.</p>
+
+<table>
+<tr><th>Property</th><th>Finding</th></tr>
+<tr><td>Dominant cost</td><td>SCF diagonalization — <code>dsygst</code> + <code>dsyevd</code> + <code>dtrsm</code> on an <code>nao×nao</code> matrix every SCC
+iteration (<code>src/mctc/lapack/eigensolve.f90:230-244</code>). Theory suggests O(N·nao³) ≈ O(N⁴); <b>measured, it is N<sup>2.95</sup></b> (r²=0.992 over 23 molecules, 3–98 atoms) — the Hessian is cheaper at realistic sizes than the theoretical exponent implies.</td></tr>
+<tr><td>Memory</td><td>Trivial by browser standards: ~0.7&nbsp;MB at 20 atoms, ~4&nbsp;MB at 50, ~16&nbsp;MB at 100. The wasm32 4&nbsp;GiB ceiling is
+irrelevant here.</td></tr>
+<tr><td>Runtime files</td><td><b>Zero.</b> GFN2, GFN1 and GFN-FF parameters are compiled into the binary
+(<code>src/gfn_paramset.f90:59-82</code>, <code>src/gfnff/gfnff_param.f90:526-553</code>); D4 reference data and all 40 GBSA/ALPB solvent sets are
+compile-time <code>.fh</code> includes (981&nbsp;KB across 44 files). A GFN2 Hessian through the C API touches no filesystem.</td></tr>
+<tr><td>C API</td><td>43 <code>bind(C)</code> entry points. <code>xtb_hessian</code> (<code>include/xtb.h:243-252</code>,
+<code>src/api/interface.f90:310-454</code>) returns the Cartesian Hessian <b>and</b> dipole gradients — i.e. frequencies <em>and</em> IR intensities —
+bypassing the CLI and driver layers entirely.</td></tr>
+<tr><td>Scratch files</td><td>Nine files are written during a default <code>--ohess</code> run but none is read back, so Emscripten's MEMFS suffices.</td></tr>
+</table>
+
+<h3>Measured cost — native xtb 6.7.1, single-threaded</h3>
+
+<p>Benchmarked in this study: xtb 6.7.1 built in Docker, <code>OMP_NUM_THREADS=1</code>, GFN2, 23 molecules from 3 to 98 atoms
+(<code>experiments/benchmark/</code>). Fitted scaling: single point N<sup>1.31</sup>, optimization N<sup>2.26</sup>,
+<b>Hessian N<sup>2.95</sup> (r²=0.992)</b>. Browser columns apply the measured 2.4–5.5× wasm penalty to optimization + Hessian.</p>
+
+<table>
+<tr><th>Molecule</th><th>N atoms</th><th>nao</th><th>opt (s)</th><th>Hessian (s)</th><th>Browser, fast (s)</th><th>Browser, slow (s)</th><th>Peak RSS</th></tr>
+<tr><td>water</td><td>3</td><td>6</td><td>0.06</td><td>0.04</td><td>0.2</td><td>0.5</td><td>18 MB</td></tr>
+<tr><td>benzene</td><td>12</td><td>30</td><td>0.15</td><td>0.50</td><td>1.6</td><td>3.6</td><td>21 MB</td></tr>
+<tr><td>hexane</td><td>20</td><td>38</td><td>0.10</td><td>1.42</td><td>3.6</td><td>8.4</td><td>21 MB</td></tr>
+<tr><td>caffeine</td><td>24</td><td>66</td><td>0.39</td><td>3.96</td><td>10.4</td><td>23.9</td><td>20 MB</td></tr>
+<tr><td>ibuprofen</td><td>33</td><td>78</td><td>0.95</td><td>8.04</td><td>21.6</td><td>49.4</td><td>21 MB</td></tr>
+<tr><td>estradiol</td><td>44</td><td>104</td><td>1.34</td><td>17.5</td><td>45</td><td>104</td><td>25 MB</td></tr>
+<tr><td>sucrose</td><td>45</td><td>114</td><td>5.98</td><td>20.2</td><td>63</td><td>144</td><td>24 MB</td></tr>
+<tr><td>sildenafil</td><td>63</td><td>168</td><td>11.3</td><td>82.3</td><td>225</td><td>515</td><td>28 MB</td></tr>
+<tr><td>cholesterol</td><td>74</td><td>158</td><td>3.67</td><td>122</td><td>303</td><td>693</td><td>29 MB</td></tr>
+<tr><td>&beta;-carotene</td><td>96</td><td>216</td><td>27.1</td><td>339</td><td>878</td><td>2011</td><td>38 MB</td></tr>
+</table>
+
+<p><b>The practical envelope for an in-browser, single-threaded xtb:</b></p>
+<ul>
+<li><b>Interactive (&lt; 10 s):</b> up to roughly <b>25 atoms</b> — benzene, hexane, caffeine, small drug fragments.</li>
+<li><b>Tolerable with a progress bar (&lt; 60 s):</b> roughly <b>35–45 atoms</b> — ibuprofen, estradiol.</li>
+<li><b>Server territory (minutes):</b> beyond ~60 atoms. Sildenafil is 4–9 minutes, cholesterol 5–12, &beta;-carotene 15–34.</li>
+</ul>
+<p>Your current server cap of <code>MAX_ATOMS_XTB=60</code> is therefore roughly <em>twice</em> what the browser will serve comfortably.
+A hybrid — wasm below ~35 atoms, server above — covers the whole range behind one interface, and is the reason the recommendation keeps the
+server path alive rather than replacing it.</p>
+<p>Two secondary findings from the same data: <b>memory is a non-issue</b> (peak RSS 38 MB at 96 atoms, nowhere near the wasm32 4 GiB ceiling),
+and <b>the optimizer, not the Hessian, is the variance</b> — floppy molecules cost far more cycles (sucrose 60, sildenafil 51,
+&beta;-carotene 83, versus 4–7 for rigid ones), so pre-optimizing server-side or with a force field is a cheap win.</p>
+
+<div class="note"><b>What your current service actually calls.</b> <a href="https://github.com/cheminfo-py/xtbservice">cheminfo-py/xtbservice</a> (behind
+ir.cheminfo.org's <code>/v1/ir</code>) does <b>not</b> use xtb's Hessian driver or CLI. It uses <code>xtb-python</code>'s ASE calculator for single points and
+lets <b>ASE's <code>Infrared</code></b> do the finite differences (<code>xtbservice/ir.py:8-20</code>), with ASE <code>LBFGS</code> for optimization. The 2026
+successor, <code>pipeline-workers/xtb-vibrational</code>, says so explicitly. <b>So the surface an in-browser xtb must reproduce is narrower than the CLI:
+energy + forces + dipole for a displaced geometry.</b> Operational envelope today: <code>MAX_ATOMS_XTB=60</code>, <code>TIMEOUT=100&nbsp;s</code>,
+<code>OMP_NUM_THREADS=1</code>.</div>
+
+<div class="note"><b>A gotcha that will bite whoever writes the validation harness.</b> <code>--ohess</code> does <b>not</b> build its Hessian at the
+geometry it writes out. Re-running <code>--hess</code> at the stored optimized coordinates moves the energy by ≤3.2e−11 Eh and frequencies by ≤0.06 cm⁻¹ —
+but <b>IR intensities by up to 16%</b> (cholesterol mode 204: 12.96 vs 11.17 km/mol). Validation fixtures must therefore store a Hessian generated by the
+exact protocol they will be compared against.<br><br>
+Related, and a property of the GFN2 surface rather than of any build: a single <code>--ohess</code> from a raw Open Babel geometry lands
+<b>toluene and caffeine on methyl-rotor saddle points</b> (ν₁ = −25.7 and −65.0 cm⁻¹). Don't use them as end-to-end fixtures.</div>
+
+<div class="note"><b>A warning from your own code.</b> <code>pipeline-workers/xtb-vibrational/Dockerfile</code> opens with
+<code>FROM --platform=linux/amd64</code> and the comment <em>"xtb's ARM64 build has numerical bugs that cause GFN2-xTB calculations to diverge."</em>
+cheminfo has already been bitten by xtb diverging on a non-x86 target. <b>A wasm32 port needs a numerical-agreement suite against the x86 reference from day
+one.</b></div>
+
+<h3>A reference data set now exists</h3>
+<p>Ten molecules (water &rarr; cholesterol) were run through <code>obabel --gen3d</code> &rarr; <code>xtb --opt</code> &rarr; <code>xtb --ohess</code> with
+GFN2, all confirmed true minima with zero imaginary modes, and stored as JSON fixtures with energies, frequencies, IR intensities, optimized geometries,
+timings and per-quantity tolerances: <code>experiments/reference/</code> (61 files, 1.9 MB), plus a working two-tier harness
+(<code>scripts/validate.py</code>). Recommended assertions, sized from the measured studies:</p>
+<table>
+<tr><th>Quantity</th><th>Tolerance</th><th>Why that value</th></tr>
+<tr><td>Total energy</td><td>1e−8 Eh absolute</td><td>native spread is 0 at 1e−12 print precision</td></tr>
+<tr><td>Frequencies</td><td>0.5 cm⁻¹ absolute</td><td>50× print precision; ~60× tighter than GFN2's own error vs experiment</td></tr>
+<tr><td>IR intensities &gt; 1 km/mol</td><td>2% relative</td><td>the most geometry-sensitive quantity</td></tr>
+<tr><td>IR intensities ≤ 1 km/mol</td><td>0.05 km/mol absolute</td><td>relative tests on near-zero intensities are meaningless</td></tr>
+<tr><td>Hessian Frobenius norm + trace</td><td>1e−6 relative</td><td>rotation-invariant; catches IR-silent modes</td></tr>
+<tr><td>Imaginary / total mode count</td><td>exact</td><td>a mismatch means the trans-rot projection differs</td></tr>
+</table>
+<p>The harness passes 10/10 against both the build that produced the fixtures <em>and</em> a deliberately different build (−O1, no FMA, netlib LAPACK) — which
+is the strongest available evidence the tolerances are neither unmeetable nor toothless.</p>
+
+<h2>5. The "all tests pass" requirement</h2>
+
+<p>This constraint does more work than any other in the study. Full analysis in
+<a href="../research/test-suite-requirement.md">research/test-suite-requirement.md</a>; the essentials:</p>
+
+<h3>5.1 The suite is small and portable</h3>
+<p>35 meson targets (34 OK + 1 expected-fail) / 40 ctest targets — 41 distinct targets in the union, neither command being a superset of the other. Inside the
+tester binary: <b>135 registered unit cases</b> (119 without tblite), 1184 <code>call check</code> sites. Runtime ranges from <b>14&nbsp;s</b> (ifort+MKL,
+serial, optimized — the right base for extrapolating a single-threaded wasm run) to 80&nbsp;s for a debug+coverage build. <b>Runtime is not a risk.</b></p>
+
+<h3>5.2 The trap: a green summary proves nothing</h3>
+<p>test-drive skips are consumed <em>inside</em> the tester process (<code>test/unit/main.f90:171</code>), so a skipped case never increments the failure
+counter. Two CI jobs on the same commit — full build, and <code>-Dtblite=disabled -Dcpcmx=disabled</code> — print <b>byte-identical</b> summaries:</p>
+<pre><code>Ok: 34   Expected Fail: 1   Fail: 0   Skipped: 0   Timeout: 0</code></pre>
+<p>while actually executing <b>134 of 135</b> cases versus <b>104 of 119</b>. Thirty cases disappear with no visible signal. A wasm build that fails to bring
+up tblite would print exactly what upstream prints. And tblite is <em>likely forced off anyway</em>: it needs <code>libquadmath</code>, an x86-only GCC
+runtime — which is already why tblite is disabled on aarch64 today, and wasm32 has no <code>__float128</code>.</p>
+
+<div class="note"><b>Write the criterion as a skip allowlist, not a summary line.</b> Require <code>104 PASSED / 15 SKIPPED / 0 FAILED</code> with the 15 named
+explicitly, <em>and</em> require an identically-configured native build to produce identical per-suite counts. That last clause is what makes it a test of the
+port rather than of the flags. The rule to hold in review: <b>skipping is defensible when xtb's own build system does the skipping; deleting never is.</b></div>
+
+<h3>5.3 Numerics are lower-risk than the usual port story</h3>
+<ul>
+<li>Every xtb assertion is <b>absolute</b>, never relative — verified, zero <code>rel=</code> hits across all 373 files. The tightest in the suite
+(<code>test_gfnff.f90:154</code>, 2.22e-13) still leaves <b>~2×10⁴ ULP</b> of headroom.</li>
+<li><b>Wasm is stricter than any native config xtb already passes</b>: round-to-nearest only, no x87 extended precision, no scalar FMA contraction, no
+reduction reassociation. The only nondeterminism is NaN payload bits, which xtb never inspects.</li>
+<li>Measured emscripten-musl vs macOS-arm64 libm over 200k points: <code>sqrt</code> bit-exact (and it is xtb's most-used math function, 691 sites),
+<code>log</code>/<code>pow</code>/<code>exp</code>/<code>sin</code> ≤1 ULP, <code>erfc</code> ≤6 ULP worst case.</li>
+<li>The tolerances already survive gfortran 10–15, ifort, ifx, x86-64, aarch64, MinGW, and netlib/OpenBLAS/MKL substitution in xtb's own CI.</li>
+</ul>
+<p><b>Estimate: 0–4 of 135 cases at real risk</b>, concentrated in <code>xtb/hessian</code>, <code>xtb/gfnff</code> and <code>ptb/polarizability</code>.
+Probability the suite is green on the first <em>successful compile</em>: ~40%. After clearing latent uninitialized-variable UB natively and pinning netlib
+LAPACK: <b>~80%</b>.</p>
+<p>The realistic failure mode is not rounding — it is <b>latent uninitialized-variable UB</b>. Precedent:
+<a href="https://github.com/grimme-lab/xtb/issues/1109">xtb#1109</a> broke 7 tests under GCC 14.1 and was fixed by removing an uninitialized variable, with no
+tolerance changed. Wasm's zeroed linear memory is a third initialization behaviour.</p>
+
+<h3>5.4 Measured: the wasm-shaped build is a <em>cleaner</em> gate than the default build</h3>
+
+<p>xtb 6.7.1 was built natively in Docker in four configurations and the full suite run (gfortran 13.3.0, OpenBLAS,
+<code>OMP_NUM_THREADS=1</code>; <code>experiments/reference/testsuite/</code>). The result is better than expected:</p>
+
+<table>
+<tr><th>Configuration</th><th>Targets</th><th>OK</th><th>Expected fail</th><th>Fail</th><th>Skip</th><th>Wall</th></tr>
+<tr><td>A — default</td><td>216</td><td>195</td><td>10</td><td class="no">1</td><td>10</td><td>97 s</td></tr>
+<tr><td><b>B — wasm-shaped</b> <code>-Dopenmp=false -Dtblite=disabled -Dcpcmx=disabled</code></td><td>81</td><td>80</td><td>1</td>
+    <td class="yes">0</td><td class="yes">0</td><td>47 s</td></tr>
+<tr><td colspan="7"><em>xtb's own targets only (<code>--suite xtb</code>): 35 targets, 34 OK / 1 expected-fail / 0 fail / 0 skip in
+<b>both</b> configurations, deterministic over 3 repeats.</em></td></tr>
+</table>
+
+<p>Two things fall out of this that matter for CI design:</p>
+<ul>
+<li><b>The default build's single FAIL is not xtb's.</b> It is <code>multicharge / pbc</code> → <code>eeqbc-sigma-ice</code>, an analytic-vs-numerical
+strain derivative off by 1.6e−8 on values of order 24 (relative 6e−10) against an upstream tolerance set too tightly for this compiler/arch. It is
+deterministic, it lives in a bundled dependency, and it is <b>absent from the wasm-shaped build</b>.</li>
+<li><b>The 10 skips are a missing Python module</b> (dftd4's <code>tester.py</code> exits 77 without pytest). Installing <code>python3-pytest</code> converts
+all ten to passes — and then exposes an <em>order-dependent</em> failure: an xtb CPCM-X test writes <code>smd_h2o</code> into the shared build directory and
+numsa's <code>cds</code> test then reads that stale file. Verified directly. Test-harness pollution, not a code defect — and numsa is not built in the
+wasm-shaped configuration either.</li>
+</ul>
+
+<p><b>So configuration B is the better CI gate</b>: fewer moving parts, no third-party noise, zero skips at target level, and it is the configuration the wasm
+port would use anyway.</p>
+
+<h4>The exact skip allowlist, measured</h4>
+<p>At subtest level, A runs 135 (134 passed, 1 skipped) and B runs 119 (104 passed, 15 skipped). The inventory shift is exact and explainable: PTB is built on
+tblite, so A's 17 real <code>ptb</code> subtests are replaced by a single guard — 135 − 17 + 1 = 119.</p>
+<ul>
+<li><code>eeq / hbond</code> — <em>"Not implemented"</em>, a genuine upstream gap, skipped in <b>both</b> configurations</li>
+<li>11 × <code>tblite/*</code> and <code>ptb / ptb_not_present</code> — <em>"xtb not compiled with tblite support"</em></li>
+<li><code>dipro / J_ab,eff</code> — <em>"tblite libary not available."</em></li>
+<li><code>cpx / solvation</code> — <em>"CPCM-X libary not available."</em></li>
+</ul>
+<p>Each skip names its own reason, which makes the allowlist auditable rather than a bare count. <b>None of the 15 touches the GFN2 IR path</b> — GFN2 through
+xtb's own calculators is covered by <code>xtb:unit / gfn2</code> and <code>xtb:unit / hessian</code>, both passing in B.</p>
+
+<h3>5.5 The numerics question is now answered: the spread is <em>zero</em></h3>
+
+<p>Six variants across all ten reference molecules — identical rerun, 4 BLAS threads, an OpenMP build at 1 and at 4+4 threads, and true netlib reference
+LAPACK+BLAS forced via <code>LD_LIBRARY_PATH</code>: <b>every delta exactly zero</b> in energy, frequency and intensity. A further build at <code>-O1</code>
+with FMA contraction disabled <em>and</em> a swapped LAPACK backend reproduced the fixtures exactly; the Cartesian Hessian was bit-identical for the eight
+smallest molecules and differed by 1e−10 (one ULP of the printed value) on the two largest.</p>
+<div class="note"><b>Watch out for a false negative here.</b> Ubuntu's <code>liblapack.so.3</code> alternative points at OpenBLAS, so
+<code>-Dlapack=netlib</code> alone does <em>not</em> give you netlib. The genuine reference implementation had to be forced with
+<code>LD_LIBRARY_PATH</code> and confirmed with <code>LD_DEBUG=libs</code>. Any "we tested both backends" claim that skips this step tested one backend
+twice.</div>
+<p>The noise is real but never reaches a printed digit: caffeine's gradient components differ at ~1e−16 Eh/a₀ between backends while the energy agrees to all
+11 printed decimals. The SCF is a converged fixed point, and that is what absorbs the difference.</p>
+
+<p><b>The risk is the geometry, not the arithmetic.</b> Perturbing the input geometry and running the full pipeline:</p>
+<table>
+<tr><th>&epsilon; (Å)</th><th>max &Delta;E (Eh)</th><th>max &Delta;&nu; (cm⁻¹)</th><th>max relative &Delta;I (peaks &gt; 1 km/mol)</th></tr>
+<tr><td>1e−8</td><td>1.6e−11</td><td>0.00</td><td>1.1e−4</td></tr>
+<tr><td>1e−6</td><td>1.6e−9</td><td>0.04</td><td>1.1e−2</td></tr>
+<tr><td>1e−4</td><td>1.9e−6</td><td class="no">19.34</td><td class="no">0.53</td></tr>
+</table>
+<p>The ANC optimizer stops around gnorm ≈ 2e−4, so two builds taking different optimizer paths can land on geometries differing at 1e−4 Å — worth ~20 cm⁻¹ on
+a soft torsion and tens of percent on IR intensities. <b>Validate at a fixed geometry</b> (<code>--hess</code> from stored coordinates), not through
+<code>--ohess</code>.</p>
+
+<h3>5.6 Two tests can never be a reliable gate</h3>
+<p><code>xtb/symmetry</code> (4 cases) rattles geometries with <b>unseeded</b> <code>random_number</code> (<code>test_symmetry.f90:234-250</code>), so
+upstream CI already tests a different geometry every run. <code>xtb/random</code> (3 cases) needs the wasm Fortran runtime to implement
+<code>random_seed(size=/get=/put=)</code> correctly. Pin these expectations before they become contractual.</p>
+
+<h2>6. Routes compared</h2>
+
+<table>
+<tr><th>Route</th><th>xtb tests that run</th><th>Meets your requirement?</th><th>Assessment</th></tr>
+<tr><td><b>A. Full wasm cross-compile</b><br><code>-Dopenmp=false -Dtblite=disabled -Dcpcmx=disabled</code></td>
+    <td>104 executed + 15 skipped, 0 failed</td><td class="yes">Operationally yes</td>
+    <td>The only route satisfying <em>both</em> constraints (all tests + in-browser). Skip set is exactly upstream's own
+    <code>xtb-lightweight-meson-build</code> job.</td></tr>
+<tr><td>B. Trimmed build (GFN2 + Hessian only)</td><td>fewer than A, with suites <em>deleted</em></td><td class="no">No</td>
+    <td><b>Strictly dominated — eliminate it.</b> There are no per-feature build options; 81% of the source (229/348 files, 143.7k/177.4k lines) is inside the
+    IR dependency closure; <code>src/hessian.F90:55</code> imports the PTB calculator and <code>src/type/data.F90:25</code> imports the docking force field.
+    The trim experiment died on the first file. It buys 19% less Fortran and costs you the requirement.</td></tr>
+<tr><td>C. tblite + TypeScript Hessian/frequencies</td><td>0 / 135</td><td class="no">No</td>
+    <td>tblite's C API has <b>no Hessian and no dipole gradient</b> (<code>result.h</code> stops at <code>hamiltonian_matrix</code>). You would write the
+    Hessian, dipole derivatives, projection, mass-weighting, frequencies, thermochemistry and optimizer yourself — all with zero upstream test coverage.</td></tr>
+<tr><td>D. Clean-room GFN2 reimplementation</td><td>0 / 135</td><td class="no">No</td>
+    <td>Multi-year. Parameters are permissively available (the Grimme group's own Apache-2.0 <code>dxtb</code> ships the full 1680-line
+    <code>gfn2-xtb.toml</code>), but validating to 1e-7 on Hessian elements is not a realistic timeframe.</td></tr>
+<tr><td>E. Server-side xtb behind an API</td><td>135 / 135</td><td class="yes">Yes, trivially</td>
+    <td>Satisfies the test requirement <em>perfectly because it does no porting</em> — and therefore fails the product goal. Measured cost: 205&nbsp;s cold
+    Docker build+test, 7&nbsp;s warm.</td></tr>
+</table>
+
+<p><b>The tension to resolve explicitly:</b> E satisfies your stated requirement best and your stated goal worst. If both constraints are genuinely
+non-negotiable, <b>A is the only route</b>, and the project reduces to the Flang question.</p>
+
+<h3>Prior art that changes the fallback calculus</h3>
+<p><b>Nobody has ported Fortran xtb to wasm</b> (verified negative). But <a href="https://www.npmjs.com/package/@peterspackman/occjs">@peterspackman/occjs</a>
+@0.9.3 (2026-08-05) — OCC, a ~9000-line C++17 GFN2-xTB reimplementation developed against xtb/tblite references and agreeing <em>"to single µHa on small
+molecules"</em> — is already compiled to wasm with emcc/embind and published on npm. An agent installed it and ran it under Node 26:
+<b>water E = −5.07025643 Ha; a numerical Hessian giving 1573.9 / 3573.6 / 3668.0 cm⁻¹ in 51 ms; benzene's full 36-mode Hessian in 1.04 s.</b>
+It exposes no dipole derivatives, so <b>IR intensities are the missing piece</b> — band positions come free. It runs none of xtb's tests, so it cannot satisfy
+your requirement, but it is a strong comparison point and a plausible interim product. Also relevant: ExaPsi/IQCP (Rust→wasm) does HF/DFT with analytic
+Hessians, IR and Raman entirely client-side at iqcp.dev.</p>
+
+<h2>7. Licensing — two decisions to make before the first release</h2>
+<ul>
+<li>xtb is <b>LGPL-3.0-or-later</b>, but <code>symmetry/symmetry_i.c</code> (Patchkovskii's symmetry analyzer) is <b>GPL-2.0-or-later</b>, which would make a
+statically linked <code>xtb.wasm</code> a GPL-3.0 combined work. It is used only for the thermostatistics rotational symmetry number
+(<code>src/thermo.f90:59</code> ← <code>src/main/property.F90:1344</code>), never for frequencies or intensities.
+<b>Dropping it keeps the artifact pure LGPL — but it also drops the 4 <code>xtb/symmetry</code> tests, which collides with your requirement.</b> Decide
+deliberately: pure-LGPL artifact, or literal test parity.</li>
+<li>Because wasm has no shared-library mechanism, LGPL-3 §4(d)(1) is unavailable — you must satisfy §4(d)(0) by publishing the full build tree plus linkable
+objects so a user can relink a modified xtb. The clean precedent is ffmpeg.wasm: <code>@ffmpeg/ffmpeg</code> is MIT while <code>@ffmpeg/core</code> (the
+package holding the <code>.wasm</code>) is declared GPL. Note the asymmetry: <b>serving a <code>.wasm</code> is conveying; a server-side API conveys
+nothing.</b></li>
+<li>Dependencies split LGPL-3 (tblite, dftd4, CPCM-X) and Apache-2.0 (mctc-lib, multicharge, toml-f); LAPACK/OpenBLAS are BSD.</li>
+</ul>
+
+<h2>8. Recommendation</h2>
+
+<p><b>Do not start the port. Spend hours — not weeks — answering one question first, and keep the server-side path running regardless.</b></p>
+
+<p>The sequencing changed because of &sect;3. The expensive milestones (LAPACK to wasm, building xtb, running the suite) are all downstream of a compiler that
+does not currently work on xtb's Fortran. Doing them now would be building on sand.</p>
+
+<ol>
+<li><b>Step 1 — is the bug already fixed upstream? (hours, do this first.)</b> Run the saved <code>p1..p10</code> probe suite against any flang &ge; 22
+targeting wasm32. If it passes, the blocker is gone and this becomes a straightforward path. This is by far the highest leverage per hour in the whole
+project.</li>
+<li><b>Step 2a — if it passes: native hygiene (2–3 days).</b> Run xtb's suite natively with
+<code>-finit-real=snan -finit-integer=-99999999 -finit-logical=true -ffpe-trap=invalid,zero,overflow</code> and fix what it finds — this is where every
+historical cross-compiler failure lived. Then build xtb with flang <em>natively</em>; nobody ever has, and a native flang failure is far cheaper to debug than
+a wasm one.</li>
+<li><b>Step 2b — if it fails: decide whether to fund a compiler milestone.</b> Extend r-wasm's patch series into flang's semantics layer
+(<code>compute-offsets.cpp</code>, <code>runtime-type-info.cpp</code>, <code>TargetCharacteristics</code>), rebuild LLVM+flang+MLIR on a native linux-amd64
+host (many hours, tens of GB — not under Rosetta), and re-run <code>p1..p10</code> plus the mctc-lib reproduction. <b>This is a genuine project risk, not a
+formality</b>: that patching the semantics layer is <em>sufficient</em> is a hypothesis, and there may be further host-<code>long</code> assumptions
+downstream. Budget it as compiler engineering with an uncertain tail, or find someone upstream to do it.</li>
+<li><b>Step 3 — in parallel, independent of the bug: build reference LAPACK/BLAS to wasm.</b> This is F77-class Fortran, which the current toolchain already
+handles, so it can be de-risked today. Build netlib LAPACK 3.12.1 + reference BLAS with the same flang and smoke-test <code>dgemm</code>/<code>dsyev</code>
+under node. Doing it with the <em>same</em> flang is what makes the ABI self-consistent and avoids the f2c signature-mismatch trap (&sect;10).</li>
+<li><b>Steps 4–6 — only after a working compiler:</b> build xtb via CMake (not meson — only CMake has the <code>LLVMFlang</code> branch supplying
+<code>-fdefault-real-8</code>), run <code>ctest</code> through <code>CMAKE_CROSSCOMPILING_EMULATOR=node</code> with the skip allowlist from &sect;5.2, then
+package down your existing house pattern with <code>-sSTACK_SIZE=8MB</code> and an <code>extern "C"</code> JSON-envelope shim over <code>xtb_hessian</code>.
+Estimating these now would be false precision.</li>
+</ol>
+
+<h3>What to do about ir.cheminfo.org in the meantime</h3>
+<ul>
+<li><b>Keep the server path.</b> It is the only thing that satisfies your test requirement today, and &sect;4's cost model says it must stay anyway for
+molecules above ~45 atoms. Architect the TypeScript client so a wasm backend can slot in behind the same interface later — that is the cheap insurance.</li>
+<li><b>Evaluate <code>@peterspackman/occjs</code> now.</b> It already runs GFN2-xTB in the browser (benzene's 36-mode Hessian in 1.04 s, measured) and gives
+you correct band <em>positions</em> immediately. Its gap is IR intensities — it exposes no dipole derivatives. Adding those to a 9k-line C++ codebase you can
+compile with the emcc toolchain you already master is a far smaller, far more predictable job than fixing LLVM Flang. <b>If the goal is "IR spectra in the
+browser" rather than "xtb in the browser", this is the shortest credible path</b> — but note it satisfies none of your test requirement, so it is a product
+decision, not a compliance one.</li>
+</ul>
+
+<h2>9. The next experiment — start here</h2>
+
+<p>One question, answerable in hours, decides everything: <b>has upstream LLVM made flang's semantics layer target-aware since 21.1.8?</b></p>
+
+<pre><code># The probe suite is already written and saved — 10 files, ~30 lines each
+cd experiments/fortran-wasm/probes
+
+# Run them against the CURRENT toolchain to reproduce the known-bad baseline
+docker run --rm --platform linux/amd64 -v "$PWD:/work" -w /work \
+  ghcr.io/r-wasm/flang-wasm:main bash -lc '
+    source /opt/emsdk/emsdk_env.sh
+    export PATH=/opt/flang/host/bin:$PATH
+    for f in p*.f90; do
+      flang -c "$f" -o "${f%.f90}.o" &amp;&amp; \
+      emcc "${f%.f90}.o" -L/opt/flang/wasm/lib -lFortranRuntime -sNODERAWFS -o "${f%.f90}.js" &amp;&amp; \
+      echo "== $f" &amp;&amp; node "${f%.f90}.js"
+    done'
+# Expected today: p1,p2,p4,p5,p7,p8 abort; p9,p10 print 0 instead of 42
+
+# Then the real question — the same suite against any flang >= 22 for wasm32.
+# Sources to try, in order of cost:
+#   1. a newer r-wasm/flang-wasm tag, if one appears
+#   2. rebuild r-wasm/llvm-project@wasm rebased onto LLVM 23.1.0
+#      (-DLLVM_DEFAULT_TARGET_TRIPLE=wasm32-unknown-emscripten
+#       -DLLVM_TARGETS_TO_BUILD=WebAssembly
+#       -DLLVM_ENABLE_PROJECTS="clang;flang;mlir" -DFLANG_ENABLE_FLANG_RT=OFF)
+#      -- on a native linux-amd64 host, NOT under Rosetta
+#   3. ask upstream: llvm/llvm-project#54832 is the tracking issue
+
+# Independent of the above, and worth doing now (F77-class, already works):
+#   build netlib LAPACK 3.12.1 + reference BLAS with this flang, link with emcc,
+#   smoke-test dgemm/dsyev under node.
+</code></pre>
+
+<p><b>Stop rules.</b> If a flang &ge; 22 passes <code>p1..p10</code>, proceed to step 2a and the project is live. If it fails and nobody upstream is working
+on it, the honest answer to "can we have xtb in the browser this year?" is no — and the conversation should move to occjs plus the server, not to a longer
+port schedule.</p>
+
+<h2>10. Risks, unknowns, and what was refuted</h2>
+<ul>
+<li><b>Resolved by the spike, and it is the headline:</b> no wasm build of xtb was produced, because no available toolchain can compile xtb's dependency
+source at all (&sect;3). flang has still never been shown to compile xtb <em>natively</em> either — that remains untested and is now step 2a.</li>
+<li><b>The load-bearing hypothesis:</b> that patching flang's semantics layer to use 4-byte pointers and a 32-bit <code>CFI_index_t</code> on wasm32 clears
+the blocker. The root cause is <em>measured</em>; that this fix is <em>sufficient</em> is not. There may be further host-<code>long</code> assumptions
+downstream. The entire project now rests on this.</li>
+<li><b>The reference fixtures are aarch64-only</b>, generated with gfortran 13.3.0 on Apple Silicon Docker. Your own
+<code>pipeline-workers/xtb-vibrational</code> pins <code>--platform=linux/amd64</code> because <em>"xtb's ARM64 build has numerical bugs"</em> — yet this study
+measured zero spread on aarch64 across every backend, thread count and FP setting tried. Those two facts are in tension. <b>Regenerate the fixtures on amd64
+and diff them</b>: it either confirms your ARM64 note or retires it, and it costs one Docker run.</li>
+<li><b>Only <code>error_type</code> was measured against real xtb-family source.</b> Whether all ~1000 <code>class(...)</code> sites are affected or only some
+is unknown — irrelevant to go/no-go (one blocked site on the universal error path is enough), but relevant to post-fix risk estimation. Next step once a fixed
+compiler exists: compile mctc-lib and toml-f standalone and run <em>their</em> suites under node before touching xtb.</li>
+<li><b>Everything downstream of a working compiler is unmeasured:</b> whether <code>src/mctc/signal.c</code> builds under emcc, whether NODERAWFS holds at
+test-suite scale, GFN2 numerical agreement wasm-vs-native, build wall-time, and final <code>.wasm</code> size. Do not estimate these from this study.</li>
+<li><b>flang-rt's Fortran I/O layer is unvalidated on wasm.</b> emscripten-forge's build disables all runtime tests; its entire validation is one
+<code>PRINT *</code>. Nothing exercises <code>OPEN</code>/<code>READ</code>/<code>WRITE</code>/<code>INQUIRE</code> or scratch files.
+<code>flang-rt/lib/runtime/file.cpp:33-58</code> hard-codes <code>/tmp/Fortran-Scratch-XXXXXX</code> + <code>mkstemp</code> — fine under NODERAWFS,
+impossible under WASI.</li>
+<li><b>WASI is ruled out mechanically</b>, not on maturity: wasi-sdk 34's libc has no <code>signal</code>, <code>tmpfile</code>, <code>mkstemp</code> or
+<code>system</code>, and <code>src/mctc/signal.c</code> does not even compile for <code>wasm32-wasip1</code> — while being on the critical path of every unit
+test via <code>mctc_init</code>.</li>
+<li><b>LAPACK ABI is the classic killer, and it is avoidable.</b> flang emits the f2c convention (trailing underscore, by-reference, hidden CHARACTER lengths
+as trailing <code>i32</code>, COMPLEX via <code>sret</code>) — but f2c/CLAPACK declares subroutines as <code>int foo_()</code> where flang expects
+<code>void</code>, and omits the trailing <code>ftnlen</code> arguments. Symptom: <code>wasm-ld: warning: function signature mismatch</code> then
+<code>RuntimeError: unreachable</code> at call time, with no linker flag to relax it. <b>Compile reference LAPACK from Fortran with the same flang and the
+problem does not exist.</b></li>
+<li><b>Refuted during verification:</b> the claim that "no component requires Fortran 2018" — tblite v0.6.0 needs F2018 for <code>ERROR STOP</code> in
+<code>pure</code> procedures. Also corrected: <code>findloc</code> and <code>impure elemental</code> are F2008 features, so their absence proves nothing about
+F2018.</li>
+<li><b>Acceptance scope is genuinely ambiguous and must be pinned.</b> "All the tests of the original project" is not what upstream runs: meson filters
+<code>--suite xtb</code>, CTest's <code>-R 'xtb/*'</code> is a substring regex, and CI explicitly excludes <code>tblite/gfn1-xtb</code>. The literal reading —
+<code>ninja test</code> with no filter, 131 targets across six subprojects — has never been run by upstream on any platform. Do not let it become the contract
+by default.</li>
+</ul>
+
+<footer>
+Research appendix: 13 agent reports in <code>research/</code>, most importantly
+<code>09-fortran-to-wasm-toolchains.md</code>, <code>test-suite-requirement.md</code>, <code>05-ir-hessian-path-and-cost.md</code> and
+<code>07-lapack-blas-in-wasm-and-abi.md</code> and <code>14-build-spike.md</code>.<br>Reproducible artifacts: <code>experiments/fortran-wasm/probes/</code> (the 10-probe toolchain-fitness suite), <code>experiments/fortran-wasm/realcode/</code> (the mctc-lib reproduction), <code>experiments/benchmark/</code> (native cost model, 23 molecules).<br>
+Key sources: <a href="https://github.com/r-wasm/flang-wasm">r-wasm/flang-wasm</a> &middot;
+<a href="https://gws.phd/posts/fortran_wasm/">Fortran on WebAssembly (G. Stagg)</a> &middot;
+<a href="https://github.com/grimme-lab/xtb/pull/1207">xtb#1207 LLVMFlang support</a> &middot;
+<a href="https://emscripten-forge.org">emscripten-forge</a> &middot;
+<a href="https://github.com/peterspackman/occ">peterspackman/occ</a>
+</footer>
+
+</div>
+</body>
+</html>

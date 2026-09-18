@@ -1,0 +1,321 @@
+{
+  "schema": "xtb-wasm/ir-reference/1",
+  "molecule": {
+    "name": "methanol",
+    "formula": "CH4O",
+    "smiles": "CO",
+    "n_atoms": 6,
+    "charge": 0,
+    "uhf": 0
+  },
+  "provenance": {
+    "xtb_version": "6.7.1",
+    "method": "GFN2-xTB",
+    "build_label": "wasm-shaped",
+    "build_options": "meson setup --buildtype=release -Dlapack=openblas -Dopenmp=false -Dtblite=disabled -Dcpcmx=disabled",
+    "geometry_source": "SMILES -> Open Babel --gen3d (obabel 3.1.1), then xtb --opt --gfn 2",
+    "hessian_rounds": 1,
+    "saddle_escape_applied": false,
+    "hessian_rounds_note": "Number of --ohess rounds. >1 means the first Hessian had an imaginary mode (a methyl-torsion saddle point); the geometry was distorted along it (xtb's xtbhess.xyz) and re-optimized until all modes are real.",
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "lapack": "OpenBLAS (Ubuntu 24.04 libopenblas.so.0)",
+      "host_arch": "aarch64",
+      "container": "xtbnat:base (ubuntu:24.04, gfortran 13.3.0)"
+    },
+    "commands": {
+      "preoptimization": "/opt/work/xtb-B/_build_wasmshape/xtb input.xyz --opt --gfn 2 --chrg 0 --uhf 0",
+      "hessian": "/opt/work/xtb-B/_build_wasmshape/xtb optimized.xyz --ohess --gfn 2 --chrg 0 --uhf 0"
+    }
+  },
+  "input_geometry_xyz": {
+    "n_atoms": 6,
+    "comment": "",
+    "atoms": [
+      {
+        "symbol": "C",
+        "x": 1.06316,
+        "y": 0.0598,
+        "z": 0.05395
+      },
+      {
+        "symbol": "O",
+        "x": 2.47888,
+        "y": 0.05958,
+        "z": 0.06465
+      },
+      {
+        "symbol": "H",
+        "x": 0.70165,
+        "y": -0.82503,
+        "z": -0.47568
+      },
+      {
+        "symbol": "H",
+        "x": 0.70165,
+        "y": 0.9657,
+        "z": -0.43878
+      },
+      {
+        "symbol": "H",
+        "x": 0.70007,
+        "y": 0.03857,
+        "z": 1.08423
+      },
+      {
+        "symbol": "H",
+        "x": 2.77179,
+        "y": 0.07868,
+        "z": -0.86229
+      }
+    ]
+  },
+  "optimized_geometry_xyz": {
+    "n_atoms": 6,
+    "comment": " energy: -8.226118333561 gnorm: 0.000247752901 xtb: 6.7.1 (unknown)",
+    "atoms": [
+      {
+        "symbol": "C",
+        "x": 1.06584873670773,
+        "y": 0.06009678998755,
+        "z": 0.03958151843967
+      },
+      {
+        "symbol": "O",
+        "x": 2.47179837411987,
+        "y": 0.05957840627956,
+        "z": 0.06471519441389
+      },
+      {
+        "symbol": "H",
+        "x": 0.66943514880777,
+        "y": -0.82121113722254,
+        "z": -0.47642094724264
+      },
+      {
+        "symbol": "H",
+        "x": 0.66943574087776,
+        "y": 0.96191381121075,
+        "z": -0.43967697264764
+      },
+      {
+        "symbol": "H",
+        "x": 0.73757084544196,
+        "y": 0.03871828015917,
+        "z": 1.0770496180165
+      },
+      {
+        "symbol": "H",
+        "x": 2.80311115404491,
+        "y": 0.07820384958551,
+        "z": -0.8391684109798
+      }
+    ]
+  },
+  "energies_hartree": {
+    "total_energy": -8.226118333561,
+    "total_enthalpy": -8.172258608684,
+    "total_free_energy": -8.19915744126,
+    "gradient_norm": 0.000247752045,
+    "zero_point_energy": 0.049639314935,
+    "g_rrho_without_zpve": -0.022678422634,
+    "g_rrho_contribution": 0.026960892301
+  },
+  "homo_lumo_gap_ev": 13.101055102616,
+  "dipole": {
+    "x": -0.372,
+    "y": 0.013,
+    "z": -0.655,
+    "total_debye": 1.915
+  },
+  "vibrations": {
+    "units": {
+      "frequency": "cm^-1",
+      "ir_intensity": "km/mol"
+    },
+    "n_modes_total": 18,
+    "n_vibrational_modes": 12,
+    "n_imaginary": 0,
+    "frequencies": [
+      373.53,
+      1031.02,
+      1091.01,
+      1140.18,
+      1314.35,
+      1416.5,
+      1485.11,
+      1489.75,
+      2918.21,
+      2937.62,
+      3033.84,
+      3558.03
+    ],
+    "ir_intensities": [
+      152.34135,
+      86.17181,
+      25.68179,
+      2.84311,
+      68.08456,
+      3.3459,
+      4.67976,
+      1.38663,
+      68.02089,
+      54.92981,
+      17.5503,
+      7.84671
+    ],
+    "all_modes_including_trans_rot": {
+      "frequencies": [
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        373.53,
+        1031.02,
+        1091.01,
+        1140.18,
+        1314.35,
+        1416.5,
+        1485.11,
+        1489.75,
+        2918.21,
+        2937.62,
+        3033.84,
+        3558.03
+      ],
+      "ir_intensities": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        152.34135,
+        86.17181,
+        25.68179,
+        2.84311,
+        68.08456,
+        3.3459,
+        4.67976,
+        1.38663,
+        68.02089,
+        54.92981,
+        17.5503,
+        7.84671
+      ]
+    }
+  },
+  "hessian_invariants": {
+    "dimension": 18,
+    "frobenius_norm": 1.6289787621825884,
+    "trace": 4.1408551959999995,
+    "valid": true
+  },
+  "timings_seconds": {
+    "preoptimization_wall": 0.139,
+    "ohess_wall": 0.105,
+    "xtb_internal": {
+      "total": 0.098,
+      "SCF": 0.004,
+      "ANC optimizer": 0.002,
+      "analytical hessian": 0.079
+    },
+    "note": "preoptimization_wall/ohess_wall are external wall clock for the two xtb invocations. xtb_internal is xtb's own breakdown of the --ohess run; 'ANC optimizer' is the geometry relaxation and 'analytical hessian' is the 6N+1 finite-difference Hessian (despite the label, xtb has no analytic Hessian)."
+  },
+  "validation": {
+    "tier1_eligible": true,
+    "tier2_single_ohess_reaches_minimum": true,
+    "note": "A single --ohess from geometries/methanol.xyz reaches this minimum."
+  },
+  "tier1_hess_at_optimized_geometry": {
+    "description": "Reference for the tier-1 validation protocol: `xtb optimized.xyz --hess --gfn 2` run at exactly the coordinates in optimized_geometry_xyz, with no optimizer step. Use THIS block when validating with --hess; the top-level `vibrations` block came from --ohess, which relaxes the geometry a little further first and therefore reports slightly different IR intensities.",
+    "command": "xtb optimized.xyz --hess --gfn 2 --chrg <charge> --uhf <uhf>",
+    "total_energy_hartree": -8.226118333561,
+    "zero_point_energy_hartree": 0.049639315163,
+    "units": {
+      "frequency": "cm^-1",
+      "ir_intensity": "km/mol"
+    },
+    "n_vibrational_modes": 12,
+    "n_imaginary": 0,
+    "frequencies": [
+      373.53,
+      1031.02,
+      1091.01,
+      1140.18,
+      1314.35,
+      1416.5,
+      1485.11,
+      1489.75,
+      2918.21,
+      2937.62,
+      3033.84,
+      3558.03
+    ],
+    "ir_intensities": [
+      152.34131,
+      86.17181,
+      25.68179,
+      2.84311,
+      68.08456,
+      3.3459,
+      4.67976,
+      1.38663,
+      68.02089,
+      54.92981,
+      17.5503,
+      7.84671
+    ],
+    "all_modes_including_trans_rot": {
+      "frequencies": [
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        373.53,
+        1031.02,
+        1091.01,
+        1140.18,
+        1314.35,
+        1416.5,
+        1485.11,
+        1489.75,
+        2918.21,
+        2937.62,
+        3033.84,
+        3558.03
+      ],
+      "ir_intensities": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        152.34131,
+        86.17181,
+        25.68179,
+        2.84311,
+        68.08456,
+        3.3459,
+        4.67976,
+        1.38663,
+        68.02089,
+        54.92981,
+        17.5503,
+        7.84671
+      ]
+    },
+    "hessian_invariants": {
+      "dimension": 18,
+      "frobenius_norm": 1.6289787611538704,
+      "trace": 4.140855202899999,
+      "n_elements": 324,
+      "valid": true
+    }
+  }
+}

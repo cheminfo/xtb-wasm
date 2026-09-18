@@ -1,0 +1,208 @@
+{
+  "schema": "xtb-wasm/validation-tolerances/1",
+  "purpose": "Assertions a wasm build of xtb 6.7.1 must satisfy against the fixtures in ./fixtures, with the tolerances justified by the measured native spread (see evidence below).",
+  "evidence": {
+    "native_variant_spread": {
+      "source": "tolerance_study.json + logs/tolerance_run.log",
+      "variants_compared": [
+        "B_omp1_openblas1 (reference: -O3 release, OpenBLAS, OpenMP off, 1 BLAS thread)",
+        "B_repeat_identical (same binary, same env, rerun -> run-to-run floor)",
+        "B_omp1_openblas4 (OPENBLAS_NUM_THREADS=4)",
+        "A_omp1_openblas1 (OpenMP-enabled build, 1 thread)",
+        "A_omp4_openblas4 (OpenMP-enabled build, 4 OpenMP + 4 BLAS threads)",
+        "C_omp1_netlib_reference (netlib reference LAPACK 3.12 + reference BLAS forced via LD_LIBRARY_PATH)"
+      ],
+      "molecules": 10,
+      "observed": {
+        "energy_max_abs_diff_hartree": 0.0,
+        "frequency_max_abs_diff_cm1": 0.0,
+        "ir_intensity_max_abs_diff_km_mol": 0.0,
+        "ir_intensity_max_rel_diff_above_1km_mol": 0.0
+      },
+      "note": "Every delta is exactly zero at the precision xtb prints (12 decimals on TOTAL ENERGY, 0.01 cm^-1 and 1e-5 km/mol in vibspectrum). The LAPACK swap is genuinely active - a --grad run on caffeine shows the two builds' gradient components differing at ~1e-16 Eh/a0 absolute - but that noise never reaches the printed digits."
+    },
+    "fp_perturbation": {
+      "source": "fp_perturbation_study.json + logs/fp_study.log",
+      "perturbed_build": "D = -O1 -ffp-contract=off -fno-unsafe-math-optimizations, netlib reference LAPACK/BLAS, OpenMP off",
+      "rationale": "Changes FMA contraction, vectorisation and the linear-algebra backend simultaneously - the closest native proxy for the floating-point reassociation a different toolchain (flang-wasm) introduces.",
+      "observed": {
+        "energy_max_abs_diff_hartree": 0.0,
+        "frequency_max_abs_diff_cm1": 0.0,
+        "ir_intensity_max_abs_diff_km_mol": 0.0,
+        "hessian_max_abs_element_diff": 1e-10,
+        "hessian_max_abs_element_diff_note": "1 unit in the last printed digit of the xtb 'hessian' file (10 decimals); 2 of 9801 elements for ibuprofen, 0 for the smaller molecules."
+      },
+      "fixed_geometry_hess_check": {
+        "command": "xtb optimized.xyz --hess --gfn 2 (no optimizer)",
+        "molecules": [
+          "benzene",
+          "paracetamol",
+          "caffeine",
+          "ibuprofen"
+        ],
+        "cartesian_hessian": "bit-identical for benzene/paracetamol/caffeine; 2 of 9801 elements differ by 1e-10 for ibuprofen",
+        "vibspectrum": "the 3N-6 vibrational rows are identical; the only textual difference is the sign of the numerical-zero translation/rotation rows (-0.00 vs 0.00)"
+      }
+    },
+    "input_sensitivity": {
+      "source": "input_sensitivity.json + logs/sensitivity.log",
+      "method": "Full --ohess pipeline restarted from the fixture's optimized geometry perturbed by a uniform random +/- eps A per Cartesian coordinate, 2 seeds, 4 molecules.",
+      "amplification": {
+        "1e-08": {
+          "energy_max_abs_diff_hartree": 1.6e-11,
+          "frequency_max_abs_diff_cm1": 0.0,
+          "ir_intensity_max_rel_diff": 0.000109
+        },
+        "1e-06": {
+          "energy_max_abs_diff_hartree": 1.61e-09,
+          "frequency_max_abs_diff_cm1": 0.04,
+          "ir_intensity_max_rel_diff": 0.0107
+        },
+        "1e-04": {
+          "energy_max_abs_diff_hartree": 1.87e-06,
+          "frequency_max_abs_diff_cm1": 19.34,
+          "ir_intensity_max_rel_diff": 0.531
+        }
+      },
+      "conclusion": "The geometry, not the arithmetic, is what moves the numbers. The ANC optimizer stops at gnorm ~2e-4, so two builds that take slightly different optimizer paths can land on geometries that differ at the 1e-4 A level, which is worth up to ~20 cm^-1 on soft modes and tens of percent on IR intensities. This - not floating-point rounding - is what a validation suite has to be tolerant of."
+    },
+    "tier1_protocol_sensitivity": {
+      "source": "self-check of scripts/validate.py against the build that produced the fixtures",
+      "observation": "Running --hess at the stored optimized geometry instead of --ohess changes the energy by <= 3.2e-11 Eh and frequencies by <= 0.06 cm^-1, but IR intensities by up to 16% relative (cholesterol mode 204: 12.96 vs 11.17 km/mol; ibuprofen mode 43: 5.11 vs 4.77 km/mol).",
+      "conclusion": "IR intensities are far more sensitive to the exact geometry than frequencies are - the same conclusion the input-sensitivity study reached from the other direction. Hence the tier1_hess_at_optimized_geometry block, and hence the 2% intensity tolerance is only meaningful against a reference produced by the identical protocol."
+    }
+  },
+  "recommended_assertions": {
+    "tier_1_fixed_geometry": {
+      "description": "PRIMARY validation path. Run the wasm build with --hess (NOT --ohess) starting from fixtures[*].optimized_geometry_xyz. The optimizer is excluded, so the comparison is purely of the SCF + finite-difference Hessian + dipole-gradient code. This is where the tolerances can be tight and where a real numerical regression will show up.",
+      "command": "xtb optimized.xyz --hess --gfn 2 --chrg <charge> --uhf <uhf>",
+      "assertions": [
+        {
+          "quantity": "total_energy",
+          "field": "energies_hartree.total_energy",
+          "tolerance": 1e-08,
+          "unit": "Eh",
+          "kind": "absolute",
+          "justification": "Native spread is 0 at the 1e-12 print precision across LAPACK, thread-count and FMA variants. 1e-8 Eh leaves four orders of magnitude of headroom for a different libm while still being 1e5 times tighter than chemical accuracy (1 kcal/mol = 1.6e-3 Eh)."
+        },
+        {
+          "quantity": "vibrational_frequencies",
+          "field": "vibrations.frequencies",
+          "tolerance": 0.5,
+          "unit": "cm^-1",
+          "kind": "absolute, element-wise, after sorting ascending",
+          "justification": "Native spread is 0.00 cm^-1 (the vibspectrum print precision is 0.01). 0.5 cm^-1 is 50x the print precision and ~12x the response to a 1e-6 A geometry change, yet ~60x tighter than GFN2's own error against experiment (~30-50 cm^-1), so it still fails on a real regression."
+        },
+        {
+          "quantity": "ir_intensities",
+          "field": "vibrations.ir_intensities",
+          "tolerance": 0.02,
+          "unit": "relative",
+          "kind": "relative, ONLY for peaks with reference intensity > 1.0 km/mol",
+          "justification": "IR intensities are the most sensitive quantity measured: a 1e-6 A geometry change already moves them by ~1e-2 relative while frequencies move by 0.04 cm^-1. Native build variants give exactly 0. 2% relative is the smallest tolerance that is not dominated by geometry noise."
+        },
+        {
+          "quantity": "ir_intensities_weak",
+          "field": "vibrations.ir_intensities",
+          "tolerance": 0.05,
+          "unit": "km/mol",
+          "kind": "absolute, for peaks with reference intensity <= 1.0 km/mol",
+          "justification": "A relative test on a near-zero intensity is meaningless; a 0.05 km/mol absolute floor keeps those modes covered without being noise-driven."
+        },
+        {
+          "quantity": "cartesian_hessian",
+          "field": "hessian_invariants.frobenius_norm and hessian_invariants.trace",
+          "tolerance": 1e-06,
+          "unit": "relative",
+          "kind": "relative",
+          "justification": "Rotation-invariant scalars of the full 3Nx3N Hessian, so they catch an error anywhere in the matrix, including in modes that happen to be IR-silent. The FP-perturbed build reproduces the Hessian to 1e-10 absolute per element, so 1e-6 relative on the norm is generous."
+        },
+        {
+          "quantity": "n_imaginary",
+          "field": "vibrations.n_imaginary",
+          "tolerance": 0,
+          "unit": "count",
+          "kind": "exact",
+          "justification": "All ten fixtures are true minima with zero imaginary modes. Any imaginary mode in the wasm build means the Hessian is wrong, not that the tolerance is tight."
+        },
+        {
+          "quantity": "n_vibrational_modes",
+          "field": "vibrations.n_vibrational_modes",
+          "tolerance": 0,
+          "unit": "count",
+          "kind": "exact",
+          "justification": "3N-6 (3N-5 for a linear molecule). A mismatch means the trans/rot projection differs."
+        }
+      ],
+      "reference_block": "Compare against fixtures[*].tier1_hess_at_optimized_geometry, NOT the top-level `vibrations` block. The top-level block came from --ohess, which relaxes the geometry a little further before building the Hessian; running --hess at the stored coordinates instead reproduces the same frequencies to 0.06 cm^-1 but IR intensities that differ by up to 16% for the larger molecules. Measured with the SAME binary, so it is a protocol mismatch, not a numerical one. With the tier-1 block, the reference build reproduces every quantity exactly."
+    },
+    "tier_2_full_pipeline": {
+      "description": "SECONDARY validation path, matching what ir.cheminfo.org actually does: --ohess from the raw input geometry in ./geometries. It exercises the ANC optimizer as well, so it is far looser and must never be the only check.",
+      "command": "xtb input.xyz --ohess --gfn 2 --chrg <charge> --uhf <uhf>",
+      "assertions": [
+        {
+          "quantity": "total_energy",
+          "field": "energies_hartree.total_energy",
+          "tolerance": 1e-05,
+          "unit": "Eh",
+          "kind": "absolute",
+          "justification": "Both builds converge to the same minimum, but along possibly different optimizer paths; the 1e-4 A geometry probe moved the energy by up to 1.9e-6 Eh, so 1e-5 Eh absorbs that with margin."
+        },
+        {
+          "quantity": "vibrational_frequencies_above_500",
+          "field": "vibrations.frequencies",
+          "tolerance": 5.0,
+          "unit": "cm^-1",
+          "kind": "absolute, modes >= 500 cm^-1 only",
+          "justification": "Stiff modes are insensitive to the residual geometry difference: at 1e-4 A perturbation the max shift over benzene/acetic acid/caffeine was 0.3-3.9 cm^-1."
+        },
+        {
+          "quantity": "vibrational_frequencies_below_500",
+          "field": "vibrations.frequencies",
+          "tolerance": 25.0,
+          "unit": "cm^-1",
+          "kind": "absolute, modes < 500 cm^-1 only",
+          "justification": "Soft torsions are the sensitive ones: paracetamol moved 19.3 cm^-1 under a 1e-4 A perturbation. Anything tighter will produce false failures that have nothing to do with the wasm port."
+        },
+        {
+          "quantity": "ir_intensities",
+          "field": "vibrations.ir_intensities",
+          "tolerance": 0.5,
+          "unit": "relative",
+          "kind": "relative, ONLY for peaks with reference intensity > 5.0 km/mol",
+          "justification": "The 1e-4 A probe produced up to 53% relative intensity change on peaks above 1 km/mol. Restricting to the strong peaks (>5 km/mol) and 50% relative is the honest bound for the full pipeline; it still catches a grossly wrong dipole gradient."
+        },
+        {
+          "quantity": "n_imaginary",
+          "field": "vibrations.n_imaginary",
+          "tolerance": 0,
+          "unit": "count",
+          "kind": "exact"
+        }
+      ],
+      "eligibility": "Only molecules with validation.tier2_single_ohess_reaches_minimum = true. For toluene and caffeine a single --ohess from the raw geometry stops at a methyl-rotor saddle point with one imaginary mode (-25.7 and -65.0 cm^-1 respectively), which is why the fixtures needed 3 and 4 displace-and-reoptimize rounds. That is a property of the potential energy surface, not of the build, so tier 2 must skip them or reproduce the escape loop."
+    }
+  },
+  "comparison_rules": [
+    "Never byte-compare the vibspectrum file. The three to six numerical-zero translation/rotation rows print as -0.00 or 0.00 depending on the last bit, and this varies between builds that are otherwise bit-identical.",
+    "Drop all modes with |frequency| < 0.01 cm^-1 before comparing; those are the projected-out translations and rotations. fixtures[*].vibrations.frequencies is already filtered this way, and vibrations.all_modes_including_trans_rot keeps the unfiltered list.",
+    "Sort both frequency lists ascending before an element-wise comparison; near-degenerate modes (benzene has several) can be emitted in a different order.",
+    "Compare IR intensities by matching the sorted frequency index, not by matching intensity values.",
+    "Set OMP_NUM_THREADS=1 for the native side of any comparison. It is not required for reproducibility (thread count was measured to change nothing) but it keeps the wall-clock numbers comparable.",
+    "The fixtures were produced on aarch64. The tolerance study did not cover x86-64, so an x86-64 native reference may differ from these files by more than the tolerances above; regenerate on the target architecture if that matters."
+  ],
+  "validation_harness": {
+    "script": "scripts/validate.py",
+    "usage": [
+      "python3 scripts/validate.py /path/to/xtb                 # tier 1, all fixtures",
+      "python3 scripts/validate.py /path/to/xtb --tier 2",
+      "python3 scripts/validate.py /path/to/xtb --only water benzene"
+    ],
+    "exit_status": "0 only if every checked molecule is within tolerance.",
+    "self_check_results": {
+      "reference_build_B_tier1": "PASS 10/10 (all deltas exactly 0)",
+      "fp_perturbed_build_D_tier1": "PASS 10/10 (all deltas exactly 0) - D differs from B in optimization level, FMA contraction and LAPACK backend",
+      "reference_build_B_tier2": "PASS 8/8, 2 skipped (toluene, caffeine)"
+    }
+  }
+}
