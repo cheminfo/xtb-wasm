@@ -1,6 +1,6 @@
 {
   "name": "xtb-wasm",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "GFN2-xTB vibrational spectroscopy in the browser: harmonic frequencies, IR intensities, Raman activities and RRHO thermochemistry, validated against native xtb",
   "license": "GPL-3.0-or-later",
   "type": "module",
