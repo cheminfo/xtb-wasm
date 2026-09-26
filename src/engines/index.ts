@@ -33,3 +33,15 @@ export {
 } from './occAnalyse.ts';
 export { createOccjsEngine, occjsEngine, occjsSerialEngine } from './occjs.ts';
 export { disposeOccPool, occPoolWorkerCount } from './occPoolLifecycle.ts';
+export {
+  relaxGeometryInProcess,
+  relaxInProcess,
+  relaxRefusals,
+  resolveRelaxSettings,
+} from './occRelax.ts';
+export type { RelaxPoolOptions, RelaxPoolSizeInput } from './occRelaxPool.ts';
+export {
+  relaxGeometries,
+  relaxGeometry,
+  relaxPoolSize,
+} from './occRelaxPool.ts';

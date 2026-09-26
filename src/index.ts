@@ -53,6 +53,7 @@ export {
   ramanActivities,
   ramanSupport,
 } from './chemistry/raman/index.ts';
+export type { RelaxPoolOptions } from './engines/index.ts';
 export {
   ENGINES,
   createOccjsEngine,
@@ -61,6 +62,9 @@ export {
   occPoolWorkerCount,
   occjsEngine,
   occjsSerialEngine,
+  relaxGeometries,
+  relaxGeometry,
+  relaxGeometryInProcess,
 } from './engines/index.ts';
 export type {
   BuildOptions,
@@ -96,6 +100,10 @@ export type {
   Molecule,
   MoleculeSource,
   OutputSelection,
+  RelaxOptions,
+  RelaxRequest,
+  RelaxResult,
+  RelaxSettings,
   Thermochemistry,
   Timings,
   VibrationalEngine,
@@ -104,4 +112,8 @@ export type {
   VibrationalResult,
   XtbMethod,
 } from './types/index.ts';
-export { DEFAULT_OUTPUTS, DEFAULT_SETTINGS } from './types/index.ts';
+export {
+  DEFAULT_OUTPUTS,
+  DEFAULT_RELAX_SETTINGS,
+  DEFAULT_SETTINGS,
+} from './types/index.ts';

@@ -1,6 +1,5 @@
 /// <reference lib="webworker" />
 import { describeOccError, loadOccModule } from './occModule.ts';
-import { optimizeGeometry } from './occOptimize.ts';
 import type { HandleScope } from './occScope.ts';
 import { createHandleScope } from './occScope.ts';
 import type { PreparedSystem } from './occSetup.ts';
@@ -10,8 +9,8 @@ import { createSweepContext, sweepColumns } from './occSweep.ts';
 import { detectPointGroup } from './occSymmetry.ts';
 import type { OccModule } from './occTypes.ts';
 import { readAtomicMasses, solveVibrations } from './occVibrations.ts';
+import { runOptimizeCommand, runRelaxCommand } from './occWorkerJobs.ts';
 import type {
-  OptimizeCommand,
   PrepareCommand,
   WorkerCommand,
   WorkerMessage,
@@ -65,7 +64,10 @@ async function dispatch(command: WorkerCommand): Promise<void> {
 
     switch (command.cmd) {
       case 'optimize':
-        optimize(module, command);
+        runOptimizeCommand(module, command, post);
+        return;
+      case 'relax':
+        runRelaxCommand(module, command, post);
         return;
       case 'prepare':
         prepare(module, command);
@@ -91,43 +93,6 @@ async function dispatch(command: WorkerCommand): Promise<void> {
       id: command.cmd === 'load' ? 0 : command.id,
       message,
     });
-  }
-}
-
-function optimize(module: OccModule, command: OptimizeCommand): void {
-  const scope = createHandleScope();
-  try {
-    const { geometry, settings } = command.input;
-    const prepared = prepareSystem(module, geometry, settings, scope);
-    const relaxed = optimizeGeometry(
-      module,
-      prepared.molecule,
-      prepared.calculator,
-      {
-        maxCycles: settings.maxCycles,
-        onCycle: (cycle, energy) => {
-          post({
-            type: 'progress',
-            id: command.id,
-            stage: 'optimize',
-            fraction: null,
-            message: `Optimizing: cycle ${cycle}, E = ${energy.toFixed(8)} Eh`,
-          });
-        },
-      },
-    );
-    post(
-      {
-        type: 'optimized',
-        id: command.id,
-        coordinates: relaxed.coordinates,
-        cycles: relaxed.cycles,
-        converged: relaxed.converged,
-      },
-      [relaxed.coordinates.buffer],
-    );
-  } finally {
-    scope.release();
   }
 }
 

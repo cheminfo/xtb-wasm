@@ -17,6 +17,13 @@ export type {
 } from './engine.ts';
 export type { Geometry, Molecule, MoleculeSource } from './molecule.ts';
 export type {
+  RelaxOptions,
+  RelaxRequest,
+  RelaxResult,
+  RelaxSettings,
+} from './relax.ts';
+export { DEFAULT_RELAX_SETTINGS } from './relax.ts';
+export type {
   ModeInvolvement,
   Thermochemistry,
   VibrationalMode,

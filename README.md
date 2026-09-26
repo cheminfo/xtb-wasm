@@ -1,9 +1,9 @@
 # xtb-wasm
 
-GFN2-xTB vibrational spectroscopy as a library: hand it a structure and it returns the
-optimized geometry, the harmonic wavenumbers, the IR intensities, the Raman activities and
-the RRHO thermochemistry — computed on the machine the page is open on, with nothing
-uploaded.
+GFN2-xTB as a library: hand it a structure and it returns the optimized geometry, the
+harmonic wavenumbers, the IR intensities, the Raman activities and the RRHO
+thermochemistry — computed on the machine the page is open on, with nothing uploaded. Or
+ask only for the geometry and the energy, which is the cheap half of that.
 
 The quantum chemistry is [`@peterspackman/occjs`](https://www.npmjs.com/package/@peterspackman/occjs)
 — OCC, an independent C++17 implementation of GFN2-xTB compiled to WebAssembly — driven
@@ -49,6 +49,46 @@ console.log(result.energy.total, result.thermochemistry?.totalFreeEnergy);
 `occjsEngine.validate(request)` returns the same refusals as strings without running
 anything.
 
+### Relaxing a geometry and nothing else
+
+A geometry optimization with no Hessian after it is the cheap half of the library, and it
+is what a conformer search wants as a second stage: a force field such as MMFF94 places the
+atoms well but ranks conformers badly, because it has no dispersion and no electronic
+structure, and both are what decides which conformer is lowest.
+
+```ts
+import { relaxGeometries, relaxGeometry } from 'xtb-wasm';
+
+const relaxed = await relaxGeometry({
+  geometry: { elements: ['O', 'H', 'H'], coordinates: new Float64Array([...]) },
+});
+relaxed.energy.total; // Eh, at relaxed.coordinates
+relaxed.energy.dispersion; // the D4 term, which MMFF94 has no counterpart for
+relaxed.cycles;
+relaxed.converged;
+```
+
+`relaxGeometries` takes several structures and hands them out one at a time across the
+worker pool — every relaxation is an independent whole job, so a set of conformers
+parallelises cleanly — and returns one result per request, in request order:
+
+```ts
+const results = await relaxGeometries(conformers, {
+  onSettled: (done, total) => console.log(`${done} of ${total}`),
+  signal: controller.signal,
+});
+```
+
+The energy comes from a single point taken **at the geometry that is returned**, not from
+the optimizer's last cycle, so the number and the coordinates describe the same molecule.
+Starting from a geometry a force field already minimised, and measured on an Apple M1, one
+relaxation costs 4–7 ms up to six atoms, ~20 ms for benzene, ~200 ms for caffeine (24
+atoms) and ~670 ms for ibuprofen (33 atoms), in 2 to 9 optimizer cycles. That is why it is
+opt-in: a tool offers it as an action, never on every keystroke.
+
+Accuracy: a water and a benzene pulled 3 % off their minima relax back onto native xtb
+6.7.1's own optimized energies to 1e-7 and 1e-5 Eh (`src/engines/__tests__/occRelax.test.ts`).
+
 ## What a consumer needs
 
 **A Vite-compatible bundler.** The wasm binary and its data package are resolved through
@@ -57,6 +97,32 @@ consumer's own asset pipeline decides where they are served from and how they ar
 Under another bundler, alias `@peterspackman/occjs/wasm?url` and
 `@peterspackman/occjs/data?url` to the corresponding files inside
 `@peterspackman/occjs`.
+
+**Three Vite settings, all three required.** Without them the build fails, and the one that
+matters most fails _without naming a reason_ — Vite compiles a worker to `iife` by default,
+occjs opens with a top-level `await`, and the resulting error is swallowed on its way out of
+the worker bundler, so what a consumer sees is an unrelated plugin further down the pipeline
+finding no `dist/index.html`.
+
+```ts
+export default defineConfig({
+  optimizeDeps: {
+    // Both packages locate their WebAssembly next to an ESM entry point and
+    // resolve it from import.meta.url; pre-bundling rewrites that and the wasm
+    // stops loading. xtb-wasm also spawns its worker through a `new URL`, which
+    // only survives if the package is served as source.
+    exclude: ['@peterspackman/occjs', 'xtb-wasm'],
+  },
+  // occjs uses a top-level await, which cannot be expressed in an `iife`.
+  worker: { format: 'es' },
+  build: { target: 'es2022' },
+});
+```
+
+**Room for the binary.** The wasm is 21 MB and its data package 8.2 MB, emitted as two
+assets and fetched only when a calculation starts. Nothing of them is in the initial
+download of a page that imports this package behind a dynamic `import()`, but they do ship
+in the deployed bundle.
 
 **openchemlib as a peer dependency.** It is a peer on purpose: two copies mean two
 `Molecule` classes, and the atom indices that `Molecule.bonds` carries — the ones a
@@ -69,15 +135,17 @@ The engine needs `Worker`; `occjsEngine.isAvailable()` reports whether it is the
 | Group           | Exports                                                                                                                                                                                                                   |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Engines         | `occjsEngine`, `occjsSerialEngine`, `createOccjsEngine`, `ENGINES`, `getEngine`, `disposeOccPool`, `occPoolWorkerCount`                                                                                                   |
+| Relaxation      | `relaxGeometry`, `relaxGeometries`                                                                                                                                                                                        |
 | Input           | `moleculeFromSmiles`, `moleculeFromMolfile`, `moleculeFromIdCode`, `moleculeFromGeometry`, `moleculeFromStructure`, `moleculesFromText`, `moleculesFromFile`, `geometryFromPdb`, `detectFormat`, `getOcl`, `DEFAULT_SEED` |
 | Analyses        | `installVibrationalAnalyser`, `thermochemistry`, `ramanActivities`, `bondPolarizability`, `ramanSupport`, `compareConnectivity`, `SUPPORTED_ELEMENTS`, `resolveSymmetry`, `principalMoments`                              |
 | Geometry        | `fromXyz`, `toXyz`, `geometryFromOcl`, `canonicalElement`, `elementSymbols`                                                                                                                                               |
-| Defaults, units | `DEFAULT_SETTINGS`, `DEFAULT_OUTPUTS`, and the CODATA conversion factors (`WAVENUMBER_PER_HARTREE`, `IR_INTENSITY_KM_PER_MOL`, `KCAL_PER_MOL_PER_HARTREE`, …)                                                             |
+| Defaults, units | `DEFAULT_SETTINGS`, `DEFAULT_OUTPUTS`, `DEFAULT_RELAX_SETTINGS`, and the CODATA conversion factors (`WAVENUMBER_PER_HARTREE`, `IR_INTENSITY_KM_PER_MOL`, `KCAL_PER_MOL_PER_HARTREE`, …)                                   |
 
 Types: `Molecule`, `Geometry`, `MoleculeSource`, `CalculationSettings`, `OutputSelection`,
 `VibrationalRequest`, `VibrationalResult`, `VibrationalMode`, `ModeInvolvement`,
 `Thermochemistry`, `EnergyBreakdown`, `Timings`, `VibrationalEngine`,
-`EngineCapabilities`, `EngineProgress`, `EngineStage`, `EngineRunOptions`, `XtbMethod`.
+`EngineCapabilities`, `EngineProgress`, `EngineStage`, `EngineRunOptions`, `XtbMethod`,
+`RelaxSettings`, `RelaxRequest`, `RelaxResult`, `RelaxOptions`, `RelaxPoolOptions`.
 
 `occjsSerialEngine` is the same physics pinned to one instance. The parallel sweep visits
 the displacements in a run-dependent order and warm-starts each point from the previous

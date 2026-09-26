@@ -1,4 +1,5 @@
-import type { EnergyBreakdown, EngineStage } from '../types/index.ts';
+import type { EnergyBreakdown, EngineStage, Geometry } from '../types/index.ts';
+import type { RelaxSettings } from '../types/relax.ts';
 
 import type { RunInput } from './occRun.ts';
 import type { PointGroupInfo } from './occSymmetry.ts';
@@ -28,6 +29,18 @@ export interface OptimizeCommand {
 }
 
 /**
+ * Relax a geometry and report the energy at the geometry that comes back. A
+ * whole job in one command, so it can go to any worker of the pool — unlike
+ * `optimize`, which is one step of the vibrational run the primary drives.
+ */
+export interface RelaxCommand {
+  cmd: 'relax';
+  id: number;
+  geometry: Geometry;
+  settings: RelaxSettings;
+}
+
+/**
  * Build the molecule, converge the SCF and capture the sweep state at a
  * geometry that is already final. Sent to every worker of the pool, so each one
  * owns a calculator warm-started at the reference geometry.
@@ -53,7 +66,12 @@ export interface SolveCommand {
 }
 
 export type WorkerCommand =
-  LoadCommand | OptimizeCommand | PrepareCommand | SweepCommand | SolveCommand;
+  | LoadCommand
+  | OptimizeCommand
+  | RelaxCommand
+  | PrepareCommand
+  | SweepCommand
+  | SolveCommand;
 
 export interface LoadedMessage {
   type: 'loaded';
@@ -67,6 +85,18 @@ export interface OptimizedMessage {
   coordinates: Float64Array;
   cycles: number;
   converged: boolean;
+}
+
+export interface RelaxedMessage {
+  type: 'relaxed';
+  id: number;
+  /** The relaxed geometry, flat `x,y,z` per atom in Å. */
+  coordinates: Float64Array;
+  /** The energy terms at `coordinates`, in Eh. */
+  energy: EnergyBreakdown;
+  cycles: number;
+  converged: boolean;
+  warnings: string[];
 }
 
 export interface PreparedMessage {
@@ -118,6 +148,7 @@ export interface FailureMessage {
 export type WorkerMessage =
   | LoadedMessage
   | OptimizedMessage
+  | RelaxedMessage
   | PreparedMessage
   | SweptMessage
   | SolvedMessage
