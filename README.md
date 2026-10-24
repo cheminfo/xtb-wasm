@@ -7,7 +7,9 @@ ask only for the geometry and the energy, which is the cheap half of that.
 
 The quantum chemistry is [`@peterspackman/occjs`](https://www.npmjs.com/package/@peterspackman/occjs)
 — OCC, an independent C++17 implementation of GFN2-xTB compiled to WebAssembly — driven
-from a pool of Web Workers.
+from a pool of Web Workers. The package carries occjs 0.9.6 inside it until that version is
+on npm: it is the first whose D4 dispersion is self-consistent, as in xtb (see
+[`vendor/`](vendor/README.md)).
 
 ```sh
 npm install xtb-wasm openchemlib
@@ -182,8 +184,8 @@ the native test-suite baseline and the three spread studies behind every toleran
 
 ## Accuracy, measured
 
-**Frequencies and IR intensities**, against the fixtures: water max |Δν| 0.107 cm⁻¹,
-benzene 0.590 cm⁻¹. Intensities come from the true GFN2 dipole — the AO multipole over the
+**Frequencies and IR intensities**, against the fixtures: water max |Δν| 0.046 cm⁻¹,
+benzene 0.256 cm⁻¹. Intensities come from the true GFN2 dipole — the AO multipole over the
 wavefunction basis — not a point-charge approximation.
 
 **Thermochemistry**: Grimme's modified RRHO, transcribed from xtb's own `print_thermo`

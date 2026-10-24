@@ -96,7 +96,7 @@ test('charge and unpaired electrons change the energy', () => {
   const neutral = energyOf(hydroxyl, { charge: 0, unpairedElectrons: 1 });
   const anion = energyOf(hydroxyl, { charge: -1, unpairedElectrons: 0 });
   // The closed-shell anion reproduces to the full 10 decimals.
-  expect(anion).toBeCloseTo(-4.681_611_446_369_915, 10);
+  expect(anion).toBeCloseTo(-4.681_611_547_522_833_5, 10);
   // The OH· doublet is pinned one order looser: its open-shell SCF is only
   // reproducible to ~1.3e-8 Eh, an SCF landing on a marginally different fixed
   // point. That measurement sets the tolerance; it was not relaxed until the

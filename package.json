@@ -44,9 +44,12 @@
   },
   "homepage": "https://github.com/cheminfo/xtb-wasm#readme",
   "dependencies": {
-    "@peterspackman/occjs": "^0.9.3",
+    "@peterspackman/occjs": "file:vendor/peterspackman-occjs-0.9.6.tgz",
     "sdf-parser": "^9.0.0"
   },
+  "bundleDependencies": [
+    "@peterspackman/occjs"
+  ],
   "devDependencies": {
     "@types/node": "^25.6.0",
     "@vitest/coverage-v8": "^4.1.11",

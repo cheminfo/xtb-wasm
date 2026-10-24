@@ -34,7 +34,7 @@ export interface PreparedSystem {
  *
  * `charge` and `numUnpairedElectrons` are accessor properties on
  * `XtbCalculator`, so assigning them before the first SCF is what changes the
- * physics: OH⁻ at charge −1 gives −4.68161144637 Eh against −4.44320562018 Eh
+ * physics: OH⁻ at charge −1 gives −4.68161154752 Eh against −4.44320561238 Eh
  * for the neutral radical.
  * @param module - The loaded occjs module.
  * @param geometry - Elements and Cartesian coordinates in Å.

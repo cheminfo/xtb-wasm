@@ -36,7 +36,7 @@ test('the reference water geometry gives its documented total energy', () => {
     (scope) =>
       prepareSystem(module, water, GAS_PHASE_SETTINGS, scope).energy.total,
   );
-  expect(centred).toBe(-5.070_370_524_921_434);
+  expect(centred).toBe(-5.070_370_538_811_788);
 
   const uncentred = withHandleScope((scope) => {
     const calculator = scope.keep(
@@ -47,7 +47,7 @@ test('the reference water geometry gives its documented total energy', () => {
     calculator.singlePoint();
     return calculator.totalEnergy();
   });
-  expect(uncentred).toBe(-5.070_370_524_921_436);
+  expect(uncentred).toBe(-5.070_370_538_811_789_5);
   expect(Math.abs(centred - uncentred)).toBeLessThan(1e-14);
 }, 120_000);
 

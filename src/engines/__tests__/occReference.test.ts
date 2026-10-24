@@ -14,19 +14,20 @@ import { GAS_PHASE_SETTINGS, loadFixture } from './fixtures.ts';
  * those were derived for a WebAssembly build of xtb 6.7.1 itself, whereas OCC is
  * an independent reimplementation of GFN2 and the fixture geometries are xtb's
  * stationary points, not OCC's. The values below are the agreement actually
- * measured on the three fixtures asserted here — water 0.11 cm⁻¹ / 0.35 %,
- * methanol 0.47 cm⁻¹ / 3.7 %, benzene 0.59 cm⁻¹ / 2.9 % — with roughly a factor
- * of two of headroom, so a real regression still fails.
+ * measured on the three fixtures asserted here — water 0.05 cm⁻¹ / 0.04 %,
+ * methanol 0.28 cm⁻¹ / 1.4 %, benzene 0.26 cm⁻¹ / 6.6 % (its degenerate C–H
+ * stretch), 0.11 km/mol on a weak band, 7.0e-7 Eh — with roughly a factor of
+ * two of headroom, so a real regression still fails.
  *
  * They do NOT generalize to every fixture, and must not be widened until one
- * does: acetic acid is measured at 2.9 cm⁻¹ on its 113 cm⁻¹ torsion and 10.9 %
+ * does: acetic acid is measured at 1.5 cm⁻¹ on its 113 cm⁻¹ torsion and 7.8 %
  * on one band. Soft low-frequency modes are where OCC and xtb diverge most, so
  * a fixture is added here only once its own agreement has been measured.
  */
-const FREQUENCY_TOLERANCE_CM = 1.2;
-const STRONG_INTENSITY_TOLERANCE = 0.06;
-const WEAK_INTENSITY_TOLERANCE_KM_PER_MOL = 0.35;
-const ENERGY_TOLERANCE_HARTREE = 1e-5;
+const FREQUENCY_TOLERANCE_CM = 0.6;
+const STRONG_INTENSITY_TOLERANCE = 0.13;
+const WEAK_INTENSITY_TOLERANCE_KM_PER_MOL = 0.2;
+const ENERGY_TOLERANCE_HARTREE = 1.5e-6;
 const INVARIANT_TOLERANCE = 5e-4;
 
 let module: OccModule;
@@ -64,8 +65,8 @@ function expectFixture(name: string): void {
   });
 
   expect(modes).toHaveLength(reference.modeCount);
-  // An explicit absolute bound, because `toBeCloseTo(value, 5)` would assert
-  // 5e-6 rather than the 1e-5 the constant names, and benzene sits at 4.1e-6.
+  // An explicit absolute bound, because `toBeCloseTo(value, 6)` would assert
+  // 5e-7 rather than the 1.5e-6 the constant names, and benzene sits at 7.0e-7.
   expect(
     Math.abs(raw.energy.total - reference.totalEnergy),
     'total energy',
