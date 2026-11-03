@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/cheminfo/xtb-wasm/compare/v1.1.1...v1.2.0) (2026-11-03)
+
+
+### Features
+
+* compute vibrations in process, with no Worker or bundler ([256d42a](https://github.com/cheminfo/xtb-wasm/commit/256d42adb626d17573faa2b49f840b0b6153bc7f))
+
 ## [1.1.1](https://github.com/cheminfo/xtb-wasm/compare/v1.1.0...v1.1.1) (2026-10-24)
 
 
