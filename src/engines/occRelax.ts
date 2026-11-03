@@ -8,7 +8,7 @@ import type {
 } from '../types/relax.ts';
 import { DEFAULT_RELAX_SETTINGS } from '../types/relax.ts';
 
-import { loadOccModule } from './occModule.ts';
+import { loadInProcessModule } from './occModule.ts';
 import { optimizeGeometry } from './occOptimize.ts';
 import { createHandleScope } from './occScope.ts';
 import { prepareSystem } from './occSetup.ts';
@@ -178,12 +178,5 @@ export async function relaxGeometryInProcess(
   request: RelaxRequest,
   options: RelaxOptions = {},
 ): Promise<RelaxResult> {
-  loaded ??= loadOccModule().catch((error: unknown) => {
-    // A failed load must not poison every later call of the session.
-    loaded = null;
-    throw error;
-  });
-  return relaxInProcess(await loaded, request, options);
+  return relaxInProcess(await loadInProcessModule(), request, options);
 }
-
-let loaded: Promise<OccModule> | null = null;

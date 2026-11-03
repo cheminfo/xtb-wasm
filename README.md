@@ -91,6 +91,38 @@ opt-in: a tool offers it as an action, never on every keystroke.
 Accuracy: a water and a benzene pulled 3 % off their minima relax back onto native xtb
 6.7.1's own optimized energies to 1e-7 and 1e-5 Eh (`src/engines/__tests__/occRelax.test.ts`).
 
+### In Node, or on a thread you already own
+
+The engines and the pooled relaxations need `Worker` and the bundler-resolved wasm URL, so
+they run in a browser only. Two functions run the same calculations on the calling thread
+instead, with no bundler: in Node, in a test, or inside a worker of your own. Both block
+that thread while they run, and they share one occjs instance (~100 MB).
+
+```ts
+import {
+  DEFAULT_OUTPUTS,
+  DEFAULT_SETTINGS,
+  computeVibrationsInProcess,
+  installVibrationalAnalyser,
+  moleculeFromSmiles,
+  relaxGeometryInProcess,
+} from 'xtb-wasm';
+
+installVibrationalAnalyser();
+
+const molecule = await moleculeFromSmiles('CC(=O)C', 'acetone');
+const result = await computeVibrationsInProcess({
+  molecule,
+  settings: DEFAULT_SETTINGS,
+  outputs: DEFAULT_OUTPUTS,
+});
+const relaxed = await relaxGeometryInProcess({ geometry: molecule });
+```
+
+`computeVibrationsInProcess` takes the request `compute` takes, refuses what it refuses,
+and returns a `VibrationalResult` whose `engineId` is `IN_PROCESS_ENGINE_ID`. It runs on
+one instance, so a repeated request gives the same digits.
+
 ## What a consumer needs
 
 **A Vite-compatible bundler.** The wasm binary and its data package are resolved through
@@ -137,6 +169,7 @@ The engine needs `Worker`; `occjsEngine.isAvailable()` reports whether it is the
 | Group           | Exports                                                                                                                                                                                                                   |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Engines         | `occjsEngine`, `occjsSerialEngine`, `createOccjsEngine`, `ENGINES`, `getEngine`, `disposeOccPool`, `occPoolWorkerCount`                                                                                                   |
+| In-process      | `computeVibrationsInProcess`, `relaxGeometryInProcess`, `IN_PROCESS_ENGINE_ID`                                                                                                                                            |
 | Relaxation      | `relaxGeometry`, `relaxGeometries`                                                                                                                                                                                        |
 | Input           | `moleculeFromSmiles`, `moleculeFromMolfile`, `moleculeFromIdCode`, `moleculeFromGeometry`, `moleculeFromStructure`, `moleculesFromText`, `moleculesFromFile`, `geometryFromPdb`, `detectFormat`, `getOcl`, `DEFAULT_SEED` |
 | Analyses        | `installVibrationalAnalyser`, `thermochemistry`, `ramanActivities`, `bondPolarizability`, `ramanSupport`, `compareConnectivity`, `SUPPORTED_ELEMENTS`, `resolveSymmetry`, `principalMoments`                              |

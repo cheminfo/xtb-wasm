@@ -56,6 +56,8 @@ export {
 export type { RelaxPoolOptions } from './engines/index.ts';
 export {
   ENGINES,
+  IN_PROCESS_ENGINE_ID,
+  computeVibrationsInProcess,
   createOccjsEngine,
   disposeOccPool,
   getEngine,

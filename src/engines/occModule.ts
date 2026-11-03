@@ -71,6 +71,23 @@ export async function loadOccModule(
 }
 
 /**
+ * The module the in-process paths run on, loaded on first use and kept for the
+ * realm. Relaxation and vibrations share it, so a Node process that does both
+ * pays for one instance (~100 MB), not two.
+ * @returns The shared module.
+ */
+export function loadInProcessModule(): Promise<OccModule> {
+  inProcessModule ??= loadOccModule().catch((error: unknown) => {
+    // A failed load must not poison every later call of the session.
+    inProcessModule = null;
+    throw error;
+  });
+  return inProcessModule;
+}
+
+let inProcessModule: Promise<OccModule> | null = null;
+
+/**
  * Turn an embind failure into a readable message.
  *
  * A C++ exception reaches JavaScript in one of two shapes and both stringify to

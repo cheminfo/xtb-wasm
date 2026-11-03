@@ -34,6 +34,10 @@ export {
 export { createOccjsEngine, occjsEngine, occjsSerialEngine } from './occjs.ts';
 export { disposeOccPool, occPoolWorkerCount } from './occPoolLifecycle.ts';
 export {
+  IN_PROCESS_ENGINE_ID,
+  computeVibrationsInProcess,
+} from './occVibrationsInProcess.ts';
+export {
   relaxGeometryInProcess,
   relaxInProcess,
   relaxRefusals,

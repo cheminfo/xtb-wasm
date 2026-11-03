@@ -53,14 +53,14 @@ export function createOccjsEngine(
 
     isAvailable: async () => typeof Worker !== 'undefined',
 
-    validate: (request) => refusals(request),
+    validate: (request) => vibrationalRefusals(request),
 
     compute: async (
       request: VibrationalRequest,
       runOptions: EngineRunOptions,
     ): Promise<VibrationalResult> => {
       const startedAt = performance.now();
-      const problems = refusals(request);
+      const problems = vibrationalRefusals(request);
       if (problems.length > 0) throw new Error(problems.join(' '));
 
       const raw = await runVibrationalInPool(
@@ -111,8 +111,12 @@ export const occjsSerialEngine = createOccjsEngine({
   maxWorkers: 1,
 });
 
-/** Every reason this build cannot honour a request. */
-function refusals(request: VibrationalRequest): string[] {
+/**
+ * Every reason this build cannot honour a vibrational request.
+ * @param request - The molecule, settings and requested outputs.
+ * @returns One sentence per problem, empty when there is none.
+ */
+export function vibrationalRefusals(request: VibrationalRequest): string[] {
   const problems: string[] = [];
   const { settings, molecule } = request;
 
