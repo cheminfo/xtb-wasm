@@ -141,11 +141,6 @@ async function orchestrate(
       `The optimizer stopped after ${optimizerCycles} cycles without converging, so the Hessian is not at a stationary point.`,
     );
   }
-  if (workers.length > 1) {
-    warnings.push(
-      `The displacement sweep ran on ${workers.length} parallel GFN2 instances, so the numbers are reproducible only to ~0.02 cm⁻¹ and ~0.1 % in intensity.`,
-    );
-  }
   return {
     coordinates: reference.coordinates,
     energy: reference.energy,
