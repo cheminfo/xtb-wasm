@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0](https://github.com/cheminfo/xtb-wasm/compare/v1.1.1...v2.0.0) (2026-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* the `warnings` fields of VibrationalResult, RelaxResult, LoadedMolecules, BuiltMolecule and PdbReadResult are removed; pass a `logger` (LightLogger from cheminfo-types) to receive the messages at their level.
+
+### Features
+
+* compute vibrations in process, with no Worker or bundler ([256d42a](https://github.com/cheminfo/xtb-wasm/commit/256d42adb626d17573faa2b49f840b0b6153bc7f))
+* report messages through an optional logger instead of warnings arrays ([a25125b](https://github.com/cheminfo/xtb-wasm/commit/a25125bb40d9d22b552f8c6bce2d13eff35ea973))
+
+
+### Bug Fixes
+
+* stop warning about the parallel sweep's ~0.02 cm⁻¹ reproducibility ([6ac488e](https://github.com/cheminfo/xtb-wasm/commit/6ac488e5a93f0e9e0f60e827ec3861daa078530e))
+
 ## [1.1.1](https://github.com/cheminfo/xtb-wasm/compare/v1.1.0...v1.1.1) (2026-10-24)
 
 
