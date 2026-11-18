@@ -1,3 +1,6 @@
+import type { LightLogger } from 'cheminfo-types';
+
+import { replayLog } from './occLog.ts';
 import type {
   LoadedMessage,
   ProgressMessage,
@@ -20,6 +23,25 @@ interface SharedResources {
   wasmModule?: WebAssembly.Module;
   /** @default undefined */
   dataPackage?: ArrayBuffer;
+}
+
+/** What a caller wants to hear while a command runs. */
+export interface CommandListeners {
+  /**
+   * Receives the progress messages that arrive meanwhile.
+   * @default undefined
+   */
+  onProgress?: (message: ProgressMessage) => void;
+  /**
+   * Receives what the worker logs for this command.
+   * @default undefined
+   */
+  logger?: LightLogger;
+  /**
+   * Fields added to every entry passed to `logger`.
+   * @default undefined
+   */
+  logContext?: Record<string, unknown>;
 }
 
 let shared: Promise<SharedResources> | null = null;
@@ -80,7 +102,7 @@ export async function spawnPoolWorkers(count: number): Promise<PoolWorker[]> {
  * @param entry - The worker to talk to.
  * @param command - The command to send.
  * @param expected - The `type` of the reply that resolves this call.
- * @param onProgress - Receives the progress messages that arrive meanwhile.
+ * @param listeners - Progress and log entries that arrive meanwhile.
  * @returns The matching reply.
  * @throws When the worker replies with an error or fails to start.
  */
@@ -88,7 +110,7 @@ export function sendCommand<Type extends WorkerMessage['type']>(
   entry: PoolWorker,
   command: WorkerCommand,
   expected: Type,
-  onProgress?: (message: ProgressMessage) => void,
+  listeners: CommandListeners = {},
 ): Promise<Extract<WorkerMessage, { type: Type }>> {
   const { worker } = entry;
   return new Promise((resolve, reject) => {
@@ -99,7 +121,11 @@ export function sendCommand<Type extends WorkerMessage['type']>(
     function onMessage(event: MessageEvent<WorkerMessage>): void {
       const message = event.data;
       if (message.type === 'progress') {
-        onProgress?.(message);
+        listeners.onProgress?.(message);
+        return;
+      }
+      if (message.type === 'log') {
+        replayLog(listeners.logger, message, listeners.logContext);
         return;
       }
       if (message.type === 'error') {

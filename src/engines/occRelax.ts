@@ -33,7 +33,7 @@ import type { OccModule } from './occTypes.ts';
  * one thread over.
  * @param module - The loaded occjs module.
  * @param request - Geometry and what to override of the defaults.
- * @param options - Progress and cancellation.
+ * @param options - Progress, messages and cancellation.
  * @returns The relaxed geometry, its energy and what the optimizer did.
  * @throws When the method is not GFN2, when the SCF fails, or on cancellation.
  */
@@ -48,7 +48,6 @@ export function relaxInProcess(
   if (problems.length > 0) throw new Error(problems.join(' '));
 
   const full = calculationSettings(settings);
-  const warnings: string[] = [];
   let coordinates = request.geometry.coordinates;
   let cycles = 0;
   let converged = true;
@@ -76,7 +75,7 @@ export function relaxInProcess(
   }
 
   if (!converged) {
-    warnings.push(
+    options.logger?.warn(
       `The optimizer stopped after ${cycles} cycles without converging, so this geometry is not a stationary point and its energy is an upper bound.`,
     );
   }
@@ -88,15 +87,14 @@ export function relaxInProcess(
       { elements: request.geometry.elements, coordinates },
       full,
       scope,
+      options.logger,
     );
-    warnings.push(...final.warnings);
     return {
       coordinates: final.coordinates,
       energy: final.energy,
       cycles,
       converged,
       elapsedMs: performance.now() - startedAt,
-      warnings,
     };
   } finally {
     scope.release();
@@ -170,7 +168,7 @@ function calculationSettings(settings: RelaxSettings): CalculationSettings {
  * cost of blocking the thread it is called on. The module is loaded once per
  * realm and kept.
  * @param request - Geometry and what to override of the defaults.
- * @param options - Progress and cancellation.
+ * @param options - Progress, messages and cancellation.
  * @returns The relaxed geometry, its energy and what the optimizer did.
  * @throws When the method is not GFN2, when the SCF fails, or on cancellation.
  */

@@ -1,3 +1,5 @@
+import type { LightLogger } from 'cheminfo-types';
+
 import type {
   CalculationSettings,
   EnergyBreakdown,
@@ -25,7 +27,6 @@ export interface PreparedSystem {
   isUnrestricted: boolean;
   /** The GFN2 spin-polarization energy, Eh. Exactly 0 for a closed shell. */
   spinEnergy: number;
-  warnings: string[];
 }
 
 /**
@@ -40,6 +41,7 @@ export interface PreparedSystem {
  * @param geometry - Elements and Cartesian coordinates in Å.
  * @param settings - Charge and spin; the rest is ignored here.
  * @param scope - Scope owning the molecule and the calculator.
+ * @param logger - Receives what the SCF has to say about the spin state.
  * @returns The prepared system.
  * @throws When the electron count and the unpaired-electron count disagree in
  * parity, or when the SCF fails.
@@ -49,6 +51,7 @@ export function prepareSystem(
   geometry: Geometry,
   settings: CalculationSettings,
   scope: HandleScope,
+  logger?: LightLogger,
 ): PreparedSystem {
   const atomicNumbers = atomicNumbersOf(module, geometry.elements);
   const molecule = buildMolecule(
@@ -68,15 +71,14 @@ export function prepareSystem(
     throw new Error(describeOccError(module, error), { cause: error });
   }
 
-  const warnings: string[] = [];
   const isUnrestricted = calculator.isUnrestricted();
   if (settings.unpairedElectrons > 0 && !isUnrestricted) {
-    warnings.push(
+    logger?.warn(
       `${settings.unpairedElectrons} unpaired electron(s) were requested but occ ran a spin-restricted SCF, so the result describes a closed shell.`,
     );
   }
   if (isUnrestricted) {
-    warnings.push(
+    logger?.info(
       'Open-shell GFN2: occ runs a spin-polarized SCF with its own spin constants, which is not what xtb --uhf does, so frequencies may differ from a native xtb reference by more than the closed-shell tolerance.',
     );
   }
@@ -94,7 +96,6 @@ export function prepareSystem(
     },
     isUnrestricted,
     spinEnergy: calculator.spinEnergy(),
-    warnings,
   };
 }
 

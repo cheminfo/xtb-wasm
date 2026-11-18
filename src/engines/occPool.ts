@@ -38,7 +38,7 @@ let identifier = 0;
  * ~37x inside the 0.5 cm⁻¹ frequency tolerance and ~47x inside the 2 %
  * intensity tolerance. Pass `maxWorkers: 1` when exact reproducibility matters.
  * @param input - Geometry, settings and requested outputs.
- * @param options - Pool cap, progress and cancellation.
+ * @param options - Pool cap, progress, messages and cancellation.
  * @returns The raw numbers of the calculation.
  * @throws When the pool cannot start, when occ fails, or on cancellation.
  */
@@ -91,8 +91,14 @@ async function orchestrate(
       primary,
       { cmd: 'optimize', id, input },
       'optimized',
-      (message) => {
-        options.onProgress?.(message.stage, message.fraction, message.message);
+      {
+        onProgress: (message) => {
+          options.onProgress?.(
+            message.stage,
+            message.fraction,
+            message.message,
+          );
+        },
       },
     );
     geometry = {
@@ -102,6 +108,11 @@ async function orchestrate(
     optimizerCycles = relaxed.cycles;
     optimizerConverged = relaxed.converged;
     optimizeMs = performance.now() - started;
+    if (!optimizerConverged) {
+      options.logger?.warn(
+        `The optimizer stopped after ${optimizerCycles} cycles without converging, so the Hessian is not at a stationary point.`,
+      );
+    }
   }
 
   const prepareInput: RunInput = {
@@ -111,12 +122,15 @@ async function orchestrate(
   };
   options.onProgress?.('hessian', 0, `Displacement 0 of ${size}`);
   const started = performance.now();
+  // Every worker prepares the same system, so only the primary's messages are
+  // passed on: the others would repeat them once per worker.
   const prepared = await Promise.all(
-    workers.map((worker) =>
+    workers.map((worker, index) =>
       sendCommand(
         worker,
         { cmd: 'prepare', id, input: prepareInput },
         'prepared',
+        index === 0 ? { logger: options.logger } : {},
       ),
     ),
   );
@@ -135,10 +149,9 @@ async function orchestrate(
     'solved',
   );
 
-  const warnings = [...reference.warnings];
-  if (!optimizerConverged) {
-    warnings.push(
-      `The optimizer stopped after ${optimizerCycles} cycles without converging, so the Hessian is not at a stationary point.`,
+  if (workers.length > 1) {
+    options.logger?.info(
+      `The displacement sweep ran on ${workers.length} parallel GFN2 instances, so the numbers are reproducible only to ~0.02 cm⁻¹ and ~0.1 % in intensity.`,
     );
   }
   return {
@@ -156,6 +169,5 @@ async function orchestrate(
     optimizerConverged,
     optimizeMs,
     hessianMs,
-    warnings,
   };
 }

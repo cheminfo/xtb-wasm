@@ -2,7 +2,7 @@ import { fromXyz } from '../chemistry/geometry.ts';
 
 import { moleculeFromGeometry } from './build.ts';
 import { canonicalElement } from './elements.ts';
-import type { LoadedMolecules } from './load.ts';
+import type { LoadOptions, LoadedMolecules } from './load.ts';
 import { geometryFromPdb } from './pdb.ts';
 import { formulaFromElements } from './structure.ts';
 
@@ -36,7 +36,6 @@ export function loadXyz(text: string, fileName?: string): LoadedMolecules {
         formulaFromElements(elements),
       ),
     ],
-    warnings: [],
   };
 }
 
@@ -44,10 +43,15 @@ export function loadXyz(text: string, fileName?: string): LoadedMolecules {
  * Read a PDB file. There is no connectivity, so charge and spin stay zero.
  * @param text - The PDB contents.
  * @param fileName - The file name, used in the label and provenance.
- * @returns The single geometry it describes, plus what had to be dropped.
+ * @param options - Where to report what had to be dropped or guessed.
+ * @returns The single geometry it describes.
  */
-export function loadPdb(text: string, fileName: string): LoadedMolecules {
-  const { geometry, warnings } = geometryFromPdb(text);
+export function loadPdb(
+  text: string,
+  fileName: string,
+  options: LoadOptions = {},
+): LoadedMolecules {
+  const { geometry } = geometryFromPdb(text, options);
   return {
     molecules: [
       moleculeFromGeometry(
@@ -57,6 +61,5 @@ export function loadPdb(text: string, fileName: string): LoadedMolecules {
         formulaFromElements(geometry.elements),
       ),
     ],
-    warnings,
   };
 }

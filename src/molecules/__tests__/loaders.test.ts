@@ -1,5 +1,7 @@
+import { FifoLogger } from 'fifo-logger';
 import { expect, test } from 'vitest';
 
+import { logEntries } from '../../__tests__/logEntries.ts';
 import { moleculeFromStructure } from '../build.ts';
 import { loadXyz } from '../geometryLoaders.ts';
 import {
@@ -29,12 +31,14 @@ test(
 test(
   'reads a .smi file, one molecule per line, named after the line',
   async () => {
+    const logger = new FifoLogger();
     const loaded = await moleculesFromText(
       '# a comment\nCCO ethanol\n\nCC(C)=O acetone\n',
       'list.smi',
+      { logger },
     );
 
-    expect(loaded.warnings).toStrictEqual([]);
+    expect(logEntries(logger)).toStrictEqual([]);
     expect(loaded.molecules.map((molecule) => molecule.label)).toStrictEqual([
       'ethanol',
       'acetone',
@@ -55,12 +59,15 @@ test(
 test(
   'an unparseable SMILES line is skipped, the rest still load',
   async () => {
-    const loaded = await loadSmilesLines('CCO\nC1CC\n', 42);
+    const logger = new FifoLogger();
+    const loaded = await loadSmilesLines('CCO\nC1CC\n', 42, { logger });
 
     expect(loaded.molecules).toHaveLength(1);
     expect(loaded.molecules[0]?.formula).toBe('C2H6O');
-    expect(loaded.warnings).toHaveLength(1);
-    expect(loaded.warnings[0]).toContain('skipped line 2 ("C1CC")');
+    const entries = logEntries(logger);
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.level).toBe('error');
+    expect(entries[0]?.message).toContain('skipped line 2 ("C1CC")');
   },
   OCL_TIMEOUT,
 );
@@ -78,38 +85,47 @@ test(
 test(
   'only the first maxRecords records of an SDF are built',
   async () => {
-    const loaded = await loadSdf(readFixture('three.sdf'), 'three.sdf', 42, 2);
+    const logger = new FifoLogger();
+    const loaded = await loadSdf(readFixture('three.sdf'), 'three.sdf', 42, 2, {
+      logger,
+    });
 
     expect(loaded.molecules.map((molecule) => molecule.label)).toStrictEqual([
       'ethanol',
       'acetone',
     ]);
-    expect(loaded.warnings[0]).toBe(
-      'three.sdf holds 3 records; loaded the first 2',
-    );
+    expect(logEntries(logger)[0]).toStrictEqual({
+      level: 'warn',
+      message: 'three.sdf holds 3 records; loaded the first 2',
+    });
   },
   OCL_TIMEOUT,
 );
 
 test(
-  'an unreadable SDF record is skipped with a warning',
+  'an unreadable SDF record is skipped and logged as an error',
   async () => {
     const good = readFixture('three.sdf').split('$$$$\n', 1)[0] as string;
     // A counts line with no atom block: sdf-parser keeps the record, and
     // openchemlib answers it with an empty molecule rather than throwing.
     const empty =
       'broken\n  no atom block\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\nM  END\n';
+    const logger = new FifoLogger();
     const loaded = await loadSdf(
       `${good}$$$$\n${empty}$$$$\n`,
       'mixed.sdf',
       42,
+      undefined,
+      { logger },
     );
 
     expect(loaded.molecules).toHaveLength(1);
     expect(loaded.molecules[0]?.formula).toBe('C2H6O');
-    expect(loaded.warnings).toContain(
-      'skipped record 2 of mixed.sdf: "mixed.sdf record 2" is not a readable molfile: it has no atoms',
-    );
+    expect(logEntries(logger)).toContainEqual({
+      level: 'error',
+      message:
+        'skipped record 2 of mixed.sdf: "mixed.sdf record 2" is not a readable molfile: it has no atoms',
+    });
   },
   OCL_TIMEOUT,
 );
@@ -141,9 +157,11 @@ test('an XYZ file with an upper-case element symbol is normalized', () => {
 test(
   'a 3D molfile missing its hydrogens keeps its atoms and says so',
   async () => {
+    const logger = new FifoLogger();
     const loaded = await moleculesFromText(
       readFixture('ethanol_3d_noh.mol'),
       'ethanol_3d_noh.mol',
+      { logger },
     );
     const molecule = loaded.molecules[0];
 
@@ -152,8 +170,12 @@ test(
       new Float64Array([1.2023, 0, -0.1519, 0, 0, 0.7525, -1.175, 0, -0.048]),
     );
     expect(molecule?.formula).toBe('C2H6O');
-    expect(loaded.warnings).toStrictEqual([
-      'the file has 6 implicit hydrogens with no coordinates, so they are missing from the geometry',
+    expect(logEntries(logger)).toStrictEqual([
+      {
+        level: 'warn',
+        message:
+          'the file has 6 implicit hydrogens with no coordinates, so they are missing from the geometry',
+      },
     ]);
   },
   OCL_TIMEOUT,
@@ -205,13 +227,15 @@ test(
 test(
   'a planar molecule whose header declares 3D keeps its own geometry',
   async () => {
+    const logger = new FifoLogger();
     const loaded = await moleculesFromText(
       readFixture('benzene_planar_3d.mol'),
       'benzene_planar_3d.mol',
+      { logger },
     );
     const molecule = loaded.molecules[0];
 
-    expect(loaded.warnings).toStrictEqual([]);
+    expect(logEntries(logger)).toStrictEqual([]);
     expect(molecule?.formula).toBe('C6H6');
     expect(molecule?.coordinates).toStrictEqual(
       new Float64Array([

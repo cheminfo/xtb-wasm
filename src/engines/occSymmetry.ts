@@ -1,3 +1,5 @@
+import type { LightLogger } from 'cheminfo-types';
+
 import { createHandleScope } from './occScope.ts';
 import type { OccModule, OccMolecule } from './occTypes.ts';
 
@@ -16,8 +18,6 @@ export interface PointGroupInfo {
   label: string;
   /** Rotational symmetry number σ, the value that enters `−R·ln σ`. */
   symmetryNumber: number;
-  /** Anything the chemist must know about the assignment. */
-  warnings: string[];
 }
 
 /**
@@ -34,27 +34,28 @@ export interface PointGroupInfo {
  * @param molecule - The molecule to classify, at its final geometry.
  * @param elements - Element symbols, one per atom.
  * @param coordinates - Flat Cartesian coordinates in Å, `3 · atoms` values.
- * @returns The label, σ, and any warning about the assignment.
+ * @param logger - Receives what the assignment has to say.
+ * @returns The label and σ.
  */
 export function detectPointGroup(
   module: OccModule,
   molecule: OccMolecule,
   elements: readonly string[],
   coordinates: Float64Array,
+  logger?: LightLogger,
 ): PointGroupInfo {
   const scope = createHandleScope();
   let label = 'C1';
   let symmetryNumber = 1;
-  const warnings: string[] = [];
   try {
     const group = scope.keep(new module.MolecularPointGroup(molecule));
     label = group.getPointGroupString();
     symmetryNumber = group.symmetryNumber;
   } catch {
-    warnings.push(
+    logger?.warn(
       'The point group could not be detected; σ = 1 was used, which overestimates the rotational entropy of a symmetric molecule.',
     );
-    return { label, symmetryNumber, warnings };
+    return { label, symmetryNumber };
   } finally {
     scope.release();
   }
@@ -63,16 +64,12 @@ export function detectPointGroup(
     symmetryNumber !== TETRAHEDRAL_SYMMETRY_NUMBER &&
     isRegularXY4(elements, coordinates)
   ) {
-    warnings.push(
+    logger?.info(
       `occ assigns this XY₄ molecule ${label} with σ = ${symmetryNumber}; it is tetrahedral, so σ = ${TETRAHEDRAL_SYMMETRY_NUMBER} was used instead.`,
     );
-    return {
-      label: 'Td',
-      symmetryNumber: TETRAHEDRAL_SYMMETRY_NUMBER,
-      warnings,
-    };
+    return { label: 'Td', symmetryNumber: TETRAHEDRAL_SYMMETRY_NUMBER };
   }
-  return { label, symmetryNumber, warnings };
+  return { label, symmetryNumber };
 }
 
 /**

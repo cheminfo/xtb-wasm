@@ -1,12 +1,11 @@
 import type { Geometry } from '../types/index.ts';
 
 import { canonicalElement } from './elements.ts';
+import type { LoadOptions } from './load.ts';
 
-/** A geometry read from a PDB file, with whatever had to be dropped or guessed. */
+/** A geometry read from a PDB file. */
 export interface PdbReadResult {
   geometry: Geometry;
-  /** Non-fatal problems: skipped altLocs, guessed elements, extra models. */
-  warnings: string[];
 }
 
 /**
@@ -17,13 +16,17 @@ export interface PdbReadResult {
  * Atom order is the order of the `ATOM`/`HETATM` records, which is what the
  * bond-to-mode mapping downstream relies on.
  * @param text - The PDB file contents.
- * @returns The geometry and any non-fatal problems found.
+ * @param options - Where to report what had to be dropped or guessed.
+ * @returns The geometry.
  */
-export function geometryFromPdb(text: string): PdbReadResult {
+export function geometryFromPdb(
+  text: string,
+  options: LoadOptions = {},
+): PdbReadResult {
+  const { logger } = options;
   const lines = text.split(/\r?\n/);
   const elements: string[] = [];
   const values: number[] = [];
-  const warnings: string[] = [];
 
   let models = 0;
   let inLaterModel = false;
@@ -86,25 +89,23 @@ export function geometryFromPdb(text: string): PdbReadResult {
   }
 
   if (models > 1) {
-    warnings.push(`kept the first of ${models} models`);
+    logger?.info(`kept the first of ${models} models`);
   }
   if (skippedAltLoc > 0) {
-    warnings.push(
-      `dropped ${plural(skippedAltLoc, 'alternate-location atom')}`,
-    );
+    logger?.info(`dropped ${plural(skippedAltLoc, 'alternate-location atom')}`);
   }
   if (guessedElement > 0) {
-    warnings.push(
+    logger?.warn(
       `guessed the element of ${plural(guessedElement, 'atom')} from the atom name, because columns 77-78 were empty or unknown`,
     );
   }
   if (isotopeLabels > 0) {
-    warnings.push(
+    logger?.warn(
       `treated ${plural(isotopeLabels, 'deuterium or tritium atom')} as hydrogen, because GFN2 has no isotope support`,
     );
   }
   if (unreadable > 0) {
-    warnings.push(
+    logger?.error(
       `dropped ${plural(unreadable, 'unreadable ATOM/HETATM record')}`,
     );
   }
@@ -114,7 +115,6 @@ export function geometryFromPdb(text: string): PdbReadResult {
 
   return {
     geometry: { elements, coordinates: new Float64Array(values) },
-    warnings,
   };
 }
 

@@ -51,6 +51,27 @@ console.log(result.energy.total, result.thermochemistry?.totalFreeEnergy);
 `occjsEngine.validate(request)` returns the same refusals as strings without running
 anything.
 
+### Messages
+
+Everything a calculation or a loader has to say goes to an optional `logger` — any
+`LightLogger` from `cheminfo-types`, such as a `FifoLogger` from `fifo-logger`, pino, or
+`console`. Without one nothing is reported. Each message carries its weight as its level:
+`error` for something dropped while the rest went on (a skipped SDF record), `warn` for
+what changes how the result must be read (no convergence, a saddle point, a guessed
+element), `info` for context (a generated conformer, a parallel sweep).
+
+```ts
+import { FifoLogger } from 'fifo-logger';
+
+const logger = new FifoLogger();
+const result = await occjsEngine.compute(request, { logger });
+const caveats = logger.getLogs({ minLevel: 'warn' });
+```
+
+The same option is taken by `relaxGeometry`, `relaxGeometries` (each entry then carries
+`structure`, its request index), `computeVibrationsInProcess`, `relaxGeometryInProcess`,
+`moleculesFromText`, `moleculesFromFile`, the `moleculeFrom*` builders and the loaders.
+
 ### Relaxing a geometry and nothing else
 
 A geometry optimization with no Hessian after it is the cheap half of the library, and it

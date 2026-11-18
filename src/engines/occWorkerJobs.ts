@@ -1,3 +1,4 @@
+import { createRelayLogger } from './occLog.ts';
 import { optimizeGeometry } from './occOptimize.ts';
 import { relaxInProcess } from './occRelax.ts';
 import { createHandleScope } from './occScope.ts';
@@ -84,6 +85,7 @@ export function runRelaxCommand(
       onCycle: (cycle, energy) => {
         post(progress(command.id, cycle, energy));
       },
+      logger: createRelayLogger(command.id, post),
     },
   );
   post(
@@ -94,7 +96,6 @@ export function runRelaxCommand(
       energy: result.energy,
       cycles: result.cycles,
       converged: result.converged,
-      warnings: result.warnings,
     },
     [result.coordinates.buffer],
   );

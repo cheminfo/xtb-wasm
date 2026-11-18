@@ -1,5 +1,7 @@
+import { FifoLogger } from 'fifo-logger';
 import { beforeAll, expect, test } from 'vitest';
 
+import { logEntries } from '../../__tests__/logEntries.ts';
 import type { Geometry } from '../../types/index.ts';
 import { DEFAULT_OUTPUTS } from '../../types/index.ts';
 import { assembleModes } from '../occModes.ts';
@@ -108,32 +110,44 @@ test('charge and unpaired electrons change the energy', () => {
 }, 120_000);
 
 test('a five-atom XY4 is corrected from occ D2 to Td', () => {
-  const group = pointGroupOf(methane);
+  const logger = new FifoLogger();
+  const group = pointGroupOf(methane, logger);
   expect(group.symmetryNumber).toBe(12);
   expect(group.label).toBe('Td');
-  expect(group.warnings).toHaveLength(1);
-  expect(group.warnings[0]).toContain('σ = 4');
+  const entries = logEntries(logger);
+  expect(entries).toHaveLength(1);
+  expect(entries[0]?.level).toBe('info');
+  expect(entries[0]?.message).toContain('σ = 4');
 
   // Water must be left alone: it is a three-atom molecule, not an XY4.
-  const water = pointGroupOf(loadFixture('water').geometry);
+  const waterLogger = new FifoLogger();
+  const water = pointGroupOf(loadFixture('water').geometry, waterLogger);
   expect(water.symmetryNumber).toBe(2);
   expect(water.label).toBe('C2v');
-  expect(water.warnings).toStrictEqual([]);
+  expect(logEntries(waterLogger)).toStrictEqual([]);
 }, 120_000);
 
 test('an open-shell radical runs spin-unrestricted and says so', () => {
-  const raw = runVibrational(module, {
-    geometry: methyl,
-    settings: { ...GAS_PHASE_SETTINGS, optimize: true, unpairedElectrons: 1 },
-    outputs: DEFAULT_OUTPUTS,
-  });
+  const logger = new FifoLogger();
+  const raw = runVibrational(
+    module,
+    {
+      geometry: methyl,
+      settings: { ...GAS_PHASE_SETTINGS, optimize: true, unpairedElectrons: 1 },
+      outputs: DEFAULT_OUTPUTS,
+    },
+    { logger },
+  );
   expect(raw.isUnrestricted).toBe(true);
   // The GFN2 spin-polarization term is what makes it an open-shell answer
   // rather than a restricted one relabelled.
   expect(raw.spinEnergy).toBeLessThan(-0.01);
-  expect(raw.warnings.some((warning) => warning.includes('Open-shell'))).toBe(
-    true,
-  );
+  expect(
+    logEntries(logger).some(
+      ({ level, message }) =>
+        level === 'info' && message.includes('Open-shell'),
+    ),
+  ).toBe(true);
   const modes = assembleModes({
     atoms: 4,
     masses: raw.masses,
@@ -204,7 +218,7 @@ function occHessian(geometry: Geometry, size: number): Float64Array {
 }
 
 /** The detected point group of a geometry. */
-function pointGroupOf(geometry: Geometry) {
+function pointGroupOf(geometry: Geometry, logger?: FifoLogger) {
   const scope = createHandleScope();
   try {
     const system = prepareSystem(module, geometry, GAS_PHASE_SETTINGS, scope);
@@ -213,6 +227,7 @@ function pointGroupOf(geometry: Geometry) {
       system.molecule,
       geometry.elements,
       system.coordinates,
+      logger,
     );
   } finally {
     scope.release();

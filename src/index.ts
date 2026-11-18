@@ -71,6 +71,7 @@ export {
 export type {
   BuildOptions,
   BuiltMolecule,
+  LoadOptions,
   LoadedMolecules,
   MoleculeFormat,
   OclModule,

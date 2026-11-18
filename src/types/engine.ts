@@ -1,3 +1,5 @@
+import type { LightLogger } from 'cheminfo-types';
+
 import type {
   CalculationSettings,
   OutputSelection,
@@ -62,8 +64,6 @@ export interface VibrationalResult {
   /** RRHO block, or `null` when it was not requested or not possible. */
   thermochemistry: Thermochemistry | null;
   timings: Timings;
-  /** Anything the user should know: unconverged, saddle point, model caveats. */
-  warnings: string[];
 }
 
 /**
@@ -92,6 +92,12 @@ export interface EngineRunOptions {
   signal?: AbortSignal;
   /** @default undefined */
   onProgress?: (progress: EngineProgress) => void;
+  /**
+   * Receives what the run has to say, at its level: `warn` for what changes how
+   * the result must be read (no convergence, a saddle point), `info` for context.
+   * @default undefined — nothing is reported
+   */
+  logger?: LightLogger;
 }
 
 /**

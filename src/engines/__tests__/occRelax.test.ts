@@ -1,5 +1,7 @@
+import { FifoLogger } from 'fifo-logger';
 import { beforeAll, expect, test } from 'vitest';
 
+import { logEntries } from '../../__tests__/logEntries.ts';
 import type { Geometry } from '../../types/index.ts';
 import { loadOccModule } from '../occModule.ts';
 import {
@@ -34,13 +36,16 @@ beforeAll(async () => {
 
 test('a distorted water relaxes back onto native xtb 6.7.1 own minimum', () => {
   const water = loadFixture('water');
-  const result = relaxInProcess(module, {
-    geometry: stretched(water.geometry),
-  });
+  const logger = new FifoLogger();
+  const result = relaxInProcess(
+    module,
+    { geometry: stretched(water.geometry) },
+    { logger },
+  );
 
   expect(result.converged).toBe(true);
   expect(result.cycles).toBeGreaterThan(0);
-  expect(result.warnings).toStrictEqual([]);
+  expect(logEntries(logger)).toStrictEqual([]);
   expect(result.coordinates).toHaveLength(9);
   // Native xtb optimized this molecule to -5.070544344175 Eh.
   expect(result.energy.total).toBeCloseTo(water.reference.totalEnergy, 6);
@@ -72,16 +77,22 @@ test('a distorted benzene relaxes back onto native xtb own minimum', () => {
 test('the energy reported is the one at the geometry returned, and relaxing lowers it', () => {
   const water = loadFixture('water');
   const start = stretched(water.geometry);
-  const halted = relaxInProcess(module, {
-    geometry: start,
-    settings: { maxCycles: 1 },
-  });
+  const logger = new FifoLogger();
+  const halted = relaxInProcess(
+    module,
+    { geometry: start, settings: { maxCycles: 1 } },
+    { logger },
+  );
   const relaxed = relaxInProcess(module, { geometry: start });
 
   expect(relaxed.energy.total).toBeLessThan(halted.energy.total);
   expect(halted.converged).toBe(false);
-  expect(halted.warnings).toStrictEqual([
-    'The optimizer stopped after 1 cycles without converging, so this geometry is not a stationary point and its energy is an upper bound.',
+  expect(logEntries(logger)).toStrictEqual([
+    {
+      level: 'warn',
+      message:
+        'The optimizer stopped after 1 cycles without converging, so this geometry is not a stationary point and its energy is an upper bound.',
+    },
   ]);
 
   // The energy must belong to the coordinates that came back, so a single point

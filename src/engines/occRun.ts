@@ -1,3 +1,5 @@
+import type { LightLogger } from 'cheminfo-types';
+
 import type {
   CalculationSettings,
   EnergyBreakdown,
@@ -26,7 +28,7 @@ export interface RunInput {
   outputs: OutputSelection;
 }
 
-/** How a run reports progress and gets cancelled. */
+/** How a run reports progress and messages, and gets cancelled. */
 export interface RunOptions {
   /** @default undefined */
   onProgress?: (
@@ -36,6 +38,11 @@ export interface RunOptions {
   ) => void;
   /** @default undefined */
   signal?: AbortSignal;
+  /**
+   * Receives what the run has to say, at its level.
+   * @default undefined
+   */
+  logger?: LightLogger;
 }
 
 /**
@@ -67,7 +74,6 @@ export interface RawVibrational {
   optimizerConverged: boolean;
   optimizeMs: number;
   hessianMs: number;
-  warnings: string[];
 }
 
 /**
@@ -79,7 +85,7 @@ export interface RawVibrational {
  * SCF warm start.
  * @param module - The loaded occjs module.
  * @param input - Geometry, settings and requested outputs.
- * @param options - Progress and cancellation.
+ * @param options - Progress, messages and cancellation.
  * @returns The raw numbers of the calculation.
  * @throws When the SCF fails, or on cancellation.
  */
@@ -90,7 +96,6 @@ export function runVibrational(
 ): RawVibrational {
   const { settings, outputs } = input;
   let geometry = input.geometry;
-  const warnings: string[] = [];
   let optimizeMs = 0;
   let optimizerCycles = 0;
   let optimizerConverged = true;
@@ -126,17 +131,22 @@ export function runVibrational(
       scope.release();
     }
     optimizeMs = performance.now() - started;
+    if (!optimizerConverged) {
+      options.logger?.warn(
+        `The optimizer stopped after ${optimizerCycles} cycles without converging, so the Hessian is not at a stationary point.`,
+      );
+    }
   }
 
   const scope = createHandleScope();
   try {
-    const system = prepareSystem(module, geometry, settings, scope);
-    warnings.push(...system.warnings);
-    if (!optimizerConverged) {
-      warnings.push(
-        `The optimizer stopped after ${optimizerCycles} cycles without converging, so the Hessian is not at a stationary point.`,
-      );
-    }
+    const system = prepareSystem(
+      module,
+      geometry,
+      settings,
+      scope,
+      options.logger,
+    );
     const size = system.atoms * 3;
     const context = createSweepContext(
       module,
@@ -174,8 +184,8 @@ export function runVibrational(
       system.molecule,
       geometry.elements,
       system.coordinates,
+      options.logger,
     );
-    warnings.push(...pointGroup.warnings);
 
     return {
       coordinates: system.coordinates,
@@ -192,7 +202,6 @@ export function runVibrational(
       optimizerConverged,
       optimizeMs,
       hessianMs,
-      warnings,
     };
   } finally {
     scope.release();

@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import { createRelayLogger } from './occLog.ts';
 import { describeOccError, loadOccModule } from './occModule.ts';
 import type { HandleScope } from './occScope.ts';
 import { createHandleScope } from './occScope.ts';
@@ -102,7 +103,8 @@ function prepare(module: OccModule, command: PrepareCommand): void {
   runScope = scope;
 
   const { geometry, settings, outputs } = command.input;
-  const prepared = prepareSystem(module, geometry, settings, scope);
+  const logger = createRelayLogger(command.id, post);
+  const prepared = prepareSystem(module, geometry, settings, scope, logger);
   system = prepared;
   wantDipole = outputs.ir;
   sweep = createSweepContext(
@@ -117,6 +119,7 @@ function prepare(module: OccModule, command: PrepareCommand): void {
     prepared.molecule,
     geometry.elements,
     prepared.coordinates,
+    logger,
   );
 
   post({
@@ -129,7 +132,6 @@ function prepare(module: OccModule, command: PrepareCommand): void {
     pointGroup,
     isUnrestricted: prepared.isUnrestricted,
     spinEnergy: prepared.spinEnergy,
-    warnings: [...prepared.warnings, ...pointGroup.warnings],
   });
 }
 

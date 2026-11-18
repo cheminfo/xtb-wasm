@@ -75,12 +75,19 @@ export function createOccjsEngine(
         {
           maxWorkers: options.maxWorkers,
           signal: runOptions.signal,
+          logger: runOptions.logger,
           onProgress: (stage, fraction, message) => {
             runOptions.onProgress?.({ stage, fraction, message });
           },
         },
       );
-      return buildResult({ engineId: options.id, request, raw, startedAt });
+      return buildResult({
+        engineId: options.id,
+        request,
+        raw,
+        startedAt,
+        logger: runOptions.logger,
+      });
     },
   };
 }

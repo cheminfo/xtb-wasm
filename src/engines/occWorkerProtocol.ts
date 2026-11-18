@@ -1,6 +1,7 @@
 import type { EnergyBreakdown, EngineStage, Geometry } from '../types/index.ts';
 import type { RelaxSettings } from '../types/relax.ts';
 
+import type { LogMessage } from './occLog.ts';
 import type { RunInput } from './occRun.ts';
 import type { PointGroupInfo } from './occSymmetry.ts';
 
@@ -96,7 +97,6 @@ export interface RelaxedMessage {
   energy: EnergyBreakdown;
   cycles: number;
   converged: boolean;
-  warnings: string[];
 }
 
 export interface PreparedMessage {
@@ -111,7 +111,6 @@ export interface PreparedMessage {
   pointGroup: PointGroupInfo;
   isUnrestricted: boolean;
   spinEnergy: number;
-  warnings: string[];
 }
 
 export interface SweptMessage {
@@ -153,4 +152,5 @@ export type WorkerMessage =
   | SweptMessage
   | SolvedMessage
   | ProgressMessage
+  | LogMessage
   | FailureMessage;

@@ -1,3 +1,5 @@
+import type { LightLogger } from 'cheminfo-types';
+
 import type { RelaxRequest, RelaxResult } from '../types/relax.ts';
 
 import {
@@ -30,6 +32,12 @@ export interface RelaxPoolOptions {
    * @default undefined
    */
   signal?: AbortSignal;
+  /**
+   * Receives what each relaxation has to say. In a batch of several
+   * structures, every entry carries `structure`, the index of its request.
+   * @default undefined — nothing is reported
+   */
+  logger?: LightLogger;
 }
 
 /**
@@ -41,7 +49,7 @@ export interface RelaxPoolOptions {
  * it costs 4-7 ms for a few atoms, ~20 ms for benzene, ~200 ms for caffeine and
  * ~670 ms for ibuprofen, which is why it is never automatic.
  * @param request - Geometry and what to override of the defaults.
- * @param options - Pool cap, progress and cancellation.
+ * @param options - Pool cap, progress, messages and cancellation.
  * @returns The relaxed geometry, its energy and what the optimizer did.
  * @throws When `Worker` is unavailable, when occ fails, or on cancellation.
  */
@@ -71,7 +79,7 @@ export async function relaxGeometry(
  * Results come back in the order the requests were given, whichever worker
  * produced them.
  * @param requests - The structures to relax.
- * @param options - Pool cap, progress and cancellation.
+ * @param options - Pool cap, progress, messages and cancellation.
  * @returns One result per request, in request order.
  * @throws When `Worker` is unavailable, when occ fails on any structure, or on
  * cancellation. A failure gives up the whole batch.
@@ -156,6 +164,10 @@ async function drain(
             settings: resolveRelaxSettings(request.settings),
           },
           'relaxed',
+          {
+            logger: options.logger,
+            logContext: requests.length > 1 ? { structure: index } : undefined,
+          },
         );
         results[index] = {
           coordinates: relaxed.coordinates,
@@ -163,7 +175,6 @@ async function drain(
           cycles: relaxed.cycles,
           converged: relaxed.converged,
           elapsedMs: performance.now() - startedAt,
-          warnings: relaxed.warnings,
         };
         done++;
         options.onSettled?.(done, requests.length);

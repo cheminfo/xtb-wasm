@@ -1,3 +1,5 @@
+import type { LightLogger } from 'cheminfo-types';
+
 import type {
   Molecule,
   VibrationalMode,
@@ -16,17 +18,23 @@ export interface ResultInput {
   raw: RawVibrational;
   /** `performance.now()` at the start of the run, for the total timing. */
   startedAt: number;
+  /**
+   * Receives what the analysis has to say.
+   * @default undefined
+   */
+  logger?: LightLogger;
 }
 
 /**
  * Turn one engine's raw numbers into the app's `VibrationalResult`: assemble
- * the modes, run the pure-JavaScript analysis that is available, and collect
- * every warning the user has to see.
- * @param input - Engine id, the echoed request, the raw numbers and the start time.
+ * the modes, and run the pure-JavaScript analysis that is available, logging
+ * what the user has to know about it.
+ * @param input - Engine id, the echoed request, the raw numbers, the start time
+ * and the logger.
  * @returns The finished result.
  */
 export function buildResult(input: ResultInput): VibrationalResult {
-  const { engineId, request, raw, startedAt } = input;
+  const { engineId, request, raw, startedAt, logger } = input;
   const analyseStarted = performance.now();
   const atoms = request.molecule.elements.length;
   const modes = assembleModes({
@@ -41,11 +49,10 @@ export function buildResult(input: ResultInput): VibrationalResult {
     elements: request.molecule.elements,
     coordinates: raw.coordinates,
   };
-  const warnings = [...raw.warnings];
   const analyser = getVibrationalAnalyser();
 
   if (request.outputs.raman) {
-    applyRaman(modes, geometry, raw.masses, request.molecule, warnings);
+    applyRaman(modes, geometry, raw.masses, request.molecule, logger);
   }
   const involvements = analyser?.involvements?.(request.molecule, modes);
   if (involvements !== undefined) {
@@ -60,12 +67,12 @@ export function buildResult(input: ResultInput): VibrationalResult {
     if (mode.wavenumber < 0) imaginaryCount++;
   }
   if (imaginaryCount > 0) {
-    warnings.push(
+    logger?.warn(
       `${imaginaryCount} imaginary mode(s): this geometry is a saddle point, not a minimum, so the thermochemistry describes a transition state.`,
     );
   }
 
-  const thermochemistry = buildThermochemistry(input, modes, warnings);
+  const thermochemistry = buildThermochemistry(input, modes);
   const analyse = performance.now() - analyseStarted;
   return {
     id: crypto.randomUUID(),
@@ -84,7 +91,6 @@ export function buildResult(input: ResultInput): VibrationalResult {
       analyse,
       total: performance.now() - startedAt,
     },
-    warnings,
   };
 }
 
@@ -94,11 +100,11 @@ function applyRaman(
   geometry: { elements: string[]; coordinates: Float64Array },
   masses: Float64Array,
   molecule: Molecule,
-  warnings: string[],
+  logger: LightLogger | undefined,
 ): void {
   const compute = getVibrationalAnalyser()?.ramanActivities;
   if (compute === undefined) {
-    warnings.push(
+    logger?.warn(
       'Raman activities were requested but no Raman analyser is installed, so they are not reported.',
     );
     return;
@@ -110,7 +116,7 @@ function applyRaman(
   try {
     activities = compute(geometry, modes, masses, molecule);
   } catch (error) {
-    warnings.push(
+    logger?.error(
       `Raman activities could not be computed: ${error instanceof Error ? error.message : String(error)}`,
     );
     return;
@@ -124,17 +130,16 @@ function applyRaman(
   }
 }
 
-/** The RRHO block, or null with a warning saying why. */
+/** The RRHO block, or null with a logged reason. */
 function buildThermochemistry(
   input: ResultInput,
   modes: readonly VibrationalMode[],
-  warnings: string[],
 ): VibrationalResult['thermochemistry'] {
-  const { request, raw } = input;
+  const { request, raw, logger } = input;
   if (!request.outputs.thermochemistry) return null;
   const compute = getVibrationalAnalyser()?.thermochemistry;
   if (compute === undefined) {
-    warnings.push(
+    logger?.warn(
       'Thermochemistry was requested but no thermochemistry analyser is installed, so it is not reported.',
     );
     return null;
@@ -161,7 +166,7 @@ function buildThermochemistry(
       pointGroup: raw.pointGroup.label,
     });
   } catch (error) {
-    warnings.push(
+    logger?.error(
       `Thermochemistry could not be computed: ${error instanceof Error ? error.message : String(error)}`,
     );
     return null;

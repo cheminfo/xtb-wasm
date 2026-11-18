@@ -1,13 +1,16 @@
+import { FifoLogger } from 'fifo-logger';
 import { expect, test } from 'vitest';
 
+import { logEntries } from '../../__tests__/logEntries.ts';
 import { geometryFromPdb } from '../pdb.ts';
 
 import { readFixture } from './readFixture.ts';
 
 test('reads a real PDB entry in file order, with no warnings', () => {
-  const { geometry, warnings } = geometryFromPdb(readFixture('peptide.pdb'));
+  const logger = new FifoLogger();
+  const { geometry } = geometryFromPdb(readFixture('peptide.pdb'), { logger });
 
-  expect(warnings).toStrictEqual([]);
+  expect(logEntries(logger)).toStrictEqual([]);
   expect(geometry.elements).toHaveLength(50);
   expect(geometry.coordinates).toHaveLength(150);
   expect(geometry.elements.slice(0, 6)).toStrictEqual([
@@ -29,17 +32,26 @@ test('reads a real PDB entry in file order, with no warnings', () => {
 });
 
 test('normalizes the element column, guesses it, and honours altLoc and MODEL', () => {
-  const { geometry, warnings } = geometryFromPdb(readFixture('edge.pdb'));
+  const logger = new FifoLogger();
+  const { geometry } = geometryFromPdb(readFixture('edge.pdb'), { logger });
 
   expect(geometry.elements).toStrictEqual(['N', 'C', 'Cl', 'H', 'H']);
   expect([...geometry.coordinates]).toStrictEqual([
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, -1.5, -2.5, -3.5,
   ]);
-  expect(warnings).toStrictEqual([
-    'kept the first of 2 models',
-    'dropped 1 alternate-location atom',
-    'guessed the element of 1 atom from the atom name, because columns 77-78 were empty or unknown',
-    'treated 1 deuterium or tritium atom as hydrogen, because GFN2 has no isotope support',
+  expect(logEntries(logger)).toStrictEqual([
+    { level: 'info', message: 'kept the first of 2 models' },
+    { level: 'info', message: 'dropped 1 alternate-location atom' },
+    {
+      level: 'warn',
+      message:
+        'guessed the element of 1 atom from the atom name, because columns 77-78 were empty or unknown',
+    },
+    {
+      level: 'warn',
+      message:
+        'treated 1 deuterium or tritium atom as hydrogen, because GFN2 has no isotope support',
+    },
   ]);
 });
 

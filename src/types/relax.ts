@@ -1,3 +1,5 @@
+import type { LightLogger } from 'cheminfo-types';
+
 import type { XtbMethod } from './calculation.ts';
 import type { EnergyBreakdown } from './engine.ts';
 import type { Geometry } from './molecule.ts';
@@ -56,8 +58,6 @@ export interface RelaxResult {
   converged: boolean;
   /** Wall-clock duration of this relaxation, in milliseconds. */
   elapsedMs: number;
-  /** Plain sentences about anything the caller should know. */
-  warnings: string[];
 }
 
 /** How a relaxation reports progress and gets cancelled. */
@@ -69,4 +69,9 @@ export interface RelaxOptions {
   onCycle?: (cycle: number, energy: number) => void;
   /** @default undefined */
   signal?: AbortSignal;
+  /**
+   * Receives what the relaxation has to say, at its level.
+   * @default undefined — nothing is reported
+   */
+  logger?: LightLogger;
 }

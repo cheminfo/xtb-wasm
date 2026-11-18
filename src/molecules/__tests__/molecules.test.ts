@@ -1,5 +1,7 @@
+import { FifoLogger } from 'fifo-logger';
 import { expect, test } from 'vitest';
 
+import { logEntries } from '../../__tests__/logEntries.ts';
 import {
   moleculeFromIdCode,
   moleculeFromMolfile,
@@ -72,17 +74,23 @@ test(
 test(
   'generates and reports a conformer for a 2D molfile',
   async () => {
+    const logger = new FifoLogger();
     const loaded = await moleculesFromText(
       readFixture('ethanol.mol'),
       'ethanol.mol',
+      { logger },
     );
     const molecule = loaded.molecules[0];
 
     expect(loaded.molecules).toHaveLength(1);
     expect(molecule?.formula).toBe('C2H6O');
     expect(molecule?.elements).toHaveLength(9);
-    expect(loaded.warnings).toStrictEqual([
-      '"ethanol.mol" has no 3D coordinates, so a conformer was generated with seed 42 and minimized with MMFF94s',
+    expect(logEntries(logger)).toStrictEqual([
+      {
+        level: 'info',
+        message:
+          '"ethanol.mol" has no 3D coordinates, so a conformer was generated with seed 42 and minimized with MMFF94s',
+      },
     ]);
   },
   OCL_TIMEOUT,

@@ -25,7 +25,7 @@ export const IN_PROCESS_ENGINE_ID = 'occjs-in-process';
  * Raman activities and thermochemistry are filled only once
  * `installVibrationalAnalyser()` has been called, as with the engines.
  * @param request - The molecule, settings and requested outputs.
- * @param options - Progress and cancellation.
+ * @param options - Progress, messages and cancellation.
  * @returns The finished result.
  * @throws When the request cannot be honoured, when occ fails, or on cancellation.
  */
@@ -50,6 +50,7 @@ export async function computeVibrationsInProcess(
     },
     {
       signal: options.signal,
+      logger: options.logger,
       onProgress: (stage, fraction, message) => {
         options.onProgress?.({ stage, fraction, message });
       },
@@ -60,5 +61,6 @@ export async function computeVibrationsInProcess(
     request,
     raw,
     startedAt,
+    logger: options.logger,
   });
 }

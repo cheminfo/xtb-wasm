@@ -1,3 +1,4 @@
+import type { LightLogger } from 'cheminfo-types';
 import type * as OclTypes from 'openchemlib';
 
 import { geometryFromOcl } from '../chemistry/geometry.ts';
@@ -35,12 +36,16 @@ export interface BuildOptions {
    * @default 42
    */
   seed?: number;
+  /**
+   * Receives what the build had to do or could not do.
+   * @default undefined — nothing is reported
+   */
+  logger?: LightLogger;
 }
 
-/** A built molecule plus anything the user should know about how it was built. */
+/** A built molecule. */
 export interface BuiltMolecule {
   molecule: Molecule;
-  warnings: string[];
 }
 
 /**
@@ -52,19 +57,19 @@ export interface BuiltMolecule {
  * structure either way, so an anion or a radical is no longer forced neutral
  * and closed-shell.
  * @param structure - The parsed structure. It is mutated by hydrogen addition.
- * @param options - Label, provenance, and the optional verbatim geometry.
- * @returns The molecule and any non-fatal warnings.
+ * @param options - Label, provenance, the optional verbatim geometry and the
+ * logger.
+ * @returns The molecule.
  */
 export async function moleculeFromStructure(
   structure: OclTypes.Molecule,
   options: BuildOptions,
 ): Promise<BuiltMolecule> {
   const ocl = await getOcl();
-  const warnings: string[] = [];
 
   const { final, geometry } =
     options.geometry === undefined
-      ? generateConformer(structure, ocl, options.seed ?? 42, warnings)
+      ? generateConformer(structure, ocl, options.seed ?? 42, options.logger)
       : { final: structure, geometry: options.geometry };
 
   if (geometry.elements.length !== final.getAllAtoms()) {
@@ -73,7 +78,7 @@ export async function moleculeFromStructure(
     );
   }
   if (options.geometry !== undefined) {
-    warnAboutImplicitHydrogens(final, warnings);
+    warnAboutImplicitHydrogens(final, options.logger);
   }
 
   const charge = structureCharge(final);
@@ -92,7 +97,6 @@ export async function moleculeFromStructure(
       elements: geometry.elements,
       coordinates: geometry.coordinates,
     },
-    warnings,
   };
 }
 
@@ -127,14 +131,14 @@ export function moleculeFromGeometry(
  * @param structure - The 2D structure. Mutated by hydrogen addition.
  * @param ocl - The openchemlib module.
  * @param seed - Conformer generator seed.
- * @param warnings - Collects a note when the minimization could not run.
+ * @param logger - Told when the minimization could not run.
  * @returns The 3D structure and its geometry.
  */
 function generateConformer(
   structure: OclTypes.Molecule,
   ocl: OclModule,
   seed: number,
-  warnings: string[],
+  logger: LightLogger | undefined,
 ): { final: OclTypes.Molecule; geometry: Geometry } {
   structure.addImplicitHydrogens();
   const conformer = new ocl.ConformerGenerator(seed).getOneConformerAsMolecule(
@@ -153,7 +157,7 @@ function generateConformer(
   } catch {
     // MMFF94 does not cover every element. The raw conformer is still usable —
     // GFN2 will simply need more optimization cycles.
-    warnings.push(
+    logger?.info(
       'MMFF94s does not cover this structure, so the starting geometry is the unminimized conformer',
     );
   }
@@ -164,11 +168,11 @@ function generateConformer(
 /**
  * Warn when a verbatim 3D structure still has hydrogens without coordinates.
  * @param structure - The structure whose geometry is used as given.
- * @param warnings - Collects the note.
+ * @param logger - Told about the missing hydrogens.
  */
 function warnAboutImplicitHydrogens(
   structure: OclTypes.Molecule,
-  warnings: string[],
+  logger: LightLogger | undefined,
 ): void {
   let implicit = 0;
   const atoms = structure.getAllAtoms();
@@ -176,7 +180,7 @@ function warnAboutImplicitHydrogens(
     implicit += structure.getImplicitHydrogens(atom);
   }
   if (implicit > 0) {
-    warnings.push(
+    logger?.warn(
       `the file has ${implicit} implicit hydrogens with no coordinates, so they are missing from the geometry`,
     );
   }

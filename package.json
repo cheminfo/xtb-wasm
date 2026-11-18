@@ -45,6 +45,7 @@
   "homepage": "https://github.com/cheminfo/xtb-wasm#readme",
   "dependencies": {
     "@peterspackman/occjs": "file:vendor/peterspackman-occjs-0.9.6.tgz",
+    "cheminfo-types": "^1.16.0",
     "sdf-parser": "^9.0.0"
   },
   "bundleDependencies": [
@@ -54,9 +55,9 @@
     "@types/node": "^25.6.0",
     "@vitest/coverage-v8": "^4.1.11",
     "@zakodium/tsconfig": "^1.0.5",
-    "cheminfo-types": "^1.16.0",
     "eslint": "^9",
     "eslint-config-zakodium": "^20.1.0",
+    "fifo-logger": "^2.0.1",
     "openchemlib": "^9.25.0",
     "prettier": "^3.9.6",
     "rimraf": "^6.1.3",

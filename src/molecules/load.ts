@@ -1,3 +1,4 @@
+import type { LightLogger } from 'cheminfo-types';
 import { parse as parseSdf } from 'sdf-parser';
 
 import type { Molecule, MoleculeSource } from '../types/index.ts';
@@ -6,11 +7,20 @@ import { moleculeFromStructure } from './build.ts';
 import { geometryInOclOrder } from './molfileGeometry.ts';
 import { getOcl } from './ocl.ts';
 
-/** Everything one file yielded, plus what went wrong along the way. */
+/** Everything one file yielded. */
 export interface LoadedMolecules {
   molecules: Molecule[];
-  /** Non-fatal problems: skipped records, missing element columns, guessed charges. */
-  warnings: string[];
+}
+
+/** How a loader reports what it had to do. */
+export interface LoadOptions {
+  /**
+   * Receives every non-fatal message: `error` for a record that was skipped,
+   * `warn` for a geometry that may not be what the file meant, `info` for what
+   * was done as a matter of course, such as generating a conformer.
+   * @default undefined — nothing is reported
+   */
+  logger?: LightLogger;
 }
 
 /**
@@ -19,12 +29,12 @@ export interface LoadedMolecules {
  * A molfile that carries 3D coordinates — a non-zero z, or a header that says
  * so — keeps every coordinate exactly as written, reordered only where
  * openchemlib indexes its atoms differently. A 2D one gets a generated
- * conformer, reported as a warning so the user knows the geometry is not
- * theirs.
+ * conformer, logged so the user knows the geometry is not theirs.
  * @param molfile - The molfile text.
  * @param label - Human-readable name shown in the UI.
  * @param seed - Conformer generator seed, used only for a 2D molfile.
  * @param source - Provenance. Defaults to a plain molfile.
+ * @param options - Where to report what was done.
  * @returns The single molecule it describes.
  */
 export async function loadMolfile(
@@ -32,7 +42,9 @@ export async function loadMolfile(
   label: string,
   seed: number,
   source?: MoleculeSource,
+  options: LoadOptions = {},
 ): Promise<LoadedMolecules> {
+  const { logger } = options;
   const ocl = await getOcl();
   const structure = ocl.Molecule.fromMolfile(molfile);
   if (structure.getAllAtoms() === 0) {
@@ -48,13 +60,14 @@ export async function loadMolfile(
     seed,
     molfile,
     geometry: is3d ? geometryInOclOrder(molfile, structure) : undefined,
+    logger,
   });
   if (!is3d) {
-    built.warnings.push(
+    logger?.info(
       `"${label}" has no 3D coordinates, so a conformer was generated with seed ${seed} and minimized with MMFF94s`,
     );
   }
-  return { molecules: [built.molecule], warnings: built.warnings };
+  return { molecules: [built.molecule] };
 }
 
 /**
@@ -62,13 +75,14 @@ export async function loadMolfile(
  *
  * Records are returned in file order, so the caller can offer a choice rather
  * than silently picking the first, and a record that fails to parse is skipped
- * with a warning instead of failing the whole file. Only the first
+ * and logged instead of failing the whole file. Only the first
  * `maxRecords` are built: a conformer costs tens of milliseconds, so a catalogue
  * SDF would otherwise freeze the tab for minutes before showing anything.
  * @param text - The SDF contents.
  * @param fileName - The file name, used in labels and provenance.
  * @param seed - Conformer generator seed for records without 3D coordinates.
  * @param maxRecords - How many records to build.
+ * @param options - Where to report skipped records and the limit.
  * @returns Every record that parsed, up to the limit.
  */
 export async function loadSdf(
@@ -76,13 +90,14 @@ export async function loadSdf(
   fileName: string,
   seed: number,
   maxRecords = 200,
+  options: LoadOptions = {},
 ): Promise<LoadedMolecules> {
+  const { logger } = options;
   const { molecules: records } = parseSdf(text, { mixedEOL: true });
   const molecules: Molecule[] = [];
-  const warnings: string[] = [];
   const limit = Math.min(records.length, maxRecords);
   if (records.length > limit) {
-    warnings.push(
+    logger?.warn(
       `${fileName} holds ${records.length} records; loaded the first ${limit}`,
     );
   }
@@ -95,16 +110,16 @@ export async function loadSdf(
       /* eslint-disable-next-line no-await-in-loop -- conformer generation is
          CPU-bound and single-threaded, so building records concurrently would
          not be faster and would hold every conformer in memory at once */
-      const loaded = await loadMolfile(entry.molfile, label, seed, {
-        kind: 'sdf',
-        molfile: entry.molfile,
-        fileName,
-        record,
-      });
+      const loaded = await loadMolfile(
+        entry.molfile,
+        label,
+        seed,
+        { kind: 'sdf', molfile: entry.molfile, fileName, record },
+        options,
+      );
       molecules.push(...loaded.molecules);
-      warnings.push(...loaded.warnings);
     } catch (error) {
-      warnings.push(
+      logger?.error(
         `skipped record ${record + 1} of ${fileName}: ${(error as Error).message}`,
       );
     }
@@ -113,23 +128,25 @@ export async function loadSdf(
   if (molecules.length === 0) {
     throw new Error(`${fileName} contains no readable record`);
   }
-  return { molecules, warnings };
+  return { molecules };
 }
 
 /**
  * Read a `.smi` file: one SMILES per line, with an optional name after it.
  * @param text - The file contents.
  * @param seed - Conformer generator seed.
+ * @param options - Where to report skipped lines.
  * @returns One molecule per non-empty line.
  */
 export async function loadSmilesLines(
   text: string,
   seed: number,
+  options: LoadOptions = {},
 ): Promise<LoadedMolecules> {
+  const { logger } = options;
   const ocl = await getOcl();
   const lines = text.split(/\r?\n/);
   const molecules: Molecule[] = [];
-  const warnings: string[] = [];
 
   for (let index = 0; index < lines.length; index++) {
     const line = (lines[index] as string).trim();
@@ -146,12 +163,12 @@ export async function loadSmilesLines(
           label,
           source: { kind: 'smiles', smiles: smiles as string, seed },
           seed,
+          logger,
         },
       );
       molecules.push(built.molecule);
-      warnings.push(...built.warnings);
     } catch (error) {
-      warnings.push(
+      logger?.error(
         `skipped line ${index + 1} ("${line}"): ${(error as Error).message}`,
       );
     }
@@ -160,7 +177,7 @@ export async function loadSmilesLines(
   if (molecules.length === 0) {
     throw new Error('no line of this file parsed as a SMILES');
   }
-  return { molecules, warnings };
+  return { molecules };
 }
 
 /**
